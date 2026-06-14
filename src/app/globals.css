@@ -1,26 +1,92 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  /* Toast 애니메이션 */
+  --animate-toast-in: toast-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+  --animate-toast-out: toast-out 0.22s ease-in forwards;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Skeleton 애니메이션 */
+  --animate-skeleton-pulse: skeleton-pulse 1.6s ease-in-out infinite;
+
+  /* LikeButton 팝 애니메이션 */
+  --animate-like-pop: like-pop 280ms cubic-bezier(0.36, 0.07, 0.19, 0.97) forwards;
+
+  /* Primary — Deep Forest Green */
+  --color-primary-50:  #F0F7F4;
+  --color-primary-100: #D6EBE3;
+  --color-primary-200: #A8D4C3;
+  --color-primary-300: #72BAA0;
+  --color-primary-400: #459E7E;
+  --color-primary-500: #2D8463;
+  --color-primary-600: #1F6B4D;
+  --color-primary-700: #1F4D3A;
+  --color-primary-800: #163826;
+  --color-primary-900: #0D2318;
+
+  /* Neutral — Warm Ivory / Warm Charcoal */
+  --color-neutral-50:  #FDFCF9;
+  --color-neutral-100: #F5F4F0;
+  --color-neutral-200: #E8E6E1;
+  --color-neutral-300: #D4D1CA;
+  --color-neutral-400: #B5B1A8;
+  --color-neutral-500: #908C83;
+  --color-neutral-600: #6B6760;
+  --color-neutral-700: #4A4742;
+  --color-neutral-800: #2E2C29;
+  --color-neutral-900: #1C1917;
+
+  /* Font */
+  --font-sans: var(--font-plus-jakarta-sans), 'SUIT Variable', -apple-system, sans-serif;
+  --font-serif: var(--font-noto-serif-kr), Georgia, serif;
+
+  /* Border radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+
+  /* Shadow */
+  --shadow-card: 0 1px 4px rgba(28,25,23,0.06);
+  --shadow-md:   0 4px 16px rgba(28,25,23,0.10);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-neutral-50);
+  color: var(--color-neutral-900);
+  font-family: var(--font-sans);
+}
+
+/* Toast 키프레임 */
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes toast-out {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0.4;
+    transform: translateY(12px);
+  }
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.45; }
+}
+
+@keyframes like-pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.2); }
+  70%  { transform: scale(0.92); }
+  100% { transform: scale(1); }
 }

@@ -1,23 +1,39 @@
-export type PostType = 'snap' | 'article'
+// 피드 API 명세 기반 타입 (decisions/api-spec.md)
 
-export interface Post {
+export interface FeedAuthorDto {
   id: string
-  authorId: string
-  type: PostType
-
-  // 스냅 전용
-  images?: string[]
-  caption?: string
-
-  // 아티클 전용
-  title?: string
-  body?: object
-  coverImage?: string
-  readingTime?: number
-
-  // 공통
-  tags: string[]
-  likesCount: number
-  commentsCount: number
-  createdAt: string
+  username: string
+  avatar: string | null
 }
+
+export interface PostImageDto {
+  url: string
+  width: number
+  height: number
+}
+
+export interface SnapFeedItemDto {
+  id: string
+  type: 'snap'
+  createdAt: string
+  author: FeedAuthorDto
+  images: PostImageDto[]
+  caption: string | null
+  likeCount: number
+  likedByMe: boolean
+}
+
+export interface ArticleFeedItemDto {
+  id: string
+  type: 'article'
+  createdAt: string
+  author: FeedAuthorDto
+  title: string
+  excerpt: string
+  coverImage: string | null
+  readingTime: number
+  likeCount: number
+  likedByMe: boolean
+}
+
+export type FeedItemDto = SnapFeedItemDto | ArticleFeedItemDto
