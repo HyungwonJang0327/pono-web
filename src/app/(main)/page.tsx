@@ -121,7 +121,7 @@ export default function HomePage() {
   return (
     <>
       {/* 서브탭 */}
-      <div className="flex gap-4 mb-3">
+      <div className="sticky top-0 z-10 bg-neutral-50 -mx-3.5 px-3.5 pt-3 pb-2 mb-3 border-b border-neutral-200 flex gap-4">
         {(['following', 'recommended'] as const).map((tab) => {
           const isActive = activeTab === tab
           const label = tab === 'following' ? '팔로잉' : '추천'

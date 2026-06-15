@@ -1,13 +1,38 @@
-// 렌더링 전략: 서버 컴포넌트
-// 현재 버튼 클릭 핸들러 없음. 추후 알림 기능 추가 시 'use client' 전환 필요.
+'use client'
+
+// 렌더링 전략: 클라이언트 컴포넌트 (hide-on-scroll 스크롤 리스너 필요)
+
+import { useEffect, useRef, useState } from 'react'
 
 export interface HeaderProps {
   isWebView?: boolean // 추후 WebView 분기용 (현재 미사용)
 }
 
 export default function Header({ isWebView }: HeaderProps) {
+  const [isHidden, setIsHidden] = useState(false)
+  const lastScrollY = useRef(0)
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY
+      if (y > lastScrollY.current && y > 60) {
+        setIsHidden(true)
+      } else if (y < lastScrollY.current) {
+        setIsHidden(false)
+      }
+      lastScrollY.current = y
+    }
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
   return (
-    <header className="sticky top-0 z-10 bg-neutral-50 border-b border-neutral-200">
+    <header
+      className={[
+        'sticky top-0 z-20 bg-neutral-50 border-b border-neutral-200 transition-transform duration-200',
+        isHidden ? '-translate-y-full' : 'translate-y-0',
+      ].join(' ')}
+    >
       <div className="mx-auto w-full max-w-[560px] px-5 py-3 flex items-center justify-between">
         <div className="w-6" />
         <h1 className="text-xl font-bold text-primary-700 italic tracking-tight">Pono</h1>

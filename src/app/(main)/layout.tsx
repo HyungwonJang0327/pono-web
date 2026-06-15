@@ -6,7 +6,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
       <Header />
 
       {/* 피드 */}
-      <main className="mx-auto w-full max-w-[560px] px-3.5 py-3">
+      <main className="mx-auto w-full max-w-[560px] px-3.5 pb-3">
         {children}
       </main>
 
