@@ -90,3 +90,15 @@ body {
   70%  { transform: scale(0.92); }
   100% { transform: scale(1); }
 }
+
+/* 탭 row 보조 액션 (헤더 숨김 시에만 노출) */
+.tab-secondary-actions {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+html[data-header-hidden="true"] .tab-secondary-actions {
+  opacity: 1;
+  pointer-events: auto;
+}

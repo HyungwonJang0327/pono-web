@@ -26,6 +26,10 @@ export default function Header({ isWebView }: HeaderProps) {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    document.documentElement.dataset.headerHidden = isHidden ? 'true' : 'false'
+  }, [isHidden])
+
   return (
     <header
       className={[
