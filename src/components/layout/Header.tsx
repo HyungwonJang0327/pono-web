@@ -3,12 +3,14 @@
 // 렌더링 전략: 클라이언트 컴포넌트 (hide-on-scroll 스크롤 리스너 필요)
 
 import { useEffect, useRef, useState } from 'react'
+import { useAuth, UserButton, SignInButton } from '@clerk/nextjs'
 
 export interface HeaderProps {
   isWebView?: boolean // 추후 WebView 분기용 (현재 미사용)
 }
 
 export default function Header({ isWebView }: HeaderProps) {
+  const { isSignedIn } = useAuth()
   const [isHidden, setIsHidden] = useState(false)
   const lastScrollY = useRef(0)
 
@@ -48,13 +50,19 @@ export default function Header({ isWebView }: HeaderProps) {
             </svg>
             <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-primary-500 rounded-full border border-neutral-50" />
           </button>
-          {/* 프로필 버튼 — 추후 Clerk avatar로 교체 예정 */}
-          <button className="w-7 h-7 rounded-full bg-neutral-200 overflow-hidden flex items-center justify-center text-neutral-500">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
-          </button>
+          {/* 프로필 버튼 */}
+          {isSignedIn ? (
+            <UserButton />
+          ) : (
+            <SignInButton mode="modal">
+              <button className="w-7 h-7 rounded-full bg-neutral-200 overflow-hidden flex items-center justify-center text-neutral-500">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </button>
+            </SignInButton>
+          )}
         </div>
       </div>
     </header>
