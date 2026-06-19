@@ -1,3 +1,5 @@
+import { ClerkProvider } from "@clerk/nextjs";
+import { koKR } from "@clerk/localizations";
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Noto_Serif_KR } from "next/font/google";
 import "./globals.css";
@@ -33,8 +35,10 @@ export default function RootLayout({
       className={`${plusJakartaSans.variable} ${notoSerifKR.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <ClerkProvider localization={koKR}>
           <Providers>{children}</Providers>
-        </body>
+        </ClerkProvider>
+      </body>
     </html>
   );
 }

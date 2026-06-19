@@ -1,6 +1,7 @@
+import { clerkMiddleware } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-export function middleware(request: NextRequest) {
+export default clerkMiddleware((auth, request: NextRequest) => {
   const host = request.headers.get('host') ?? ''
   const userAgent = request.headers.get('user-agent') ?? ''
 
@@ -10,8 +11,11 @@ export function middleware(request: NextRequest) {
   response.headers.set('x-is-webview', isWebView ? 'true' : 'false')
 
   return response
-}
+})
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico).*)',
+    '/__clerk/:path*',
+  ],
 }
