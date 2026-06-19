@@ -2,6 +2,7 @@
 
 import { useRef, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { useAuth } from '@clerk/nextjs';
 import { User, Plus, Pencil, Check } from 'lucide-react';
 import { RESERVED_USERNAMES } from '@/constants';
 
@@ -28,18 +29,21 @@ function validateUsername(value: string): { state: ValidationState; message: str
 
 export default function OnboardingUsernamePage() {
   const router = useRouter();
+  const { getToken } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [username, setUsername] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [conflictError, setConflictError] = useState(false);
 
   const { state: validationState, message: validationMessage } = validateUsername(username);
   const isValid = validationState === 'valid';
   const isError = validationState === 'error';
 
-  // username이 유효하면 버튼 활성화 (아바타는 선택)
-  const canSubmit = isValid;
+  // username이 유효하고 제출 중이 아닐 때 버튼 활성화 (아바타는 선택)
+  const canSubmit = isValid && !isSubmitting;
 
   const handleAvatarClick = useCallback(() => {
     fileInputRef.current?.click();
@@ -56,13 +60,36 @@ export default function OnboardingUsernamePage() {
     // @ prefix 처리: 입력 값이 @로 시작하면 제거
     const raw = e.target.value.replace(/^@/, '');
     setUsername(raw);
+    setConflictError(false);
   }, []);
 
-  const handleSubmit = useCallback(() => {
-    if (!canSubmit) return;
-    console.log({ username, avatar: avatarPreview });
-    router.push('/');
-  }, [canSubmit, username, avatarPreview, router]);
+  const handleSubmit = useCallback(async () => {
+    if (!isValid) return;
+    setIsSubmitting(true);
+    setConflictError(false);
+    try {
+      const token = await getToken();
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3005'}/users/me`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ username }),
+        }
+      );
+      if (res.ok) {
+        router.push('/');
+      } else if (res.status === 409) {
+        setConflictError(true);
+      }
+      // 기타 에러는 버튼만 다시 활성화 (finally에서 처리)
+    } finally {
+      setIsSubmitting(false);
+    }
+  }, [isValid, username, getToken, router]);
 
   // 입력창 border 클래스 결정
   const inputBorderClass = (() => {
@@ -172,7 +199,11 @@ export default function OnboardingUsernamePage() {
           </div>
 
           {/* 안내/유효성 메시지 */}
-          {username.length === 0 ? (
+          {conflictError ? (
+            <p className="mt-2 text-[13px] text-red-500">
+              이미 사용 중인 이름이에요.
+            </p>
+          ) : username.length === 0 ? (
             <p className="mt-2 text-[13px] text-neutral-500">
               영문, 숫자, 밑줄(_)만 사용할 수 있어요.
             </p>
