@@ -1,4 +1,8 @@
+'use client'
+
 import { SignIn } from "@clerk/nextjs";
+import { usePathname, useRouter } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 const ponoAppearance = {
   variables: {
@@ -34,8 +38,23 @@ const ponoAppearance = {
 } as const;
 
 export default function SignInPage() {
+  const pathname = usePathname();
+  const router = useRouter();
+  const isSubStep = pathname !== '/sign-in';
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-neutral-50">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-neutral-50 px-4">
+      {isSubStep && (
+        <div className="w-full max-w-[400px] mb-3">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-1.5 text-neutral-600 text-[14px] hover:text-neutral-900 transition-colors"
+          >
+            <ArrowLeft size={16} strokeWidth={1.5} />
+            뒤로
+          </button>
+        </div>
+      )}
       <SignIn appearance={ponoAppearance} />
     </div>
   );
