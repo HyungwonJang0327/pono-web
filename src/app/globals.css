@@ -56,6 +56,10 @@ body {
   font-family: var(--font-sans);
 }
 
+button, [role="button"], a {
+  cursor: pointer;
+}
+
 /* Toast 키프레임 */
 @keyframes toast-in {
   from {
