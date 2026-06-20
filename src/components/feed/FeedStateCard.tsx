@@ -34,7 +34,7 @@ export function FeedStateCard({
       </h3>
 
       {/* 설명 */}
-      <p className="text-[13px] text-neutral-600 text-center leading-relaxed mb-5">
+      <p className="text-[13px] text-neutral-600 text-center leading-relaxed mb-5 break-keep">
         {description}
       </p>
 

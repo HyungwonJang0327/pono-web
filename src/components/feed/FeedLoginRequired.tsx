@@ -14,7 +14,7 @@ export function FeedLoginRequired() {
       <h3 className="text-[16px] font-semibold text-neutral-900 text-center tracking-tight mb-2">
         로그인이 필요해요
       </h3>
-      <p className="text-[13px] text-neutral-600 text-center leading-relaxed mb-5">
+      <p className="text-[13px] text-neutral-600 text-center leading-relaxed mb-5 break-keep">
         팔로잉 피드는 로그인 후 이용할 수 있어요.
       </p>
       <SignInButton mode="modal">
