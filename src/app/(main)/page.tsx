@@ -124,19 +124,19 @@ export default function HomePage() {
           </div>
         </div>
       ) : error ? (
-        <div className="flex items-center justify-center" style={{ height: 'calc(100vh - 96px)' }}>
-          <div className="w-full max-w-[320px]">
+        <div className="fixed inset-x-0 top-[96px] bottom-0 flex items-center justify-center pointer-events-none">
+          <div className="w-full max-w-[320px] pointer-events-auto">
             <FeedErrorState onRetry={() => loadFeed(activeTab)} />
           </div>
         </div>
       ) : items.length === 0 && activeTab === 'following' ? (
-        <div className="flex items-center justify-center" style={{ height: 'calc(100vh - 96px)' }}>
+        <div className="fixed inset-x-0 top-[96px] bottom-0 flex items-center justify-center">
           <div className="w-full max-w-[320px]">
             <FeedNoFollowing />
           </div>
         </div>
       ) : items.length === 0 ? (
-        <div className="flex items-center justify-center" style={{ height: 'calc(100vh - 96px)' }}>
+        <div className="fixed inset-x-0 top-[96px] bottom-0 flex items-center justify-center">
           <div className="w-full max-w-[320px]">
             <FeedEmptyState />
           </div>
