@@ -1,10 +1,11 @@
 'use client'
 
+import React from 'react'
 import { WifiOff, RefreshCw } from 'lucide-react'
 
 interface NetworkErrorStateProps {
   title?: string
-  description?: string
+  description?: React.ReactNode
   retryLabel?: string
   onRetry: () => void
 }
