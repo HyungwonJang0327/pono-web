@@ -31,9 +31,6 @@ export default function SnapMiniCard({ post, aspectRatio }: SnapMiniCardProps) {
             className="w-full h-full object-cover"
           />
         )}
-        <span className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary-100 text-primary-500">
-          스냅
-        </span>
       </div>
 
       {/* 캡션 + 메타 */}

@@ -27,9 +27,6 @@ export default function ArticleCard({ post }: ArticleCardProps) {
             className="w-full h-full object-cover"
           />
         )}
-        <span className="absolute top-2.5 left-3 px-2.5 py-1 rounded-full text-[10px] font-bold bg-primary-100 text-primary-700">
-          아티클
-        </span>
       </div>
 
       {/* 본문 */}
