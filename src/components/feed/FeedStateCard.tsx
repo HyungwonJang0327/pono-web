@@ -18,7 +18,7 @@ export function FeedStateCard({
   children,
 }: FeedStateCardProps) {
   return (
-    <div className="bg-white rounded-[var(--radius-lg)] shadow-[var(--shadow-card)] px-6 pt-10 pb-8">
+    <div className="px-6 pt-10 pb-8">
       {/* 아이콘 */}
       <div className="flex justify-center mb-6">
         <div
