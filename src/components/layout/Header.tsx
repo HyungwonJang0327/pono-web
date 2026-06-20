@@ -42,13 +42,12 @@ export default function Header({ isWebView }: HeaderProps) {
       <div className="mx-auto w-full max-w-[560px] px-5 py-3 flex items-center justify-between">
         <h1 className="text-xl font-bold text-primary-700 italic tracking-tight">Pono</h1>
         <div className="flex items-center gap-3">
-          {/* 알림 버튼 */}
-          <button className="relative w-7 h-7 flex items-center justify-center text-neutral-600">
+          {/* 알림 버튼 — MVP에서 알림 기능 없음, 뱃지 미표시 */}
+          <button className="w-7 h-7 flex items-center justify-center text-neutral-600">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
               <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
             </svg>
-            <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-primary-500 rounded-full border border-neutral-50" />
           </button>
           {/* 프로필 버튼 */}
           {isSignedIn ? (
