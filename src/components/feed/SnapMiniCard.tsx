@@ -6,11 +6,11 @@ interface SnapMiniCardProps {
   aspectRatio: '1/1' | '4/5'
 }
 
-function AvatarFallback({ username }: { username: string }) {
+function AvatarFallback({ username }: { username: string | null }) {
   return (
     <div className="w-4 h-4 rounded-full bg-neutral-200 flex items-center justify-center flex-shrink-0">
       <span className="text-[9px] font-semibold text-neutral-600 leading-none">
-        {username.charAt(0).toUpperCase()}
+        {username ? username.charAt(0).toUpperCase() : '?'}
       </span>
     </div>
   )
@@ -45,14 +45,14 @@ export default function SnapMiniCard({ post, aspectRatio }: SnapMiniCardProps) {
             {post.author.avatar ? (
               <img
                 src={post.author.avatar}
-                alt={post.author.username}
+                alt={post.author.username ?? undefined}
                 className="w-4 h-4 rounded-full object-cover flex-shrink-0"
               />
             ) : (
               <AvatarFallback username={post.author.username} />
             )}
             <span className="text-[10px] text-neutral-500 truncate max-w-[60px]">
-              {post.author.username}
+              {post.author.username ?? ''}
             </span>
           </div>
           <SnapLikeButton

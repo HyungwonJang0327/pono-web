@@ -2,7 +2,7 @@
 
 export interface FeedAuthorDto {
   id: string
-  username: string
+  username: string | null
   avatar: string | null
 }
 
@@ -28,10 +28,10 @@ export interface ArticleFeedItemDto {
   type: 'article'
   createdAt: string
   author: FeedAuthorDto
-  title: string
+  title: string | null
   excerpt: string
   coverImage: string | null
-  readingTime: number
+  readingTime: number | null
   likeCount: number
   likedByMe: boolean
 }
