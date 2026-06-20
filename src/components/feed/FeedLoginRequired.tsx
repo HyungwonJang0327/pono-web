@@ -20,7 +20,7 @@ export function FeedLoginRequired() {
       <SignInButton mode="modal">
         <button
           type="button"
-          className="w-full h-12 bg-primary-700 text-white rounded-[var(--radius-md)] flex items-center justify-center gap-2 text-[15px] font-medium"
+          className="w-full h-12 bg-primary-700 text-white rounded-[var(--radius-md)] flex items-center justify-center gap-2 text-[15px] font-medium cursor-pointer"
         >
           <LogIn size={16} />
           로그인하기
