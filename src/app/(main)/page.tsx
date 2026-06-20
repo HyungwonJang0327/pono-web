@@ -6,6 +6,7 @@ import FeedRenderer from '@/components/feed/FeedRenderer'
 import { FeedErrorState } from '@/components/feed/FeedErrorState'
 import { FeedEmptyState } from '@/components/feed/FeedEmptyState'
 import { FeedNoFollowing } from '@/components/feed/FeedNoFollowing'
+import { FeedLoginRequired } from '@/components/feed/FeedLoginRequired'
 import { Skeleton } from '@/components/ui'
 import { FeedItemDto } from '@/types/post'
 import { fetchFeed } from '@/services/feed.service'
@@ -17,12 +18,14 @@ export default function HomePage() {
   const [items, setItems] = useState<FeedItemDto[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState(false)
+  const [isLoginRequired, setIsLoginRequired] = useState(false)
 
   const { getToken, isSignedIn } = useAuth()
 
   const loadFeed = async (tab: TabType) => {
     setIsLoading(true)
     setError(false)
+    setIsLoginRequired(false)
     setItems([])
 
     try {
@@ -31,8 +34,7 @@ export default function HomePage() {
       setItems(data.items)
     } catch (e: unknown) {
       if ((e as { status?: number })?.status === 401) {
-        // 비로그인 following 탭 → recommended로 자동 fallback (마이크로태스크 뒤로 미뤄 setState 중첩 방지)
-        setTimeout(() => setActiveTab('recommended'), 0)
+        setIsLoginRequired(true)
         return
       }
       setError(true)
@@ -121,6 +123,12 @@ export default function HomePage() {
                 <Skeleton className="w-2/3 h-3" />
               </div>
             </div>
+          </div>
+        </div>
+      ) : isLoginRequired ? (
+        <div className="fixed inset-x-0 top-[96px] bottom-0 flex items-center justify-center">
+          <div className="w-full max-w-[320px]">
+            <FeedLoginRequired />
           </div>
         </div>
       ) : error ? (
