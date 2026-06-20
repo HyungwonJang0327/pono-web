@@ -1,122 +1,47 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useAuth } from '@clerk/nextjs'
 import FeedRenderer from '@/components/feed/FeedRenderer'
+import { Skeleton } from '@/components/ui'
 import { FeedItemDto } from '@/types/post'
-
-const MOCK_FEED_ITEMS: FeedItemDto[] = [
-  {
-    id: '1',
-    type: 'article',
-    createdAt: '2026-06-01T09:00:00.000Z',
-    author: { id: 'u1', username: 'dohyun_l', avatar: null },
-    title: '느리게 사는 법에 대하여',
-    excerpt: '빠름이 미덕이 된 세상에서, 의도적으로 느려지기로 했다. 그 선택이 내 하루를 어떻게 바꿨는지에 대한 이야기.',
-    coverImage: null,
-    readingTime: 7,
-    likeCount: 1200,
-    likedByMe: false,
-  },
-  {
-    id: '2',
-    type: 'snap',
-    createdAt: '2026-06-02T08:30:00.000Z',
-    author: { id: 'u2', username: 'seoyeon_k', avatar: null },
-    images: [{ url: '', width: 1080, height: 1350 }],
-    caption: '아침 햇살이 가장 좋은 자리. 커피 한 잔과 책 한 권이면 충분한 주말. #느린아침 #홈카페',
-    likeCount: 248,
-    likedByMe: false,
-  },
-  {
-    id: '3',
-    type: 'snap',
-    createdAt: '2026-06-02T10:00:00.000Z',
-    author: { id: 'u3', username: 'jiwoo_h', avatar: null },
-    images: [{ url: '', width: 1080, height: 1350 }],
-    caption: '제철 채소로 차린 저녁. #집밥',
-    likeCount: 301,
-    likedByMe: true,
-  },
-  {
-    id: '4',
-    type: 'article',
-    createdAt: '2026-06-03T11:00:00.000Z',
-    author: { id: 'u4', username: 'woosung_j', avatar: null },
-    title: '도시를 떠나 살기로 했다',
-    excerpt: '귀농도 귀촌도 아닌, 그냥 도시 바깥. 선택의 이유와 6개월간의 솔직한 기록.',
-    coverImage: null,
-    readingTime: 12,
-    likeCount: 892,
-    likedByMe: false,
-  },
-  {
-    id: '5',
-    type: 'article',
-    createdAt: '2026-06-03T14:00:00.000Z',
-    author: { id: 'u5', username: 'sohee_y', avatar: null },
-    title: '매일 글을 쓴다는 것',
-    excerpt: '완성된 글보다 쓰는 행위 자체에 의미를 두기로 한 이후의 변화들.',
-    coverImage: null,
-    readingTime: 5,
-    likeCount: 543,
-    likedByMe: false,
-  },
-  {
-    id: '6',
-    type: 'snap',
-    createdAt: '2026-06-04T09:00:00.000Z',
-    author: { id: 'u6', username: 'minjun_p', avatar: null },
-    images: [{ url: '', width: 1080, height: 1080 }],
-    caption: '오늘의 독서. #책스타그램',
-    likeCount: 184,
-    likedByMe: false,
-  },
-  {
-    id: '7',
-    type: 'snap',
-    createdAt: '2026-06-04T11:00:00.000Z',
-    author: { id: 'u7', username: 'yuna_c', avatar: null },
-    images: [{ url: '', width: 1080, height: 1080 }],
-    caption: '주말 산책 루트. #걷기좋은날',
-    likeCount: 97,
-    likedByMe: false,
-  },
-  {
-    id: '8',
-    type: 'snap',
-    createdAt: '2026-06-05T08:00:00.000Z',
-    author: { id: 'u8', username: 'jaewon_l', avatar: null },
-    images: [{ url: '', width: 1080, height: 1080 }],
-    caption: '비 오는 날 창가 자리. #카페',
-    likeCount: 412,
-    likedByMe: false,
-  },
-  {
-    id: '9',
-    type: 'snap',
-    createdAt: '2026-06-05T10:00:00.000Z',
-    author: { id: 'u9', username: 'daeun_j', avatar: null },
-    images: [{ url: '', width: 1080, height: 1080 }],
-    caption: '손으로 쓴 오늘 일기. #손글씨',
-    likeCount: 226,
-    likedByMe: true,
-  },
-  {
-    id: '10',
-    type: 'snap',
-    createdAt: '2026-06-06T07:30:00.000Z',
-    author: { id: 'u2', username: 'seoyeon_k', avatar: null },
-    images: [{ url: '', width: 1080, height: 1080 }],
-    caption: '장마 전 마지막 맑은 날. #하늘',
-    likeCount: 139,
-    likedByMe: false,
-  },
-]
+import { fetchFeed } from '@/services/feed.service'
 
 type TabType = 'following' | 'recommended'
 
 export default function HomePage() {
   const [activeTab, setActiveTab] = useState<TabType>('recommended')
+  const [items, setItems] = useState<FeedItemDto[]>([])
+  const [isLoading, setIsLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  const { getToken, isSignedIn } = useAuth()
+
+  useEffect(() => {
+    loadFeed()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab])
+
+  const loadFeed = async () => {
+    setIsLoading(true)
+    setError(false)
+    setItems([])
+
+    try {
+      const token = isSignedIn ? await getToken() : null
+      const data = await fetchFeed({ tab: activeTab, token })
+      setItems(data.items)
+    } catch (e: unknown) {
+      if ((e as { status?: number })?.status === 401) {
+        // 비로그인 following 탭 → recommended로 자동 fallback
+        setActiveTab('recommended')
+        return
+      }
+      setError(true)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   return (
     <>
@@ -166,7 +91,42 @@ export default function HomePage() {
       </div>
 
       {/* 피드 */}
-      <FeedRenderer items={MOCK_FEED_ITEMS} />
+      {isLoading ? (
+        <div className="flex flex-col gap-2.5">
+          {/* 아티클 카드 스켈레톤 */}
+          <div className="bg-white rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-card)]">
+            <Skeleton className="w-full aspect-[16/9]" />
+            <div className="px-3 pt-3 pb-3.5 flex flex-col gap-2">
+              <Skeleton className="w-3/4 h-4" />
+              <Skeleton className="w-full h-3" />
+              <Skeleton className="w-1/2 h-3" />
+            </div>
+          </div>
+          {/* 스냅 2열 스켈레톤 */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-white rounded-[var(--radius-md)] overflow-hidden shadow-[var(--shadow-card)]">
+              <Skeleton className="w-full aspect-square" />
+              <div className="px-2.5 pt-2 pb-2.5 flex flex-col gap-1.5">
+                <Skeleton className="w-full h-3" />
+                <Skeleton className="w-2/3 h-3" />
+              </div>
+            </div>
+            <div className="bg-white rounded-[var(--radius-md)] overflow-hidden shadow-[var(--shadow-card)]">
+              <Skeleton className="w-full aspect-square" />
+              <div className="px-2.5 pt-2 pb-2.5 flex flex-col gap-1.5">
+                <Skeleton className="w-full h-3" />
+                <Skeleton className="w-2/3 h-3" />
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : error ? (
+        <p className="text-center text-neutral-500 text-sm mt-10">피드를 불러오지 못했어요.</p>
+      ) : items.length === 0 ? (
+        <p className="text-center text-neutral-500 text-sm mt-10">아직 게시물이 없어요.</p>
+      ) : (
+        <FeedRenderer items={items} />
+      )}
     </>
   )
 }
