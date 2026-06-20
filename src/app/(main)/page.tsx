@@ -3,6 +3,9 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import FeedRenderer from '@/components/feed/FeedRenderer'
+import { FeedErrorState } from '@/components/feed/FeedErrorState'
+import { FeedEmptyState } from '@/components/feed/FeedEmptyState'
+import { FeedNoFollowing } from '@/components/feed/FeedNoFollowing'
 import { Skeleton } from '@/components/ui'
 import { FeedItemDto } from '@/types/post'
 import { fetchFeed } from '@/services/feed.service'
@@ -39,6 +42,7 @@ export default function HomePage() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadFeed(activeTab)
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab])
@@ -120,20 +124,11 @@ export default function HomePage() {
           </div>
         </div>
       ) : error ? (
-        <p className="text-center text-neutral-500 text-sm mt-10">피드를 불러오지 못했어요.</p>
+        <FeedErrorState onRetry={() => loadFeed(activeTab)} />
+      ) : items.length === 0 && activeTab === 'following' ? (
+        <FeedNoFollowing />
       ) : items.length === 0 ? (
-        activeTab === 'following' ? (
-          <div className="flex flex-col items-center justify-center mt-16 px-6 gap-2 text-center">
-            <p className="text-[15px] font-semibold text-neutral-700">
-              아직 팔로잉한 사람의 게시물이 없어요.
-            </p>
-            <p className="text-[13px] text-neutral-500 leading-[1.6]">
-              탐색에서 흥미로운 작가를 찾아보세요.
-            </p>
-          </div>
-        ) : (
-          <p className="text-center text-neutral-500 text-sm mt-10">아직 게시물이 없어요.</p>
-        )
+        <FeedEmptyState />
       ) : (
         <FeedRenderer items={items} />
       )}
