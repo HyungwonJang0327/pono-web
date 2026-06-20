@@ -17,24 +17,19 @@ export default function HomePage() {
 
   const { getToken, isSignedIn } = useAuth()
 
-  useEffect(() => {
-    loadFeed()
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab])
-
-  const loadFeed = async () => {
+  const loadFeed = async (tab: TabType) => {
     setIsLoading(true)
     setError(false)
     setItems([])
 
     try {
       const token = isSignedIn ? await getToken() : null
-      const data = await fetchFeed({ tab: activeTab, token })
+      const data = await fetchFeed({ tab, token })
       setItems(data.items)
     } catch (e: unknown) {
       if ((e as { status?: number })?.status === 401) {
-        // 비로그인 following 탭 → recommended로 자동 fallback
-        setActiveTab('recommended')
+        // 비로그인 following 탭 → recommended로 자동 fallback (마이크로태스크 뒤로 미뤄 setState 중첩 방지)
+        setTimeout(() => setActiveTab('recommended'), 0)
         return
       }
       setError(true)
@@ -42,6 +37,11 @@ export default function HomePage() {
       setIsLoading(false)
     }
   }
+
+  useEffect(() => {
+    loadFeed(activeTab)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab])
 
   return (
     <>
@@ -122,7 +122,18 @@ export default function HomePage() {
       ) : error ? (
         <p className="text-center text-neutral-500 text-sm mt-10">피드를 불러오지 못했어요.</p>
       ) : items.length === 0 ? (
-        <p className="text-center text-neutral-500 text-sm mt-10">아직 게시물이 없어요.</p>
+        activeTab === 'following' ? (
+          <div className="flex flex-col items-center justify-center mt-16 px-6 gap-2 text-center">
+            <p className="text-[15px] font-semibold text-neutral-700">
+              아직 팔로잉한 사람의 게시물이 없어요.
+            </p>
+            <p className="text-[13px] text-neutral-500 leading-[1.6]">
+              탐색에서 흥미로운 작가를 찾아보세요.
+            </p>
+          </div>
+        ) : (
+          <p className="text-center text-neutral-500 text-sm mt-10">아직 게시물이 없어요.</p>
+        )
       ) : (
         <FeedRenderer items={items} />
       )}
