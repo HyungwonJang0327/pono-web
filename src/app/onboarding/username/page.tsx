@@ -99,7 +99,8 @@ export default function OnboardingUsernamePage() {
   })();
 
   return (
-    <div className="flex min-h-screen flex-col bg-neutral-50">
+    <div className="min-h-screen bg-neutral-50">
+      <div className="flex flex-col min-h-screen max-w-[560px] mx-auto">
       {/* 상단 로고 */}
       <div className="pt-14 pb-2 text-center">
         <span className="font-serif text-xl font-bold text-primary-700 tracking-tight">
@@ -235,6 +236,7 @@ export default function OnboardingUsernamePage() {
         >
           시작하기
         </button>
+      </div>
       </div>
     </div>
   );
