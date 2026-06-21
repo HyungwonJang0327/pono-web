@@ -65,7 +65,7 @@ function ToolbarBtn({ onClick, isActive, label, children }: ToolbarBtnProps) {
 export default function WriteArticlePage() {
   const router = useRouter()
   const toast = useToast()
-  const { getToken } = useAuth()
+  const { isLoaded, isSignedIn, getToken } = useAuth()
 
   const [title, setTitle] = useState('')
   const [coverImage, setCoverImage] = useState<string | null>(null)
@@ -264,6 +264,21 @@ export default function WriteArticlePage() {
   }
 
   const canPublish = title.trim().length > 0 && !isPublishing
+
+  if (isLoaded && !isSignedIn) {
+    return (
+      <div className="min-h-screen bg-neutral-50 flex flex-col items-center justify-center gap-4 px-6 text-center">
+        <p className="text-[15px] text-neutral-700 font-medium">로그인이 필요한 페이지입니다.</p>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="text-[14px] text-primary-700 font-medium"
+        >
+          뒤로가기
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
