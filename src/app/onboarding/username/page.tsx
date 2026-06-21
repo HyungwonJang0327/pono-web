@@ -174,7 +174,7 @@ export default function OnboardingUsernamePage() {
 
           <div
             className={[
-              'flex items-center rounded-[10px] bg-white px-4 h-[52px] transition-colors',
+              'flex items-center rounded-[14px] bg-white px-4 h-[52px] transition-colors',
               inputBorderClass,
             ].join(' ')}
           >
@@ -227,7 +227,7 @@ export default function OnboardingUsernamePage() {
           onClick={handleSubmit}
           disabled={!canSubmit}
           className={[
-            'w-full h-12 rounded-[10px] text-[15px] font-semibold transition-colors',
+            'w-full h-12 rounded-full text-[15px] font-semibold transition-colors',
             canSubmit
               ? 'bg-primary-700 text-white active:bg-primary-800'
               : 'bg-neutral-200 text-neutral-400 cursor-not-allowed',
