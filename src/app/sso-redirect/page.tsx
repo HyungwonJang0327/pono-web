@@ -1,11 +1,5 @@
-'use client'
-
-import { useEffect } from 'react'
+import { redirect } from 'next/navigation'
 
 export default function SsoRedirectPage() {
-  useEffect(() => {
-    window.location.replace('/')
-  }, [])
-
-  return <div className="min-h-screen bg-neutral-50" />
+  redirect('/')
 }
