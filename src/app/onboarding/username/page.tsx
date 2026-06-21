@@ -81,6 +81,7 @@ export default function OnboardingUsernamePage() {
         }
       );
       if (res.ok) {
+        router.refresh();
         router.push('/');
       } else if (res.status === 409) {
         setConflictError(true);
