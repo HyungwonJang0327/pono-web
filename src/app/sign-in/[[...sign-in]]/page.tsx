@@ -57,7 +57,7 @@ export default function SignInPage() {
           </button>
         </div>
       )}
-      <SignIn appearance={ponoAppearance} />
+      <SignIn appearance={ponoAppearance} fallbackRedirectUrl="/sso-redirect" signUpFallbackRedirectUrl="/sso-redirect" />
     </div>
   );
 }

@@ -38,7 +38,7 @@ const ponoAppearance = {
 export default function SignUpPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-neutral-50">
-      <SignUp appearance={ponoAppearance} />
+      <SignUp appearance={ponoAppearance} fallbackRedirectUrl="/sso-redirect" />
     </div>
   );
 }
