@@ -15,6 +15,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
       const res = await fetch(`${API_BASE}/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
         cache: 'no-store',
+        signal: AbortSignal.timeout(5000),
       })
       if (res.ok) {
         const user = await res.json()
