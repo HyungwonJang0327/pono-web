@@ -10,6 +10,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
 
   if (userId) {
     const token = await getToken()
+    let needsOnboarding = false
     try {
       const res = await fetch(`${API_BASE}/users/me`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -17,16 +18,14 @@ export default async function MainLayout({ children }: { children: React.ReactNo
       })
       if (res.ok) {
         const user = await res.json()
-        if (!user.username) {
-          redirect('/onboarding/username')
-        }
+        if (!user.username) needsOnboarding = true
       } else {
-        // Clerk 인증은 됐지만 DB에 유저 없음 (webhook 미발화 등) → 온보딩으로
-        redirect('/onboarding/username')
+        needsOnboarding = true
       }
     } catch {
       // 네트워크 오류 시 통과 (온보딩 차단 안 함)
     }
+    if (needsOnboarding) redirect('/onboarding/username')
   }
 
   return (
