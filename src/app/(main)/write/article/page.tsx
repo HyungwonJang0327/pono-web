@@ -32,10 +32,40 @@ const AUTOSAVE_DELAY_MS = 30_000
 
 type SaveStatus = 'idle' | 'saving' | 'saved'
 
+// ── 툴바 버튼 공통 컴포넌트 ──────────────────────────────────────────────────
+
+interface ToolbarBtnProps {
+  onClick: () => void
+  isActive?: boolean
+  label: string
+  children: React.ReactNode
+}
+
+function ToolbarBtn({ onClick, isActive, label, children }: ToolbarBtnProps) {
+  return (
+    <button
+      type="button"
+      aria-label={label}
+      onMouseDown={(e) => {
+        e.preventDefault()
+        onClick()
+      }}
+      className={[
+        'w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] transition-colors',
+        isActive
+          ? 'bg-primary-700 text-white'
+          : 'text-neutral-600 hover:bg-neutral-200',
+      ].join(' ')}
+    >
+      {children}
+    </button>
+  )
+}
+
 export default function WriteArticlePage() {
   const router = useRouter()
   const toast = useToast()
-  const { getToken, userId } = useAuth()
+  const { getToken } = useAuth()
 
   const [title, setTitle] = useState('')
   const [coverImage, setCoverImage] = useState<string | null>(null)
@@ -234,39 +264,6 @@ export default function WriteArticlePage() {
   }
 
   const canPublish = title.trim().length > 0 && !isPublishing
-
-  // ── 툴바 버튼 헬퍼 ───────────────────────────────────────────────────────
-
-  function ToolbarBtn({
-    onClick,
-    isActive,
-    label,
-    children,
-  }: {
-    onClick: () => void
-    isActive?: boolean
-    label: string
-    children: React.ReactNode
-  }) {
-    return (
-      <button
-        type="button"
-        aria-label={label}
-        onMouseDown={(e) => {
-          e.preventDefault()
-          onClick()
-        }}
-        className={[
-          'w-8 h-8 flex items-center justify-center rounded-[var(--radius-sm)] transition-colors',
-          isActive
-            ? 'bg-primary-700 text-white'
-            : 'text-neutral-600 hover:bg-neutral-200',
-        ].join(' ')}
-      >
-        {children}
-      </button>
-    )
-  }
 
   return (
     <div className="min-h-screen bg-neutral-50 pb-24">
