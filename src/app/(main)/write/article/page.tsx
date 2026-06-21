@@ -87,7 +87,7 @@ export default function WriteArticlePage() {
       StarterKit.configure({
         heading: { levels: [1, 2] },
       }),
-      Link.configure({ openOnClick: false, autolink: true }),
+      Link.configure({ openOnClick: false, autolink: false }),
       Image.configure({ inline: false }),
       Placeholder.configure({
         placeholder: '내용을 입력하세요...',

@@ -162,8 +162,8 @@ export default function WriteSnapPage() {
               </div>
             ))}
 
-            {/* 추가 버튼 (최대 장수 미만일 때만 노출) */}
-            {images.length < MAX_IMAGES && (
+            {/* 추가 버튼 (이미지가 있고 최대 장수 미만일 때만 노출) */}
+            {images.length > 0 && images.length < MAX_IMAGES && (
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
