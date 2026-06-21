@@ -34,6 +34,8 @@ const ponoAppearance = {
       height: '44px',
       border: '1px solid #D4D1CA',
     },
+    'socialButtonsBlockButton__oauth_x': { display: 'none' },
+    'socialButtonsBlockButton__oauth_twitter': { display: 'none' },
   },
 } as const;
 
