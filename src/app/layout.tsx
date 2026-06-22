@@ -38,9 +38,14 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: `(function(){
   var _push = history.pushState.bind(history);
   history.pushState = function(state, unused, url) {
-    if (url && url.toString() === '/sso-redirect') {
-      window.location.replace('/');
-      return;
+    var from = window.location.pathname;
+    var fromAuth = from.startsWith('/sign-in') || from.startsWith('/sign-up');
+    if (fromAuth && url) {
+      var to = url.toString();
+      if (!to.startsWith('/sign-in') && !to.startsWith('/sign-up')) {
+        window.location.replace(to);
+        return;
+      }
     }
     return _push(state, unused, url);
   };
