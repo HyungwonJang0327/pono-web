@@ -35,6 +35,16 @@ export default function RootLayout({
       className={`${plusJakartaSans.variable} ${notoSerifKR.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
+        <script dangerouslySetInnerHTML={{ __html: `(function(){
+  var _push = history.pushState.bind(history);
+  history.pushState = function(state, unused, url) {
+    if (url && url.toString() === '/sso-redirect') {
+      window.location.replace('/');
+      return;
+    }
+    return _push(state, unused, url);
+  };
+})();` }} />
         <ClerkProvider localization={koKR}>
           <Providers>{children}</Providers>
         </ClerkProvider>
