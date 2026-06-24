@@ -1,16 +1,23 @@
 'use client'
 
-// 렌더링 전략: 클라이언트 컴포넌트 (hide-on-scroll 스크롤 리스너 필요)
+// 렌더링 전략: 클라이언트 컴포넌트 (hide-on-scroll 스크롤 리스너, usePathname 필요)
 
 import { useEffect, useRef, useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { useAuth, UserButton, SignInButton } from '@clerk/nextjs'
+import { ChevronLeft } from 'lucide-react'
 
 export interface HeaderProps {
-  isWebView?: boolean // 추후 WebView 분기용 (현재 미사용)
+  isWebView?: boolean
 }
+
+// 뒤로가기 버튼을 항상 숨기는 경로 목록
+const NO_BACK_PATHS = ['/', '/onboarding/username']
 
 export default function Header({ isWebView }: HeaderProps) {
   const { isSignedIn } = useAuth()
+  const pathname = usePathname()
+  const router = useRouter()
   const [isHidden, setIsHidden] = useState(false)
   const lastScrollY = useRef(0)
 
@@ -32,6 +39,15 @@ export default function Header({ isWebView }: HeaderProps) {
     document.documentElement.dataset.headerHidden = isHidden ? 'true' : 'false'
   }, [isHidden])
 
+  // write 페이지는 자체 헤더를 가지고 있으므로 레이아웃 헤더를 렌더링하지 않음
+  if (pathname.startsWith('/write/')) return null
+
+  // 좌측 영역 결정
+  // - WebView: 로고 고정 (네이티브 백 처리)
+  // - NO_BACK_PATHS: 로고 표시 (뒤로가기 없음)
+  // - 그 외: ChevronLeft 버튼
+  const showLogo = isWebView === true || NO_BACK_PATHS.includes(pathname)
+
   return (
     <header
       className={[
@@ -40,7 +56,21 @@ export default function Header({ isWebView }: HeaderProps) {
       ].join(' ')}
     >
       <div className="mx-auto w-full max-w-[560px] px-5 py-3 flex items-center justify-between">
-        <h1 className="text-xl font-bold text-primary-700 italic tracking-tight">Pono</h1>
+        {/* 좌측: 로고 or 뒤로가기 버튼 */}
+        {showLogo ? (
+          <h1 className="text-xl font-bold text-primary-700 italic tracking-tight">Pono</h1>
+        ) : (
+          <button
+            type="button"
+            aria-label="뒤로 가기"
+            onClick={() => router.back()}
+            className="w-11 h-11 -ml-2 flex items-center justify-center text-neutral-900"
+          >
+            <ChevronLeft size={24} strokeWidth={1.5} />
+          </button>
+        )}
+
+        {/* 우측: 알림 + 프로필 */}
         <div className="flex items-center gap-3">
           {/* 알림 버튼 — MVP에서 알림 기능 없음, 뱃지 미표시 */}
           <button className="w-7 h-7 flex items-center justify-center text-neutral-600">
