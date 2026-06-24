@@ -1,4 +1,5 @@
 import { auth } from '@clerk/nextjs/server'
+import { headers } from 'next/headers'
 import { redirect } from 'next/navigation'
 import { Header } from '@/components/layout'
 import WriteFab from '@/components/layout/WriteFab'
@@ -29,9 +30,12 @@ export default async function MainLayout({ children }: { children: React.ReactNo
     if (needsOnboarding) redirect('/onboarding/username')
   }
 
+  const headersList = await headers()
+  const isWebView = headersList.get('x-is-webview') === 'true'
+
   return (
     <div className="min-h-screen bg-neutral-50">
-      <Header />
+      <Header isWebView={isWebView} />
       <main className="mx-auto w-full max-w-[560px] px-3.5 pb-24">
         {children}
       </main>
