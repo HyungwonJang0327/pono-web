@@ -19,15 +19,15 @@ export default function ArticleCard({ post }: ArticleCardProps) {
   return (
     <div className="bg-white rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-card)]">
       {/* 커버 이미지 16:9 */}
-      <div className="relative w-full aspect-[16/9] bg-neutral-200">
-        {post.coverImage && (
+      {post.coverImage && (
+        <div className="relative w-full aspect-[16/9]">
           <img
             src={post.coverImage}
             alt={post.title ?? undefined}
             className="w-full h-full object-cover"
           />
-        )}
-      </div>
+        </div>
+      )}
 
       {/* 본문 */}
       <div className="px-3 pt-3 pb-3.5">
