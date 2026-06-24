@@ -1,49 +1,14 @@
 import { api } from '@/lib/api'
+import type {
+  SnapDetailDto,
+  ArticleDetailDto,
+  PostDetailDto,
+  LikeResponseDto,
+  PostImageDto,
+} from '@/types/post'
 
-// ── DTO 타입 ──────────────────────────────────────────────────────────────────
-
-export interface PostImageDto {
-  url: string
-  width: number
-  height: number
-}
-
-export interface PostAuthorDto {
-  id: string
-  username: string
-  avatar: string | null
-}
-
-export interface SnapDetailDto {
-  id: string
-  type: 'snap'
-  author: PostAuthorDto
-  images: PostImageDto[]
-  caption: string | null
-  likeCount: number
-  likedByMe: boolean
-  commentCount: number
-  createdAt: string
-  updatedAt: string
-}
-
-export interface ArticleDetailDto {
-  id: string
-  type: 'article'
-  author: PostAuthorDto
-  title: string
-  body: object
-  coverImage: string | null
-  readingTime: number
-  isDraft: boolean
-  likeCount: number
-  likedByMe: boolean
-  commentCount: number
-  createdAt: string
-  updatedAt: string
-}
-
-export type PostDetailDto = SnapDetailDto | ArticleDetailDto
+// re-export so existing importers of post.service.ts don't break
+export type { SnapDetailDto, ArticleDetailDto, PostDetailDto, PostImageDto }
 
 export interface PresignedUrlResponseDto {
   uploadUrl: string
@@ -69,6 +34,10 @@ export interface UpdateArticleDto {
   body?: object
   coverImage?: string
   isDraft?: boolean
+}
+
+export interface UpdateSnapDto {
+  caption?: string
 }
 
 // ── 서비스 함수 ───────────────────────────────────────────────────────────────
@@ -133,4 +102,50 @@ export async function updateArticlePost(
   token: string,
 ): Promise<ArticleDetailDto> {
   return api.patch<ArticleDetailDto>(`/posts/${postId}`, dto, token)
+}
+
+/**
+ * 포스트 상세 조회
+ * GET /posts/:id
+ * 비로그인 허용. token 없으면 isOwnedByMe: false, likedByMe: false 고정
+ */
+export async function getPostDetail(postId: string, token?: string): Promise<PostDetailDto> {
+  return api.get<PostDetailDto>(`/posts/${postId}`, token)
+}
+
+/**
+ * 포스트 수정
+ * PATCH /posts/:id
+ * 스냅: caption만, 아티클: title/body/coverImage/isDraft
+ */
+export async function updatePost(
+  postId: string,
+  dto: UpdateSnapDto | UpdateArticleDto,
+  token: string,
+): Promise<PostDetailDto> {
+  return api.patch<PostDetailDto>(`/posts/${postId}`, dto, token)
+}
+
+/**
+ * 포스트 삭제
+ * DELETE /posts/:id
+ */
+export async function deletePost(postId: string, token: string): Promise<{ id: string }> {
+  return api.delete<{ id: string }>(`/posts/${postId}`, token)
+}
+
+/**
+ * 좋아요 추가
+ * POST /likes/:postId
+ */
+export async function addLike(postId: string, token: string): Promise<LikeResponseDto> {
+  return api.post<LikeResponseDto>(`/likes/${postId}`, {}, token)
+}
+
+/**
+ * 좋아요 취소
+ * DELETE /likes/:postId
+ */
+export async function removeLike(postId: string, token: string): Promise<LikeResponseDto> {
+  return api.delete<LikeResponseDto>(`/likes/${postId}`, token)
 }
