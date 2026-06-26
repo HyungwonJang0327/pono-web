@@ -159,27 +159,24 @@ export default function ProfileClient({
             style={{ maxHeight: isCompact ? 0 : 120, opacity: isCompact ? 0 : 1 }}
           >
             <div ref={profileSectionRef}>
-              {/* 팔로워/팔로잉 */}
-              <div className="flex gap-4 mt-3 text-sm">
-                <span>
-                  <span className="font-bold text-neutral-900">{profile.followerCount.toLocaleString()}</span>
-                  <span className="text-neutral-500 ml-1">팔로워</span>
-                </span>
-                <span>
-                  <span className="font-bold text-neutral-900">{profile.followingCount.toLocaleString()}</span>
-                  <span className="text-neutral-500 ml-1">팔로잉</span>
-                </span>
-              </div>
+              {/* 팔로워/팔로잉 + 버튼 — 같은 행 */}
+              <div className="flex items-center justify-between mt-3 mb-4">
+                <div className="flex gap-4 text-sm">
+                  <span>
+                    <span className="font-bold text-neutral-900">{profile.followerCount.toLocaleString()}</span>
+                    <span className="text-neutral-500 ml-1">팔로워</span>
+                  </span>
+                  <span>
+                    <span className="font-bold text-neutral-900">{profile.followingCount.toLocaleString()}</span>
+                    <span className="text-neutral-500 ml-1">팔로잉</span>
+                  </span>
+                </div>
 
-              {/* 팔로우 / 프로필 편집 버튼 */}
-              <div className="mt-3 mb-4">
                 {isOwnedByMe ? (
                   <button
                     type="button"
-                    onClick={() => {
-                      // TODO: /settings/profile 이동
-                    }}
-                    className="w-full py-2 rounded-full border border-primary-700 text-primary-700 text-sm font-medium flex items-center justify-center gap-1.5"
+                    onClick={() => router.push('/settings/profile')}
+                    className="px-4 py-1.5 rounded-full border border-primary-700 text-primary-700 text-sm font-medium flex items-center gap-1"
                   >
                     <span>✏</span>
                     <span>프로필 편집</span>
@@ -188,7 +185,7 @@ export default function ProfileClient({
                   <button
                     type="button"
                     onClick={handleFollowToggle}
-                    className="w-full py-2 rounded-full border border-neutral-300 text-neutral-700 text-sm font-medium"
+                    className="px-4 py-1.5 rounded-full border border-neutral-300 text-neutral-700 text-sm font-medium"
                   >
                     팔로잉
                   </button>
@@ -196,7 +193,7 @@ export default function ProfileClient({
                   <button
                     type="button"
                     onClick={handleFollowToggle}
-                    className="w-full py-2 rounded-full bg-primary-700 text-white text-sm font-medium"
+                    className="px-4 py-1.5 rounded-full bg-primary-700 text-white text-sm font-medium"
                   >
                     팔로우
                   </button>
