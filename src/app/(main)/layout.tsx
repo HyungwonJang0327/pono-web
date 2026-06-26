@@ -9,6 +9,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3005'
 export default async function MainLayout({ children }: { children: React.ReactNode }) {
   const { userId, getToken } = await auth()
 
+  let myUsername: string | null = null
   if (userId) {
     const token = await getToken()
     let needsOnboarding = false
@@ -21,6 +22,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
       if (res.ok) {
         const user = await res.json()
         if (!user.username) needsOnboarding = true
+        else myUsername = user.username
       } else {
         needsOnboarding = true
       }
@@ -35,7 +37,7 @@ export default async function MainLayout({ children }: { children: React.ReactNo
 
   return (
     <div className="min-h-screen bg-neutral-50">
-      <Header isWebView={isWebView} />
+      <Header isWebView={isWebView} myUsername={myUsername} />
       <main className="mx-auto w-full max-w-[560px] px-3.5 pb-24">
         {children}
       </main>

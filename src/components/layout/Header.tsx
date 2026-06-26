@@ -9,12 +9,13 @@ import { ChevronLeft } from 'lucide-react'
 
 export interface HeaderProps {
   isWebView?: boolean
+  myUsername?: string | null
 }
 
 // 뒤로가기 버튼을 항상 숨기는 경로 목록
 const NO_BACK_PATHS = ['/', '/onboarding/username']
 
-export default function Header({ isWebView }: HeaderProps) {
+export default function Header({ isWebView, myUsername }: HeaderProps) {
   const { isSignedIn } = useAuth()
   const { user } = useUser()
   const pathname = usePathname()
@@ -81,11 +82,11 @@ export default function Header({ isWebView }: HeaderProps) {
             </svg>
           </button>
           {/* 프로필 버튼 */}
-          {isSignedIn && user ? (
+          {isSignedIn && myUsername && user ? (
             <button
               type="button"
               aria-label="내 프로필"
-              onClick={() => user.username && router.push(`/${user.username}`)}
+              onClick={() => router.push(`/${myUsername}`)}
               className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center bg-neutral-200 text-neutral-700 text-xs font-semibold flex-shrink-0"
             >
               {user.imageUrl ? (
