@@ -8,3 +8,14 @@ export interface User {
   followingCount: number
   createdAt: string
 }
+
+export interface UserPublicProfileDto {
+  id: string
+  username: string
+  avatar: string | null
+  bio: string | null
+  followerCount: number
+  followingCount: number
+  postCount: number
+  isFollowedByMe: boolean  // 비로그인 시 false
+}

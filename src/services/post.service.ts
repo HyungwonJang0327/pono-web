@@ -5,6 +5,8 @@ import type {
   PostDetailDto,
   LikeResponseDto,
   PostImageDto,
+  SnapFeedItemDto,
+  ArticleFeedItemDto,
 } from '@/types/post'
 
 // re-export so existing importers of post.service.ts don't break
@@ -132,6 +134,26 @@ export async function updatePost(
  */
 export async function deletePost(postId: string, token: string): Promise<{ id: string }> {
   return api.delete<{ id: string }>(`/posts/${postId}`, token)
+}
+
+export interface PostListResponseDto {
+  items: (SnapFeedItemDto | ArticleFeedItemDto)[]
+  nextCursor: string | null
+}
+
+/**
+ * 유저 포스트 목록 조회
+ * TODO: Sofia Phase 8 구현 후 GET /users/:username/posts 실제 API 연동
+ */
+export async function getUserPosts(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _username: string,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _type: 'snap' | 'article',
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _token?: string,
+): Promise<PostListResponseDto> {
+  return { items: [], nextCursor: null }
 }
 
 /**
