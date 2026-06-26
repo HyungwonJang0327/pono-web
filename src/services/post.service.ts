@@ -5,12 +5,11 @@ import type {
   PostDetailDto,
   LikeResponseDto,
   PostImageDto,
-  SnapFeedItemDto,
-  ArticleFeedItemDto,
+  PostSummaryDto,
 } from '@/types/post'
 
 // re-export so existing importers of post.service.ts don't break
-export type { SnapDetailDto, ArticleDetailDto, PostDetailDto, PostImageDto }
+export type { SnapDetailDto, ArticleDetailDto, PostDetailDto, PostImageDto, PostSummaryDto }
 
 export interface PresignedUrlResponseDto {
   uploadUrl: string
@@ -137,23 +136,24 @@ export async function deletePost(postId: string, token: string): Promise<{ id: s
 }
 
 export interface PostListResponseDto {
-  items: (SnapFeedItemDto | ArticleFeedItemDto)[]
+  items: PostSummaryDto[]
   nextCursor: string | null
+  hasMore: boolean
 }
 
 /**
  * 유저 포스트 목록 조회
- * TODO: Sofia Phase 8 구현 후 GET /users/:username/posts 실제 API 연동
+ * GET /users/:username/posts?type=snap|article&cursor=&limit=30
  */
 export async function getUserPosts(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _username: string,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _type: 'snap' | 'article',
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  _token?: string,
+  username: string,
+  type: 'snap' | 'article',
+  token?: string,
+  cursor?: string,
 ): Promise<PostListResponseDto> {
-  return { items: [], nextCursor: null }
+  const params = new URLSearchParams({ type, limit: '30' })
+  if (cursor) params.set('cursor', encodeURIComponent(cursor))
+  return api.get<PostListResponseDto>(`/users/${username}/posts?${params.toString()}`, token)
 }
 
 /**

@@ -7,12 +7,12 @@ import { BookOpen, Clock } from 'lucide-react'
 import { useToastContext } from '@/components/ui'
 import { followUser, unfollowUser } from '@/services/user.service'
 import type { UserPublicProfileDto } from '@/types/user'
-import type { SnapFeedItemDto, ArticleFeedItemDto } from '@/types/post'
+import type { SnapSummaryDto, ArticleSummaryDto, PostSummaryDto } from '@/types/post'
 
 interface ProfileClientProps {
   profile: UserPublicProfileDto
-  snapPosts: (SnapFeedItemDto | ArticleFeedItemDto)[]
-  articlePosts: (SnapFeedItemDto | ArticleFeedItemDto)[]
+  snapPosts: PostSummaryDto[]
+  articlePosts: PostSummaryDto[]
   isOwnedByMe: boolean
   isWebView?: boolean
 }
@@ -74,8 +74,8 @@ export default function ProfileClient({
     }
   }
 
-  const snaps = snapPosts.filter((p): p is SnapFeedItemDto => p.type === 'snap')
-  const articles = articlePosts.filter((p): p is ArticleFeedItemDto => p.type === 'article')
+  const snaps = snapPosts.filter((p): p is SnapSummaryDto => p.type === 'snap')
+  const articles = articlePosts.filter((p): p is ArticleSummaryDto => p.type === 'article')
 
   return (
     <div className="min-h-screen">

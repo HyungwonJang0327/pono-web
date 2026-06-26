@@ -92,3 +92,36 @@ export interface LikeResponseDto {
 }
 
 export type PostDetailDto = SnapDetailDto | ArticleDetailDto
+
+// ── 유저 포스트 목록 타입 (GET /users/:username/posts) ───────────────────────
+
+/**
+ * 유저 포스트 목록의 스냅 항목
+ * 피드 아이템(SnapFeedItemDto)과 달리 author 필드가 없음
+ */
+export interface SnapSummaryDto {
+  id: string
+  type: 'snap'
+  images: PostImageDto[]
+  caption: string | null
+  likeCount: number
+  createdAt: string
+}
+
+/**
+ * 유저 포스트 목록의 아티클 항목
+ * 피드 아이템(ArticleFeedItemDto)과 달리 author 필드가 없음
+ */
+export interface ArticleSummaryDto {
+  id: string
+  type: 'article'
+  title: string
+  excerpt: string
+  coverImage: string | null
+  readingTime: number
+  isDraft: boolean
+  likeCount: number
+  createdAt: string
+}
+
+export type PostSummaryDto = SnapSummaryDto | ArticleSummaryDto
