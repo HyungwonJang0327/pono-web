@@ -152,7 +152,7 @@ export async function getUserPosts(
   cursor?: string,
 ): Promise<PostListResponseDto> {
   const params = new URLSearchParams({ type, limit: '30' })
-  if (cursor) params.set('cursor', encodeURIComponent(cursor))
+  if (cursor) params.set('cursor', cursor)
   return api.get<PostListResponseDto>(`/users/${username}/posts?${params.toString()}`, token)
 }
 

@@ -22,14 +22,12 @@ describe('getUserPosts', () => {
     expect(url).toContain('limit=30')
   })
 
-  it('cursor가 있을 때 encodeURIComponent 처리 후 쿼리스트링에 포함한다', async () => {
+  it('cursor가 있을 때 URLSearchParams가 인코딩해서 쿼리스트링에 포함한다', async () => {
     const cursor = '2026-01-01T00:00:00.000Z_post-1'
     await getUserPosts('seoyeon', 'snap', undefined, cursor)
 
     const [url] = mockFetch.mock.calls[0]
-    // params.set(key, encodeURIComponent(cursor)) → URLSearchParams.toString()이 한 번 더 인코딩
-    // → URL에는 이중 인코딩된 값이 포함됨
     expect(url).toContain('cursor=')
-    expect(url).toContain(encodeURIComponent(encodeURIComponent(cursor)))
+    expect(url).toContain(encodeURIComponent(cursor))
   })
 })
