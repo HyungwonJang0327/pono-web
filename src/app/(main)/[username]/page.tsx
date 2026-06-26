@@ -1,8 +1,10 @@
-import { auth, currentUser } from '@clerk/nextjs/server'
+import { auth } from '@clerk/nextjs/server'
 import { headers } from 'next/headers'
 import { getUserProfile } from '@/services/user.service'
 import { getUserPosts } from '@/services/post.service'
 import ProfileClient from './ProfileClient'
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3005'
 
 export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
@@ -12,15 +14,24 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
   const headersList = await headers()
   const isWebView = headersList.get('x-is-webview') === 'true'
 
-  const [profile, clerkUser] = await Promise.all([
+  // Pono DB의 내 username으로 본인 여부 판단
+  let myPonoUsername: string | null = null
+  if (userId && token) {
+    try {
+      const res = await fetch(`${API_BASE}/users/me`, {
+        headers: { Authorization: `Bearer ${token}` },
+        cache: 'no-store',
+      })
+      if (res.ok) {
+        const me = await res.json()
+        myPonoUsername = me.username ?? null
+      }
+    } catch {}
+  }
+  const isOwnedByMe = myPonoUsername === username
+
+  const [profile, snapPosts, articlePosts] = await Promise.all([
     getUserProfile(username, token),
-    userId ? currentUser() : null,
-  ])
-
-  // TODO: Sofia Phase 8 이후 profile.isOwnedByMe 서버 응답 값으로 대체
-  const isOwnedByMe = clerkUser?.username === username
-
-  const [snapPosts, articlePosts] = await Promise.all([
     getUserPosts(username, 'snap', token),
     getUserPosts(username, 'article', token),
   ])
