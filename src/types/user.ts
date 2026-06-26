@@ -18,4 +18,5 @@ export interface UserPublicProfileDto {
   followingCount: number
   postCount: number
   isFollowedByMe: boolean  // 비로그인 시 false
+  isOwnedByMe: boolean     // 비로그인 시 false, 서버에서 DB PK 비교 후 반환
 }

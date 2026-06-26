@@ -4,8 +4,6 @@ import { getUserProfile } from '@/services/user.service'
 import { getUserPosts } from '@/services/post.service'
 import ProfileClient from './ProfileClient'
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3005'
-
 export default async function ProfilePage({ params }: { params: Promise<{ username: string }> }) {
   const { username } = await params
   const { userId, getToken } = await auth()
@@ -14,28 +12,13 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
   const headersList = await headers()
   const isWebView = headersList.get('x-is-webview') === 'true'
 
-  // Pono DB ID(PK)로 본인 여부 판단
-  let myId: string | null = null
-  if (userId && token) {
-    try {
-      const res = await fetch(`${API_BASE}/users/me`, {
-        headers: { Authorization: `Bearer ${token}` },
-        cache: 'no-store',
-      })
-      if (res.ok) {
-        const me = await res.json()
-        myId = me.id ?? null
-      }
-    } catch {}
-  }
-
   const [profile, snapPosts, articlePosts] = await Promise.all([
     getUserProfile(username, token),
     getUserPosts(username, 'snap', token),
     getUserPosts(username, 'article', token),
   ])
 
-  const isOwnedByMe = !!myId && myId === profile.id
+  const isOwnedByMe = profile.isOwnedByMe
 
   return (
     <ProfileClient
