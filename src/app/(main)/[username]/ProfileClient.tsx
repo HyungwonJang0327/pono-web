@@ -80,7 +80,7 @@ export default function ProfileClient({
   return (
     <div className="min-h-screen">
       {/* 페이지 자체 sticky 헤더 (레이아웃 Header와 별개) */}
-      <div className="sticky top-[57px] z-10 bg-neutral-50 border-b border-neutral-200">
+      <div className="sticky top-0 z-10 bg-neutral-50 border-b border-neutral-200">
         {/* 축소/전체 프로필 행 */}
         <div
           className="mx-auto w-full max-w-[560px] px-5 transition-all duration-200"
