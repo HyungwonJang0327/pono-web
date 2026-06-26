@@ -1,3 +1,9 @@
+'use client'
+
+import { useCallback, useState } from 'react'
+import { useAuth, useClerk } from '@clerk/nextjs'
+import { useToast } from '@/hooks/useToast'
+import { addLike, removeLike } from '@/services/post.service'
 import { SnapFeedItemDto } from '@/types/post'
 import { SnapLikeButton } from '@/components/ui'
 
@@ -17,6 +23,36 @@ function AvatarFallback({ username }: { username: string | null }) {
 }
 
 export default function SnapMiniCard({ post, aspectRatio }: SnapMiniCardProps) {
+  const { isSignedIn, getToken } = useAuth()
+  const { openSignIn } = useClerk()
+  const toast = useToast()
+
+  const [likedByMe, setLikedByMe] = useState(post.likedByMe)
+  const [likeCount, setLikeCount] = useState(post.likeCount)
+
+  const handleLikeToggle = useCallback(async () => {
+    if (!isSignedIn) {
+      openSignIn()
+      return
+    }
+    const prev = { likedByMe, likeCount }
+    setLikedByMe((v) => !v)
+    setLikeCount((v) => (likedByMe ? v - 1 : v + 1))
+    try {
+      const token = await getToken()
+      if (!token) throw new Error('no token')
+      if (likedByMe) {
+        await removeLike(post.id, token)
+      } else {
+        await addLike(post.id, token)
+      }
+    } catch {
+      setLikedByMe(prev.likedByMe)
+      setLikeCount(prev.likeCount)
+      toast.error('좋아요 처리에 실패했어요')
+    }
+  }, [isSignedIn, likedByMe, likeCount, post.id, getToken, openSignIn, toast])
+
   const image = post.images[0]
   const aspectClass = aspectRatio === '4/5' ? 'aspect-[4/5]' : 'aspect-square'
 
@@ -56,9 +92,9 @@ export default function SnapMiniCard({ post, aspectRatio }: SnapMiniCardProps) {
             </span>
           </div>
           <SnapLikeButton
-            isLiked={post.likedByMe}
-            count={post.likeCount}
-            onToggle={() => {}}
+            isLiked={likedByMe}
+            count={likeCount}
+            onToggle={handleLikeToggle}
           />
         </div>
       </div>
