@@ -1,42 +1,50 @@
 'use client'
 
-import { UserPlus } from 'lucide-react'
+import { useState } from 'react'
 
-const MOCK_USER = {
-  username: 'pono_user',
-  avatar: null,
-  bio: '포노에서 글을 씁니다',
-}
+const MOCK_CREATORS = [
+  { id: '1', username: '이도현', desc: 'Slow Letters · 아티클 42', color: '#1F4D3A' },
+  { id: '2', username: '김서연', desc: '일상 스냅 · 팔로워 1.2K', color: '#B8A898' },
+  { id: '3', username: '정우성', desc: '도시를 떠나 · 아티클 18', color: '#8A9BB0' },
+  { id: '4', username: '윤소희', desc: '글쓰기 연구소 · 팔로워 860', color: '#7A9E7A' },
+]
 
-function Avatar({ username }: { username: string }) {
+function CreatorRow({ creator }: { creator: typeof MOCK_CREATORS[0] }) {
+  const [following, setFollowing] = useState(creator.id === '3')
+
   return (
-    <div className="w-10 h-10 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
-      <span className="text-sm font-semibold text-primary-700 leading-none">
-        {username.charAt(0).toUpperCase()}
-      </span>
+    <div className="flex items-center gap-2">
+      <div
+        className="w-9 h-9 rounded-full flex-shrink-0"
+        style={{ backgroundColor: creator.color }}
+      />
+      <div className="flex-1 min-w-0">
+        <p className="text-xs font-semibold text-neutral-900 truncate">{creator.username}</p>
+        <p className="text-[10px] text-neutral-500 truncate">{creator.desc}</p>
+      </div>
+      <button
+        onClick={() => setFollowing(f => !f)}
+        className={[
+          'text-[10px] font-semibold px-2.5 py-1 rounded flex-shrink-0',
+          following
+            ? 'bg-neutral-100 text-neutral-500'
+            : 'border border-primary-700 text-primary-700',
+        ].join(' ')}
+      >
+        {following ? '팔로잉' : '팔로우'}
+      </button>
     </div>
   )
 }
 
 export default function EmptySlot() {
   return (
-    <div className="rounded-[var(--radius-md)] bg-white shadow-[var(--shadow-card)] flex flex-col items-center justify-center gap-3 p-4 text-center">
-      <p className="text-[10px] text-neutral-400 font-medium tracking-wide">팔로우할 사람</p>
-      {MOCK_USER.avatar ? (
-        <img src={MOCK_USER.avatar} alt={MOCK_USER.username} className="w-10 h-10 rounded-full object-cover" />
-      ) : (
-        <Avatar username={MOCK_USER.username} />
-      )}
-      <div>
-        <p className="text-xs font-semibold text-neutral-900 leading-tight">{MOCK_USER.username}</p>
-        {MOCK_USER.bio && (
-          <p className="text-[10px] text-neutral-500 mt-0.5 line-clamp-2 leading-tight">{MOCK_USER.bio}</p>
-        )}
+    <div className="rounded-[var(--radius-md)] bg-white shadow-[var(--shadow-card)] flex flex-col p-3 gap-2.5">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-neutral-900">추천 크리에이터</span>
+        <button className="text-[10px] text-primary-700 font-medium">더보기</button>
       </div>
-      <button className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary-700 text-white text-[11px] font-semibold">
-        <UserPlus size={11} strokeWidth={2} />
-        팔로우
-      </button>
+      {MOCK_CREATORS.map(c => <CreatorRow key={c.id} creator={c} />)}
     </div>
   )
 }
