@@ -4,7 +4,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
-import { useAuth, UserButton, SignInButton } from '@clerk/nextjs'
+import { useAuth, useUser, SignInButton } from '@clerk/nextjs'
 import { ChevronLeft } from 'lucide-react'
 
 export interface HeaderProps {
@@ -16,6 +16,7 @@ const NO_BACK_PATHS = ['/', '/onboarding/username']
 
 export default function Header({ isWebView }: HeaderProps) {
   const { isSignedIn } = useAuth()
+  const { user } = useUser()
   const pathname = usePathname()
   const router = useRouter()
   const [isHidden, setIsHidden] = useState(false)
@@ -80,8 +81,20 @@ export default function Header({ isWebView }: HeaderProps) {
             </svg>
           </button>
           {/* 프로필 버튼 */}
-          {isSignedIn ? (
-            <UserButton />
+          {isSignedIn && user ? (
+            <button
+              type="button"
+              aria-label="내 프로필"
+              onClick={() => user.username && router.push(`/${user.username}`)}
+              className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center bg-neutral-200 text-neutral-700 text-xs font-semibold flex-shrink-0"
+            >
+              {user.imageUrl ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={user.imageUrl} alt={user.username ?? '프로필'} className="w-full h-full object-cover" />
+              ) : (
+                <span>{(user.username ?? user.firstName ?? '?')[0].toUpperCase()}</span>
+              )}
+            </button>
           ) : (
             <SignInButton mode="modal">
               <button className="w-7 h-7 rounded-full bg-neutral-200 overflow-hidden flex items-center justify-center text-neutral-500">
