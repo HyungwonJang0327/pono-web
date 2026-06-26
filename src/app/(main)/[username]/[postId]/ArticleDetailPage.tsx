@@ -2,13 +2,14 @@
 
 import { useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth, useClerk } from '@clerk/nextjs'
+import { useAuth, useClerk, useUser } from '@clerk/nextjs'
 import { MoreHorizontal, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
 import { ArticleLikeButton } from '@/components/ui/ArticleLikeButton'
 import { BottomSheet } from '@/components/ui/BottomSheet'
 import { useToast } from '@/hooks/useToast'
 import { addLike, removeLike, deletePost } from '@/services/post.service'
+import CommentSection from '@/components/post/CommentSection'
 import type { ArticleDetailDto } from '@/types/post'
 
 interface Props {
@@ -98,7 +99,12 @@ export default function ArticleDetailPage({ post, isWebView }: Props) {
   const router = useRouter()
   const { isSignedIn, getToken } = useAuth()
   const { openSignIn } = useClerk()
+  const { user } = useUser()
   const toast = useToast()
+
+  const currentUser = user
+    ? { id: user.id, username: user.username ?? '', avatar: user.imageUrl ?? null }
+    : null
 
   const [likedByMe, setLikedByMe] = useState(post.likedByMe)
   const [likeCount, setLikeCount] = useState(post.likeCount)
@@ -108,7 +114,6 @@ export default function ArticleDetailPage({ post, isWebView }: Props) {
   const [isDeleting, setIsDeleting] = useState(false)
 
   const commentSectionRef = useRef<HTMLDivElement>(null)
-  const commentInputRef = useRef<HTMLTextAreaElement>(null)
 
   const handleLikeToggle = useCallback(async () => {
     if (!isSignedIn) {
@@ -135,7 +140,6 @@ export default function ArticleDetailPage({ post, isWebView }: Props) {
 
   function handleCommentScroll() {
     commentSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
-    setTimeout(() => commentInputRef.current?.focus(), 400)
   }
 
   async function handleDelete() {
@@ -264,33 +268,10 @@ export default function ArticleDetailPage({ post, isWebView }: Props) {
 
         {/* 댓글 구간 */}
         <div ref={commentSectionRef} className="py-4">
-          {post.commentCount === 0 ? (
-            <p className="text-sm text-neutral-400 text-center py-6">아직 댓글이 없어요</p>
-          ) : null}
+          <CommentSection postId={post.id} currentUser={currentUser} />
         </div>
 
         <div className="pb-[72px]" />
-      </div>
-
-      {/* 댓글 입력창 (fixed) */}
-      <div
-        className="fixed bottom-0 left-0 right-0 z-20 bg-white border-t border-neutral-200"
-        style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
-      >
-        <div className="mx-auto w-full max-w-[560px] px-4 py-3 flex items-center gap-3 h-[72px]">
-          <div className="w-8 h-8 rounded-full bg-neutral-200 flex-none" />
-          <textarea
-            ref={commentInputRef}
-            readOnly={!isSignedIn}
-            placeholder="댓글 달기..."
-            rows={1}
-            onFocus={() => {
-              if (!isSignedIn) openSignIn()
-            }}
-            className="flex-1 bg-neutral-100 rounded-full px-4 py-2 text-sm text-neutral-900 placeholder:text-neutral-400 resize-none outline-none"
-            style={{ maxHeight: '96px' }}
-          />
-        </div>
       </div>
 
       {/* 수정/삭제 바텀시트 */}
