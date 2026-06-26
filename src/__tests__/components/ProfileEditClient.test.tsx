@@ -2,7 +2,7 @@
 
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import ProfileEditClient from '@/app/(main)/settings/profile/ProfileEditClient'
+import ProfileEditClient from '@/app/settings/profile/ProfileEditClient'
 
 // ── 모킹 ──────────────────────────────────────────────────────────────────────
 
