@@ -18,5 +18,7 @@ export interface CommentDto {
 }
 
 export interface CommentListResponseDto {
-  comments: CommentDto[]
+  items: CommentDto[]
+  nextCursor: string | null
+  hasMore: boolean
 }

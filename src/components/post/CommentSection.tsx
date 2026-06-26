@@ -171,7 +171,7 @@ export default function CommentSection({ postId, currentUser }: Props) {
       try {
         const token = isSignedIn ? (await getToken()) ?? undefined : undefined
         const data = await getComments(postId, token)
-        if (!cancelled) setComments(data.comments)
+        if (!cancelled) setComments(data.items)
       } catch {
         // 에러 시 빈 목록 유지
       } finally {
