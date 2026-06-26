@@ -29,3 +29,14 @@ export async function followUser(userId: string, token: string): Promise<void> {
 export async function unfollowUser(userId: string, token: string): Promise<void> {
   await api.delete<{ followingId: string }>(`/follow/${userId}`, token)
 }
+
+/**
+ * 내 프로필 수정
+ * PATCH /users/me
+ */
+export async function updateUserProfile(
+  data: { username?: string; bio?: string },
+  token: string,
+): Promise<void> {
+  await api.patch<void>('/users/me', data, token)
+}
