@@ -39,11 +39,8 @@ function CreatorRow({ creator }: { creator: typeof MOCK_CREATORS[0] }) {
 
 export default function EmptySlot() {
   return (
-    <div className="rounded-[var(--radius-md)] bg-white shadow-[var(--shadow-card)] flex flex-col p-3 gap-2.5">
-      <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold text-neutral-900">추천 크리에이터</span>
-        <button className="text-[10px] text-primary-700 font-medium">더보기</button>
-      </div>
+    <div className="flex flex-col p-3 gap-2.5">
+      <span className="text-xs font-semibold text-neutral-900">추천 크리에이터</span>
       {MOCK_CREATORS.map(c => <CreatorRow key={c.id} creator={c} />)}
     </div>
   )
