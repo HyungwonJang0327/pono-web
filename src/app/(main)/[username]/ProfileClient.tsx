@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
-import { ChevronLeft, BookOpen, Clock } from 'lucide-react'
+import { BookOpen, Clock } from 'lucide-react'
 import { useToastContext } from '@/components/ui'
 import { followUser, unfollowUser } from '@/services/user.service'
 import type { UserPublicProfileDto } from '@/types/user'
@@ -86,18 +86,8 @@ export default function ProfileClient({
           className="mx-auto w-full max-w-[560px] px-5 transition-all duration-200"
           style={{ paddingTop: isCompact ? '10px' : '16px', paddingBottom: isCompact ? '10px' : '0' }}
         >
-          {/* 상단 타이틀 행: 뒤로가기(타인) + @username */}
-          <div className="flex items-center justify-center relative mb-3">
-            {!isOwnedByMe && (
-              <button
-                type="button"
-                aria-label="뒤로 가기"
-                onClick={() => router.back()}
-                className="absolute left-0 w-10 h-10 -ml-2 flex items-center justify-center text-neutral-900"
-              >
-                <ChevronLeft size={22} strokeWidth={1.5} />
-              </button>
-            )}
+          {/* 상단 타이틀 행: @username */}
+          <div className="flex items-center justify-center mb-3">
             <span className="text-sm font-semibold text-neutral-900">@{profile.username}</span>
           </div>
 
