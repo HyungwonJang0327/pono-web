@@ -37,7 +37,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
   const toast = useToast()
 
   const currentUser = user
-    ? { id: user.id, username: user.username ?? '', avatar: user.imageUrl ?? null }
+    ? { username: user.username ?? '', avatar: user.imageUrl ?? null }
     : null
 
   // 좋아요 낙관적 업데이트 state

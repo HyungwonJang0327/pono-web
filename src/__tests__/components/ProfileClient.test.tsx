@@ -31,6 +31,7 @@ const mockProfile: UserPublicProfileDto = {
   followingCount: 50,
   postCount: 10,
   isFollowedByMe: false,
+  isOwnedByMe: false,
 }
 
 const snapPost: PostSummaryDto = {

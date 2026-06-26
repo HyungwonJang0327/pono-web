@@ -103,7 +103,7 @@ export default function ArticleDetailPage({ post, isWebView }: Props) {
   const toast = useToast()
 
   const currentUser = user
-    ? { id: user.id, username: user.username ?? '', avatar: user.imageUrl ?? null }
+    ? { username: user.username ?? '', avatar: user.imageUrl ?? null }
     : null
 
   const [likedByMe, setLikedByMe] = useState(post.likedByMe)

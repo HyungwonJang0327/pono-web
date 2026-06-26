@@ -10,7 +10,7 @@ import type { CommentDto, ReplyDto } from '@/types/comment'
 
 interface Props {
   postId: string
-  currentUser: { id: string; username: string; avatar: string | null } | null
+  currentUser: { username: string; avatar: string | null } | null
 }
 
 function formatRelativeTime(iso: string): string {
@@ -52,11 +52,9 @@ function Avatar({ src, username, size }: { src: string | null; username: string;
 
 function ReplyItem({
   reply,
-  currentUserId,
   onDelete,
 }: {
   reply: ReplyDto
-  currentUserId: string | null
   onDelete: (commentId: string) => void
 }) {
   return (
@@ -69,7 +67,7 @@ function ReplyItem({
         </div>
         <p className="text-[13px] text-neutral-800 leading-[1.5] whitespace-pre-wrap break-words">{reply.body}</p>
       </div>
-      {currentUserId === reply.author.id && (
+      {reply.isOwnedByMe && (
         <button
           type="button"
           aria-label="댓글 삭제"
@@ -85,12 +83,10 @@ function ReplyItem({
 
 function CommentItem({
   comment,
-  currentUserId,
   onDelete,
   onReply,
 }: {
   comment: CommentDto
-  currentUserId: string | null
   onDelete: (commentId: string) => void
   onReply: (username: string, parentId: string) => void
 }) {
@@ -114,7 +110,7 @@ function CommentItem({
             답글
           </button>
         </div>
-        {currentUserId === comment.author.id && (
+        {comment.isOwnedByMe && (
           <button
             type="button"
             aria-label="댓글 삭제"
@@ -140,7 +136,6 @@ function CommentItem({
               <ReplyItem
                 key={reply.id}
                 reply={reply}
-                currentUserId={currentUserId}
                 onDelete={onDelete}
               />
             ))}
@@ -255,8 +250,6 @@ export default function CommentSection({ postId, currentUser }: Props) {
     }
   }
 
-  const currentUserId = currentUser?.id ?? null
-
   return (
     <>
       {/* 댓글 목록 */}
@@ -268,7 +261,6 @@ export default function CommentSection({ postId, currentUser }: Props) {
             <CommentItem
               key={comment.id}
               comment={comment}
-              currentUserId={currentUserId}
               onDelete={handleDelete}
               onReply={handleReply}
             />
