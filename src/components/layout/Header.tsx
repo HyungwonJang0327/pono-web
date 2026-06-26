@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth, useUser, SignInButton } from '@clerk/nextjs'
 import { ChevronLeft } from 'lucide-react'
+import { RESERVED_USERNAMES } from '@/constants'
 
 export interface HeaderProps {
   isWebView?: boolean
@@ -41,8 +42,11 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
     document.documentElement.dataset.headerHidden = isHidden ? 'true' : 'false'
   }, [isHidden])
 
-  // write 페이지는 자체 헤더를 가지고 있으므로 레이아웃 헤더를 렌더링하지 않음
+  // write 페이지 / 프로필 페이지는 자체 헤더를 사용
   if (pathname.startsWith('/write/')) return null
+  const segments = pathname.split('/').filter(Boolean)
+  const isProfilePage = segments.length === 1 && !RESERVED_USERNAMES.includes(segments[0])
+  if (isProfilePage) return null
 
   // 좌측 영역 결정
   // - WebView: 로고 고정 (네이티브 백 처리)

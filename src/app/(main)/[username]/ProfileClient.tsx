@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
-import { BookOpen, Clock } from 'lucide-react'
+import { BookOpen, Bell, ChevronLeft, Clock, Settings } from 'lucide-react'
 import { useToastContext } from '@/components/ui'
 import { followUser, unfollowUser } from '@/services/user.service'
 import type { UserPublicProfileDto } from '@/types/user'
@@ -86,9 +86,32 @@ export default function ProfileClient({
           className="mx-auto w-full max-w-[560px] px-5 transition-all duration-200"
           style={{ paddingTop: isCompact ? '10px' : '16px', paddingBottom: isCompact ? '10px' : '0' }}
         >
-          {/* 상단 타이틀 행: @username */}
-          <div className="flex items-center justify-center mb-3">
+          {/* 헤더 행: 뒤로가기 + @username + 알림 [+ 설정] */}
+          <div className="flex items-center justify-between mb-3">
+            <button
+              type="button"
+              aria-label="뒤로 가기"
+              onClick={() => router.back()}
+              className="w-10 h-10 -ml-2 flex items-center justify-center text-neutral-900"
+            >
+              <ChevronLeft size={22} strokeWidth={1.5} />
+            </button>
             <span className="text-sm font-semibold text-neutral-900">@{profile.username}</span>
+            <div className="flex items-center gap-1">
+              <button type="button" aria-label="알림" className="w-10 h-10 flex items-center justify-center text-neutral-600">
+                <Bell size={20} strokeWidth={1.5} />
+              </button>
+              {isOwnedByMe && (
+                <button
+                  type="button"
+                  aria-label="설정"
+                  onClick={() => router.push('/settings')}
+                  className="w-10 h-10 flex items-center justify-center text-neutral-600"
+                >
+                  <Settings size={20} strokeWidth={1.5} />
+                </button>
+              )}
+            </div>
           </div>
 
           {/* 프로필 정보 행 */}
