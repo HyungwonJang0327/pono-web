@@ -14,8 +14,8 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
   const headersList = await headers()
   const isWebView = headersList.get('x-is-webview') === 'true'
 
-  // Pono DB의 내 username으로 본인 여부 판단
-  let myPonoUsername: string | null = null
+  // Pono DB ID(PK)로 본인 여부 판단
+  let myId: string | null = null
   if (userId && token) {
     try {
       const res = await fetch(`${API_BASE}/users/me`, {
@@ -24,17 +24,18 @@ export default async function ProfilePage({ params }: { params: Promise<{ userna
       })
       if (res.ok) {
         const me = await res.json()
-        myPonoUsername = me.username ?? null
+        myId = me.id ?? null
       }
     } catch {}
   }
-  const isOwnedByMe = myPonoUsername === username
 
   const [profile, snapPosts, articlePosts] = await Promise.all([
     getUserProfile(username, token),
     getUserPosts(username, 'snap', token),
     getUserPosts(username, 'article', token),
   ])
+
+  const isOwnedByMe = !!myId && myId === profile.id
 
   return (
     <ProfileClient
