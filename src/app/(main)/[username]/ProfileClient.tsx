@@ -162,14 +162,22 @@ export default function ProfileClient({
               {/* 팔로워/팔로잉 + 버튼 — 같은 행 */}
               <div className="flex items-center justify-between mt-3 mb-4">
                 <div className="flex gap-4 text-sm">
-                  <span>
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/${profile.username}/followers`)}
+                    className="text-left"
+                  >
                     <span className="font-bold text-neutral-900">{profile.followerCount.toLocaleString()}</span>
                     <span className="text-neutral-500 ml-1">팔로워</span>
-                  </span>
-                  <span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => router.push(`/${profile.username}/following`)}
+                    className="text-left"
+                  >
                     <span className="font-bold text-neutral-900">{profile.followingCount.toLocaleString()}</span>
                     <span className="text-neutral-500 ml-1">팔로잉</span>
-                  </span>
+                  </button>
                 </div>
 
                 {isOwnedByMe ? (
