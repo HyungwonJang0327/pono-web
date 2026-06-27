@@ -9,5 +9,5 @@ export default async function FollowersPage({ params }: { params: Promise<{ user
 
   const list = await getFollowers(username, token)
 
-  return <FollowListClient list={list} title="팔로워" />
+  return <FollowListClient list={list} activeTab="followers" username={username} />
 }
