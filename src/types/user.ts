@@ -27,4 +27,6 @@ export interface FollowUserDto {
   avatar: string | null
   bio: string | null
   isFollowedByMe: boolean
+  followerCount: number
+  recentActivity: { type: 'article' | 'snap'; daysAgo: number } | null
 }
