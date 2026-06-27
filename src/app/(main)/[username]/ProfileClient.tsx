@@ -81,39 +81,38 @@ export default function ProfileClient({
     <div className="min-h-screen">
       {/* 페이지 자체 sticky 헤더 (레이아웃 Header와 별개) */}
       <div className="sticky top-0 z-10 bg-neutral-50 border-b border-neutral-200">
-        {/* 축소/전체 프로필 행 */}
+        {/* 헤더 행 - 항상 52px */}
+        <div className="mx-auto w-full max-w-[560px] px-5 h-[52px] flex items-center justify-between">
+          <button
+            type="button"
+            aria-label="뒤로 가기"
+            onClick={() => router.back()}
+            className="w-10 h-10 -ml-2 flex items-center justify-center text-neutral-900"
+          >
+            <ChevronLeft size={22} strokeWidth={1.5} />
+          </button>
+          <span className="text-sm font-semibold text-neutral-900">@{profile.username}</span>
+          <div className="flex items-center gap-1">
+            <button type="button" aria-label="알림" className="w-10 h-10 flex items-center justify-center text-neutral-600">
+              <Bell size={20} strokeWidth={1.5} />
+            </button>
+            {isOwnedByMe && (
+              <button
+                type="button"
+                aria-label="설정"
+                onClick={() => router.push('/settings')}
+                className="w-10 h-10 flex items-center justify-center text-neutral-600"
+              >
+                <Settings size={20} strokeWidth={1.5} />
+              </button>
+            )}
+          </div>
+        </div>
+        {/* 프로필 정보 섹션 */}
         <div
           className="mx-auto w-full max-w-[560px] px-5 transition-all duration-200"
-          style={{ paddingTop: isCompact ? '10px' : '16px', paddingBottom: isCompact ? '10px' : '0' }}
+          style={{ paddingBottom: isCompact ? '10px' : '0' }}
         >
-          {/* 헤더 행: 뒤로가기 + @username + 알림 [+ 설정] */}
-          <div className="flex items-center justify-between mb-3">
-            <button
-              type="button"
-              aria-label="뒤로 가기"
-              onClick={() => router.back()}
-              className="w-10 h-10 -ml-2 flex items-center justify-center text-neutral-900"
-            >
-              <ChevronLeft size={22} strokeWidth={1.5} />
-            </button>
-            <span className="text-sm font-semibold text-neutral-900">@{profile.username}</span>
-            <div className="flex items-center gap-1">
-              <button type="button" aria-label="알림" className="w-10 h-10 flex items-center justify-center text-neutral-600">
-                <Bell size={20} strokeWidth={1.5} />
-              </button>
-              {isOwnedByMe && (
-                <button
-                  type="button"
-                  aria-label="설정"
-                  onClick={() => router.push('/settings')}
-                  className="w-10 h-10 flex items-center justify-center text-neutral-600"
-                >
-                  <Settings size={20} strokeWidth={1.5} />
-                </button>
-              )}
-            </div>
-          </div>
-
           {/* 프로필 정보 행 */}
           <div className="flex items-center gap-3">
             {/* 아바타 */}

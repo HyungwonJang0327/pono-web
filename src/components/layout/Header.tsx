@@ -42,11 +42,16 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
     document.documentElement.dataset.headerHidden = isHidden ? 'true' : 'false'
   }, [isHidden])
 
-  // write 페이지 / 프로필 페이지는 자체 헤더를 사용
+  // write 페이지 / 프로필 페이지 / 포스트 상세 페이지는 자체 헤더를 사용
   if (pathname.startsWith('/write/')) return null
   const segments = pathname.split('/').filter(Boolean)
   const isProfilePage = segments.length === 1 && !RESERVED_USERNAMES.includes(segments[0])
   if (isProfilePage) return null
+  const PROFILE_SUBPAGES = ['followers', 'following']
+  const isPostDetailPage = segments.length === 2 &&
+    !PROFILE_SUBPAGES.includes(segments[1]) &&
+    !RESERVED_USERNAMES.includes(segments[0])
+  if (isPostDetailPage) return null
 
   // 좌측 영역 결정
   // - WebView: 로고 고정 (네이티브 백 처리)
@@ -61,7 +66,7 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
         isHidden ? '-translate-y-full' : 'translate-y-0',
       ].join(' ')}
     >
-      <div className="mx-auto w-full max-w-[560px] px-5 py-3 flex items-center justify-between">
+      <div className="mx-auto w-full max-w-[560px] px-5 h-[52px] flex items-center justify-between">
         {/* 좌측: 로고 or 뒤로가기 버튼 */}
         {showLogo ? (
           <h1 className="text-xl font-bold text-primary-700 italic tracking-tight">Pono</h1>
@@ -70,7 +75,7 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
             type="button"
             aria-label="뒤로 가기"
             onClick={() => router.back()}
-            className="w-11 h-11 -ml-2 flex items-center justify-center text-neutral-900"
+            className="w-10 h-10 -ml-2 flex items-center justify-center text-neutral-900"
           >
             <ChevronLeft size={24} strokeWidth={1.5} />
           </button>
