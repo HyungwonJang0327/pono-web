@@ -1,4 +1,4 @@
-import { getUserProfile, followUser, unfollowUser } from '@/services/user.service'
+import { getUserProfile, followUser, unfollowUser, getFollowers, getFollowing } from '@/services/user.service'
 
 const mockFetch = jest.fn()
 global.fetch = mockFetch
@@ -92,5 +92,73 @@ describe('unfollowUser', () => {
 
     const [, options] = mockFetch.mock.calls[0]
     expect(options.headers['Authorization']).toBe('Bearer token-abc')
+  })
+})
+
+describe('getFollowers', () => {
+  beforeEach(() => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: async () => [
+        { id: 'user-2', username: 'jiwon', avatar: null, bio: null, isFollowedByMe: false },
+      ],
+    })
+  })
+
+  it('GET /follow/:username/followers 를 호출한다', async () => {
+    await getFollowers('seoyeon')
+
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    const [url, options] = mockFetch.mock.calls[0]
+    expect(url).toContain('/follow/seoyeon/followers')
+    expect(options?.method).toBeUndefined()
+  })
+
+  it('token이 있으면 Authorization 헤더를 포함한다', async () => {
+    await getFollowers('seoyeon', 'token-abc')
+
+    const [, options] = mockFetch.mock.calls[0]
+    expect(options.headers['Authorization']).toBe('Bearer token-abc')
+  })
+
+  it('token이 없으면 Authorization 헤더를 포함하지 않는다', async () => {
+    await getFollowers('seoyeon')
+
+    const [, options] = mockFetch.mock.calls[0]
+    expect(options.headers['Authorization']).toBeUndefined()
+  })
+})
+
+describe('getFollowing', () => {
+  beforeEach(() => {
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: async () => [
+        { id: 'user-3', username: 'minho', avatar: null, bio: null, isFollowedByMe: true },
+      ],
+    })
+  })
+
+  it('GET /follow/:username/following 를 호출한다', async () => {
+    await getFollowing('seoyeon')
+
+    expect(mockFetch).toHaveBeenCalledTimes(1)
+    const [url, options] = mockFetch.mock.calls[0]
+    expect(url).toContain('/follow/seoyeon/following')
+    expect(options?.method).toBeUndefined()
+  })
+
+  it('token이 있으면 Authorization 헤더를 포함한다', async () => {
+    await getFollowing('seoyeon', 'token-abc')
+
+    const [, options] = mockFetch.mock.calls[0]
+    expect(options.headers['Authorization']).toBe('Bearer token-abc')
+  })
+
+  it('token이 없으면 Authorization 헤더를 포함하지 않는다', async () => {
+    await getFollowing('seoyeon')
+
+    const [, options] = mockFetch.mock.calls[0]
+    expect(options.headers['Authorization']).toBeUndefined()
   })
 })
