@@ -2,18 +2,22 @@
 
 import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
-import { useAuth } from '@clerk/nextjs'
+import { useAuth, useUser } from '@clerk/nextjs'
 import { Camera, FileText } from 'lucide-react'
 import { BottomSheet } from '@/components/ui'
 
 export default function WriteFab() {
   const { isSignedIn } = useAuth()
+  const { user } = useUser()
   const router = useRouter()
   const pathname = usePathname()
   const [isOpen, setIsOpen] = useState(false)
 
+  const isHomeFeed = pathname === '/'
+  const isMyProfile = !!user?.username && pathname === `/${user.username}`
+
   if (!isSignedIn) return null
-  if (pathname.startsWith('/write/')) return null
+  if (!isHomeFeed && !isMyProfile) return null
 
   function handleSnap() {
     setIsOpen(false)
