@@ -59,7 +59,7 @@ export default function FollowListClient({ list, activeTab, username }: Props) {
             <button
               key={tab}
               type="button"
-              onClick={() => router.push(`/${username}/${tab}`)}
+              onClick={() => router.replace(`/${username}/${tab}`)}
               className={[
                 'flex-1 py-3 text-sm text-center',
                 isActive

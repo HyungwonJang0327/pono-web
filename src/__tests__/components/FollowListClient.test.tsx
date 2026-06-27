@@ -4,6 +4,7 @@ import FollowListClient from '@/app/(main)/[username]/FollowListClient'
 import type { FollowUserDto } from '@/types/user'
 
 const mockPush = jest.fn()
+const mockReplace = jest.fn()
 
 jest.mock('@clerk/nextjs', () => ({
   useAuth: () => ({ getToken: jest.fn().mockResolvedValue('token') }),
@@ -12,7 +13,7 @@ jest.mock('@clerk/nextjs', () => ({
 }))
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ push: mockPush }),
+  useRouter: () => ({ push: mockPush, replace: mockReplace }),
 }))
 
 jest.mock('@/components/ui', () => ({
@@ -57,6 +58,7 @@ const mockList: FollowUserDto[] = [
 describe('FollowListClient', () => {
   beforeEach(() => {
     mockPush.mockClear()
+    mockReplace.mockClear()
   })
 
   it('유저 목록을 렌더링한다', () => {
@@ -120,7 +122,7 @@ describe('FollowListClient', () => {
     // 첫 번째가 탭 버튼
     const followingTab = screen.getAllByRole('button', { name: '팔로잉' })[0]
     await user.click(followingTab)
-    expect(mockPush).toHaveBeenCalledWith('/profileowner/following')
+    expect(mockReplace).toHaveBeenCalledWith('/profileowner/following')
   })
 
   it('"팔로워" 탭 클릭 시 /profileowner/followers로 이동한다', async () => {
@@ -128,7 +130,7 @@ describe('FollowListClient', () => {
     render(<FollowListClient list={mockList} activeTab="following" username="profileowner" />)
     const followersTab = screen.getByRole('button', { name: '팔로워' })
     await user.click(followersTab)
-    expect(mockPush).toHaveBeenCalledWith('/profileowner/followers')
+    expect(mockReplace).toHaveBeenCalledWith('/profileowner/followers')
   })
 
   it('목록이 비어있으면 빈 상태 메시지를 표시한다', () => {
