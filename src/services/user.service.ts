@@ -1,5 +1,5 @@
 import { api } from '@/lib/api'
-import type { UserPublicProfileDto } from '@/types/user'
+import type { UserPublicProfileDto, FollowUserDto } from '@/types/user'
 
 // ── 서비스 함수 ───────────────────────────────────────────────────────────────
 
@@ -28,6 +28,28 @@ export async function followUser(userId: string, token: string): Promise<void> {
  */
 export async function unfollowUser(userId: string, token: string): Promise<void> {
   await api.delete<{ followingId: string }>(`/follow/${userId}`, token)
+}
+
+/**
+ * 팔로워 목록 조회
+ * GET /follow/:username/followers
+ */
+export async function getFollowers(
+  username: string,
+  token?: string,
+): Promise<FollowUserDto[]> {
+  return api.get<FollowUserDto[]>(`/follow/${username}/followers`, token)
+}
+
+/**
+ * 팔로잉 목록 조회
+ * GET /follow/:username/following
+ */
+export async function getFollowing(
+  username: string,
+  token?: string,
+): Promise<FollowUserDto[]> {
+  return api.get<FollowUserDto[]>(`/follow/${username}/following`, token)
 }
 
 /**

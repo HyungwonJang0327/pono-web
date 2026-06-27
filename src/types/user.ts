@@ -20,3 +20,11 @@ export interface UserPublicProfileDto {
   isFollowedByMe: boolean  // 비로그인 시 false
   isOwnedByMe: boolean     // 비로그인 시 false, 서버에서 DB PK 비교 후 반환
 }
+
+export interface FollowUserDto {
+  id: string
+  username: string | null
+  avatar: string | null
+  bio: string | null
+  isFollowedByMe: boolean
+}
