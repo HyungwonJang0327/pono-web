@@ -1,0 +1,62 @@
+{
+  "nav": {
+    "home": "홈",
+    "explore": "탐색",
+    "profile": "프로필"
+  },
+  "feed": {
+    "empty": {
+      "title": "아직 보여드릴 글이 없어요",
+      "description": "탐색에서 마음에 드는 스냅과 아티클을 찾아보세요.\n곧 당신만의 피드가 채워질 거예요.",
+      "exploreButton": "탐색 둘러보기"
+    },
+    "loginRequired": {
+      "title": "로그인이 필요해요",
+      "description": "팔로잉 피드는 로그인 후 이용할 수 있어요.",
+      "loginButton": "로그인하기"
+    },
+    "noFollowing": {
+      "title": "팔로우하고 피드를 채워보세요",
+      "description": "관심 있는 사람을 팔로우하면 그들의 스냅과 아티클이 이곳에 모여요.",
+      "recommendedCreators": "추천 크리에이터",
+      "more": "더보기"
+    },
+    "error": {
+      "title": "피드를 불러오지 못했어요"
+    }
+  },
+  "follow": {
+    "follow": "팔로우",
+    "following": "팔로잉",
+    "followers": "팔로워",
+    "followerCount": "팔로워 {count}",
+    "empty": "아직 없어요",
+    "recentArticle": "{days}일 전 아티클 발행",
+    "recentSnap": "{days}일 전 스냅 게시",
+    "errorFollow": "오류가 발생했어요"
+  },
+  "profile": {
+    "snap": "스냅",
+    "article": "아티클",
+    "editProfile": "프로필 편집",
+    "readingTime": "{minutes}분 읽기",
+    "noPost": "아직 게시물이 없어요",
+    "errorFollow": "오류가 발생했어요"
+  },
+  "comment": {
+    "empty": "아직 댓글이 없어요",
+    "placeholder": "댓글 달기...",
+    "submit": "게시",
+    "delete": "댓글 삭제",
+    "reply": "답글",
+    "replyCancel": "답글 취소",
+    "replyingTo": "→ {username}에게 답글 중",
+    "errorDelete": "댓글 삭제에 실패했어요",
+    "errorSubmit": "댓글 게시에 실패했어요"
+  },
+  "error": {
+    "networkTitle": "불러오지 못했어요",
+    "networkDescription": "인터넷 연결이 불안정하거나 서버에 일시적인 문제가 있어요. 잠시 후 다시 시도해 주세요.",
+    "retry": "다시 시도"
+  }
+}

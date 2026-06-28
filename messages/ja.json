@@ -1,0 +1,62 @@
+{
+  "nav": {
+    "home": "ホーム",
+    "explore": "探索",
+    "profile": "プロフィール"
+  },
+  "feed": {
+    "empty": {
+      "title": "まだ表示できる投稿がありません",
+      "description": "探索でお気に入りのスナップやアーティクルを見つけましょう。\nあなただけのフィードがすぐに埋まります。",
+      "exploreButton": "探索を見る"
+    },
+    "loginRequired": {
+      "title": "ログインが必要です",
+      "description": "フォロー中のフィードはログイン後にご利用いただけます。",
+      "loginButton": "ログイン"
+    },
+    "noFollowing": {
+      "title": "フォローしてフィードを充実させよう",
+      "description": "気になる人をフォローすると、そのスナップやアーティクルがここに集まります。",
+      "recommendedCreators": "おすすめクリエイター",
+      "more": "もっと見る"
+    },
+    "error": {
+      "title": "フィードを読み込めませんでした"
+    }
+  },
+  "follow": {
+    "follow": "フォロー",
+    "following": "フォロー中",
+    "followers": "フォロワー",
+    "followerCount": "フォロワー {count}",
+    "empty": "まだいません",
+    "recentArticle": "{days}日前にアーティクルを公開",
+    "recentSnap": "{days}日前にスナップを投稿",
+    "errorFollow": "エラーが発生しました"
+  },
+  "profile": {
+    "snap": "スナップ",
+    "article": "アーティクル",
+    "editProfile": "プロフィールを編集",
+    "readingTime": "{minutes}分で読める",
+    "noPost": "まだ投稿がありません",
+    "errorFollow": "エラーが発生しました"
+  },
+  "comment": {
+    "empty": "まだコメントがありません",
+    "placeholder": "コメントを追加...",
+    "submit": "投稿",
+    "delete": "コメントを削除",
+    "reply": "返信",
+    "replyCancel": "返信をキャンセル",
+    "replyingTo": "→ {username}へ返信中",
+    "errorDelete": "コメントの削除に失敗しました",
+    "errorSubmit": "コメントの投稿に失敗しました"
+  },
+  "error": {
+    "networkTitle": "読み込めませんでした",
+    "networkDescription": "インターネット接続が不安定か、サーバーに一時的な問題があります。しばらくしてからもう一度お試しください。",
+    "retry": "再試行"
+  }
+}

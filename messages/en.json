@@ -1,0 +1,62 @@
+{
+  "nav": {
+    "home": "Home",
+    "explore": "Explore",
+    "profile": "Profile"
+  },
+  "feed": {
+    "empty": {
+      "title": "Nothing to show yet",
+      "description": "Find snaps and articles you like in Explore.\nYour feed will fill up soon.",
+      "exploreButton": "Browse Explore"
+    },
+    "loginRequired": {
+      "title": "Login required",
+      "description": "Sign in to see posts from people you follow.",
+      "loginButton": "Sign in"
+    },
+    "noFollowing": {
+      "title": "Follow someone to fill your feed",
+      "description": "Follow people you're interested in and their snaps and articles will appear here.",
+      "recommendedCreators": "Suggested creators",
+      "more": "See more"
+    },
+    "error": {
+      "title": "Couldn't load feed"
+    }
+  },
+  "follow": {
+    "follow": "Follow",
+    "following": "Following",
+    "followers": "Followers",
+    "followerCount": "{count} followers",
+    "empty": "Nothing here yet",
+    "recentArticle": "Published an article {days}d ago",
+    "recentSnap": "Posted a snap {days}d ago",
+    "errorFollow": "Something went wrong"
+  },
+  "profile": {
+    "snap": "Snaps",
+    "article": "Articles",
+    "editProfile": "Edit profile",
+    "readingTime": "{minutes} min read",
+    "noPost": "No posts yet",
+    "errorFollow": "Something went wrong"
+  },
+  "comment": {
+    "empty": "No comments yet",
+    "placeholder": "Add a comment...",
+    "submit": "Post",
+    "delete": "Delete comment",
+    "reply": "Reply",
+    "replyCancel": "Cancel reply",
+    "replyingTo": "→ Replying to {username}",
+    "errorDelete": "Failed to delete comment",
+    "errorSubmit": "Failed to post comment"
+  },
+  "error": {
+    "networkTitle": "Couldn't load",
+    "networkDescription": "Your connection may be unstable or the server is temporarily unavailable. Please try again later.",
+    "retry": "Try again"
+  }
+}

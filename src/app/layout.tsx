@@ -2,6 +2,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { koKR } from "@clerk/localizations";
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Noto_Serif_KR } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale, getMessages } from "next-intl/server";
 import "./globals.css";
 import { Providers } from "@/providers";
 
@@ -24,14 +26,17 @@ export const metadata: Metadata = {
   description: "짧은 스냅과 깊이 있는 아티클을 함께 발견하는 플랫폼",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+  const messages = await getMessages();
+
   return (
     <html
-      lang="ko"
+      lang={locale}
       className={`${plusJakartaSans.variable} ${notoSerifKR.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
@@ -51,7 +56,9 @@ export default function RootLayout({
   };
 })();` }} />
         <ClerkProvider localization={koKR}>
-          <Providers>{children}</Providers>
+          <NextIntlClientProvider locale={locale} messages={messages}>
+            <Providers>{children}</Providers>
+          </NextIntlClientProvider>
         </ClerkProvider>
       </body>
     </html>
