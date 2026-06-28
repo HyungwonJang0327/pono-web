@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { useToastContext } from '@/components/ui'
 import { followUser, unfollowUser } from '@/services/user.service'
 import type { FollowUserDto } from '@/types/user'
@@ -13,11 +14,11 @@ interface Props {
   username: string
 }
 
-function getSubText(user: FollowUserDto): { text: string; muted: boolean } {
+function getSubText(user: FollowUserDto, t: (key: string, params?: Record<string, unknown>) => string): { text: string; muted: boolean } {
   if (user.bio) return { text: user.bio, muted: false }
   if (user.recentActivity) {
-    const label = user.recentActivity.type === 'article' ? '아티클 발행' : '스냅 게시'
-    return { text: `${user.recentActivity.daysAgo}일 전 ${label}`, muted: false }
+    const key = user.recentActivity.type === 'article' ? 'recentArticle' : 'recentSnap'
+    return { text: t(key, { days: user.recentActivity.daysAgo }), muted: false }
   }
   return { text: `@${user.username ?? ''}`, muted: true }
 }
@@ -27,6 +28,8 @@ export default function FollowListClient({ list, activeTab, username }: Props) {
   const { getToken } = useAuth()
   const { user: clerkUser } = useUser()
   const toast = useToastContext()
+
+  const t = useTranslations('follow')
 
   const [following, setFollowing] = useState<Record<string, boolean>>(
     () => Object.fromEntries(list.map((u) => [u.id, u.isFollowedByMe])),
@@ -44,7 +47,7 @@ export default function FollowListClient({ list, activeTab, username }: Props) {
       }
     } catch {
       setFollowing((s) => ({ ...s, [userId]: prev }))
-      toast.error('오류가 발생했어요')
+      toast.error(t('errorFollow'))
     }
   }
 
@@ -53,7 +56,7 @@ export default function FollowListClient({ list, activeTab, username }: Props) {
       {/* 탭 헤더 */}
       <div className="flex border-b border-neutral-100">
         {(['followers', 'following'] as const).map((tab) => {
-          const label = tab === 'followers' ? '팔로워' : '팔로잉'
+          const label = tab === 'followers' ? t('followers') : t('following')
           const isActive = activeTab === tab
           return (
             <button
@@ -76,7 +79,7 @@ export default function FollowListClient({ list, activeTab, username }: Props) {
       {/* 빈 상태 */}
       {list.length === 0 && (
         <div className="flex items-center justify-center py-20">
-          <p className="text-sm text-neutral-400">아직 없어요</p>
+          <p className="text-sm text-neutral-400">{t('empty')}</p>
         </div>
       )}
 
@@ -85,7 +88,7 @@ export default function FollowListClient({ list, activeTab, username }: Props) {
         {list.map((user) => {
           const isMe = clerkUser?.username === user.username
           const isFollowing = following[user.id] ?? false
-          const subText = getSubText(user)
+          const subText = getSubText(user, t)
 
           return (
             <li
@@ -111,7 +114,7 @@ export default function FollowListClient({ list, activeTab, username }: Props) {
                   {subText.text}
                 </p>
                 <p className="text-[13px] text-neutral-400 mt-0.5">
-                  팔로워 {user.followerCount.toLocaleString()}
+                  {t('followerCount', { count: user.followerCount.toLocaleString() })}
                 </p>
               </div>
 
@@ -127,7 +130,7 @@ export default function FollowListClient({ list, activeTab, username }: Props) {
                       : 'border border-[#E4E0D6] text-primary-700 bg-white',
                   ].join(' ')}
                 >
-                  {isFollowing ? '팔로잉' : '팔로우'}
+                  {isFollowing ? t('following') : t('follow')}
                 </button>
               )}
             </li>
