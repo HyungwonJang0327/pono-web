@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
 import { BookOpen, Bell, ChevronLeft, Clock, Settings } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { useToastContext } from '@/components/ui'
 import { followUser, unfollowUser } from '@/services/user.service'
 import type { UserPublicProfileDto } from '@/types/user'
@@ -27,6 +28,9 @@ export default function ProfileClient({
   const { getToken } = useAuth()
   const { user: clerkUser } = useUser()
   const toast = useToastContext()
+
+  const t = useTranslations('profile')
+  const tFollow = useTranslations('follow')
 
   const [isFollowing, setIsFollowing] = useState(profile.isFollowedByMe)
   const [activeTab, setActiveTab] = useState<0 | 1>(0) // 0: 스냅, 1: 아티클
@@ -70,7 +74,7 @@ export default function ProfileClient({
       }
     } catch {
       setIsFollowing(prev)
-      toast.error('오류가 발생했어요')
+      toast.error(t('errorFollow'))
     }
   }
 
@@ -167,7 +171,7 @@ export default function ProfileClient({
                     className="text-left"
                   >
                     <span className="font-bold text-neutral-900">{profile.followerCount.toLocaleString()}</span>
-                    <span className="text-neutral-500 ml-1">팔로워</span>
+                    <span className="text-neutral-500 ml-1">{tFollow('followers')}</span>
                   </button>
                   <button
                     type="button"
@@ -175,7 +179,7 @@ export default function ProfileClient({
                     className="text-left"
                   >
                     <span className="font-bold text-neutral-900">{profile.followingCount.toLocaleString()}</span>
-                    <span className="text-neutral-500 ml-1">팔로잉</span>
+                    <span className="text-neutral-500 ml-1">{tFollow('following')}</span>
                   </button>
                 </div>
 
@@ -186,7 +190,7 @@ export default function ProfileClient({
                     className="px-4 py-1.5 rounded-full border border-primary-700 text-primary-700 text-sm font-medium flex items-center gap-1"
                   >
                     <span>✏</span>
-                    <span>프로필 편집</span>
+                    <span>{t('editProfile')}</span>
                   </button>
                 ) : isFollowing ? (
                   <button
@@ -194,7 +198,7 @@ export default function ProfileClient({
                     onClick={handleFollowToggle}
                     className="px-4 py-1.5 rounded-full border border-neutral-300 text-neutral-700 text-sm font-medium"
                   >
-                    팔로잉
+                    {tFollow('following')}
                   </button>
                 ) : (
                   <button
@@ -202,7 +206,7 @@ export default function ProfileClient({
                     onClick={handleFollowToggle}
                     className="px-4 py-1.5 rounded-full bg-primary-700 text-white text-sm font-medium"
                   >
-                    팔로우
+                    {tFollow('follow')}
                   </button>
                 )}
               </div>
@@ -222,7 +226,7 @@ export default function ProfileClient({
                 : 'text-neutral-400',
             ].join(' ')}
           >
-            스냅
+            {t('snap')}
           </button>
           <button
             type="button"
@@ -234,7 +238,7 @@ export default function ProfileClient({
                 : 'text-neutral-400',
             ].join(' ')}
           >
-            아티클
+            {t('article')}
           </button>
         </div>
       </div>
@@ -256,7 +260,7 @@ export default function ProfileClient({
           {/* 스냅 탭 */}
           <div className="w-1/2">
             {snaps.length === 0 ? (
-              <EmptyState />
+              <EmptyState label={t('noPost')} />
             ) : (
               <div className="grid grid-cols-3 gap-px">
                 {snaps.map((snap) => (
@@ -285,7 +289,7 @@ export default function ProfileClient({
           {/* 아티클 탭 */}
           <div className="w-1/2">
             {articles.length === 0 ? (
-              <EmptyState />
+              <EmptyState label={t('noPost')} />
             ) : (
               <ul>
                 {articles.map((article) => (
@@ -304,7 +308,7 @@ export default function ProfileClient({
                         </p>
                         <p className="text-xs text-neutral-400 mt-1.5 flex items-center gap-1">
                           <Clock size={12} strokeWidth={1.5} />
-                          {article.readingTime}분 읽기
+                          {t('readingTime', { minutes: article.readingTime })}
                         </p>
                       </div>
                       {article.coverImage && (
@@ -327,11 +331,11 @@ export default function ProfileClient({
   )
 }
 
-function EmptyState() {
+function EmptyState({ label }: { label: string }) {
   return (
     <div className="flex flex-col items-center justify-center gap-2 py-20">
       <BookOpen size={32} strokeWidth={1.5} className="text-neutral-300" />
-      <p className="text-sm text-neutral-400">아직 게시물이 없어요</p>
+      <p className="text-sm text-neutral-400">{label}</p>
     </div>
   )
 }

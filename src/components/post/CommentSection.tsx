@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import Image from 'next/image'
 import { Trash2, X } from 'lucide-react'
 import { useAuth, useClerk } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { useToast } from '@/hooks/useToast'
 import { getComments, createComment, deleteComment } from '@/services/comment.service'
 import type { CommentDto, ReplyDto } from '@/types/comment'
@@ -53,9 +54,11 @@ function Avatar({ src, username, size }: { src: string | null; username: string;
 function ReplyItem({
   reply,
   onDelete,
+  deleteLabel,
 }: {
   reply: ReplyDto
   onDelete: (commentId: string) => void
+  deleteLabel: string
 }) {
   return (
     <div className="ml-10 flex gap-2.5 py-3 border-t border-neutral-100">
@@ -70,7 +73,7 @@ function ReplyItem({
       {reply.isOwnedByMe && (
         <button
           type="button"
-          aria-label="댓글 삭제"
+          aria-label={deleteLabel}
           onClick={() => onDelete(reply.id)}
           className="flex-none self-start mt-0.5 p-1 text-neutral-400 hover:text-neutral-600"
         >
@@ -85,10 +88,14 @@ function CommentItem({
   comment,
   onDelete,
   onReply,
+  replyLabel,
+  deleteLabel,
 }: {
   comment: CommentDto
   onDelete: (commentId: string) => void
   onReply: (username: string, parentId: string) => void
+  replyLabel: string
+  deleteLabel: string
 }) {
   const [repliesOpen, setRepliesOpen] = useState(false)
 
@@ -107,13 +114,13 @@ function CommentItem({
             onClick={() => onReply(comment.author.username, comment.id)}
             className="mt-1 text-[11px] text-neutral-400 font-medium"
           >
-            답글
+            {replyLabel}
           </button>
         </div>
         {comment.isOwnedByMe && (
           <button
             type="button"
-            aria-label="댓글 삭제"
+            aria-label={deleteLabel}
             onClick={() => onDelete(comment.id)}
             className="flex-none self-start mt-0.5 p-1 text-neutral-400 hover:text-neutral-600"
           >
@@ -137,6 +144,7 @@ function CommentItem({
                 key={reply.id}
                 reply={reply}
                 onDelete={onDelete}
+                deleteLabel={deleteLabel}
               />
             ))}
         </>
@@ -148,6 +156,7 @@ function CommentItem({
 export default function CommentSection({ postId, currentUser }: Props) {
   const { isSignedIn, getToken } = useAuth()
   const { openSignIn } = useClerk()
+  const t = useTranslations('comment')
   const toast = useToast()
 
   const [comments, setComments] = useState<CommentDto[]>([])
@@ -204,7 +213,7 @@ export default function CommentSection({ postId, currentUser }: Props) {
           }))
         })
       } catch {
-        toast.error('댓글 삭제에 실패했어요')
+        toast.error(t('errorDelete'))
       }
     },
     [postId, getToken, toast],
@@ -244,7 +253,7 @@ export default function CommentSection({ postId, currentUser }: Props) {
         textareaRef.current.style.height = 'auto'
       }
     } catch {
-      toast.error('댓글 게시에 실패했어요')
+      toast.error(t('errorSubmit'))
     } finally {
       setIsSubmitting(false)
     }
@@ -255,7 +264,7 @@ export default function CommentSection({ postId, currentUser }: Props) {
       {/* 댓글 목록 */}
       <div>
         {isLoading ? null : comments.length === 0 ? (
-          <p className="text-sm text-neutral-400 text-center py-6">아직 댓글이 없어요</p>
+          <p className="text-sm text-neutral-400 text-center py-6">{t('empty')}</p>
         ) : (
           comments.map((comment) => (
             <CommentItem
@@ -263,6 +272,8 @@ export default function CommentSection({ postId, currentUser }: Props) {
               comment={comment}
               onDelete={handleDelete}
               onReply={handleReply}
+              replyLabel={t('reply')}
+              deleteLabel={t('delete')}
             />
           ))
         )}
@@ -277,11 +288,11 @@ export default function CommentSection({ postId, currentUser }: Props) {
         {replyTarget && (
           <div className="mx-auto w-full max-w-[560px] px-4 pt-2 flex items-center justify-between">
             <span className="text-[12px] text-neutral-500">
-              → {replyTarget.username}에게 답글 중
+              {t('replyingTo', { username: replyTarget.username })}
             </span>
             <button
               type="button"
-              aria-label="답글 취소"
+              aria-label={t('replyCancel')}
               onClick={() => setReplyTarget(null)}
               className="p-1 text-neutral-400"
             >
@@ -301,7 +312,7 @@ export default function CommentSection({ postId, currentUser }: Props) {
               value={body}
               onChange={handleBodyChange}
               readOnly={!isSignedIn}
-              placeholder="댓글 달기..."
+              placeholder={t('placeholder')}
               rows={1}
               maxLength={200}
               onFocus={() => { if (!isSignedIn) openSignIn() }}
@@ -321,7 +332,7 @@ export default function CommentSection({ postId, currentUser }: Props) {
               disabled={isSubmitting}
               className="text-sm font-semibold text-primary-700 disabled:opacity-50 flex-none"
             >
-              게시
+              {t('submit')}
             </button>
           )}
         </div>
