@@ -14,7 +14,7 @@ interface Props {
   username: string
 }
 
-function getSubText(user: FollowUserDto, t: (key: string, params?: Record<string, unknown>) => string): { text: string; muted: boolean } {
+function getSubText(user: FollowUserDto, t: (key: string, params?: Record<string, string | number | Date>) => string): { text: string; muted: boolean } {
   if (user.bio) return { text: user.bio, muted: false }
   if (user.recentActivity) {
     const key = user.recentActivity.type === 'article' ? 'recentArticle' : 'recentSnap'

@@ -216,7 +216,7 @@ export default function CommentSection({ postId, currentUser }: Props) {
         toast.error(t('errorDelete'))
       }
     },
-    [postId, getToken, toast],
+    [postId, getToken, toast, t],
   )
 
   // 답글 타겟 설정
