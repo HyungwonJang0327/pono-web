@@ -1,5 +1,6 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
 import { NetworkErrorState } from '@/components/ui'
 
 interface FeedErrorStateProps {
@@ -7,9 +8,11 @@ interface FeedErrorStateProps {
 }
 
 export function FeedErrorState({ onRetry }: FeedErrorStateProps) {
+  const t = useTranslations('feed')
+
   return (
     <NetworkErrorState
-      title="피드를 불러오지 못했어요"
+      title={t('error.title')}
       onRetry={onRetry}
     />
   )

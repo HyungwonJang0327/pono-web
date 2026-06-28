@@ -2,8 +2,11 @@
 
 import { LogIn, Lock } from 'lucide-react'
 import { SignInButton } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 
 export function FeedLoginRequired() {
+  const t = useTranslations('feed')
+
   return (
     <div className="px-4 pt-2 pb-6">
       <div className="flex justify-center mb-4">
@@ -12,10 +15,10 @@ export function FeedLoginRequired() {
         </div>
       </div>
       <h3 className="text-[16px] font-semibold text-neutral-900 text-center tracking-tight mb-2">
-        로그인이 필요해요
+        {t('loginRequired.title')}
       </h3>
       <p className="text-[13px] text-neutral-600 text-center leading-relaxed mb-5 break-keep">
-        팔로잉 피드는 로그인 후 이용할 수 있어요.
+        {t('loginRequired.description')}
       </p>
       <SignInButton mode="modal">
         <button
@@ -23,7 +26,7 @@ export function FeedLoginRequired() {
           className="w-full h-12 bg-primary-700 text-white rounded-[var(--radius-md)] flex items-center justify-center gap-2 text-[15px] font-medium cursor-pointer"
         >
           <LogIn size={16} />
-          로그인하기
+          {t('loginRequired.loginButton')}
         </button>
       </SignInButton>
     </div>

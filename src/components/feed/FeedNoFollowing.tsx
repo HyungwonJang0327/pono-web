@@ -1,4 +1,7 @@
+'use client'
+
 import { UserPlus } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 import { FeedStateCard } from './FeedStateCard'
 
 interface Creator {
@@ -46,19 +49,22 @@ const MOCK_CREATORS: Creator[] = [
 ]
 
 export function FeedNoFollowing() {
+  const t = useTranslations('feed')
+  const tFollow = useTranslations('follow')
+
   return (
     <FeedStateCard
       iconBg="bg-primary-50"
       iconNode={<UserPlus size={28} className="text-primary-500" strokeWidth={1.5} />}
-      title="팔로우하고 피드를 채워보세요"
-      description="관심 있는 사람을 팔로우하면 그들의 스냅과 아티클이 이곳에 모여요."
+      title={t('noFollowing.title')}
+      description={t('noFollowing.description')}
       action={undefined}
     >
       {/* 구분선 + 헤더 */}
       <div className="border-t border-neutral-100 mt-2 pt-5 flex items-center justify-between mb-3">
-        <span className="text-[13px] text-neutral-500 font-medium">추천 크리에이터</span>
+        <span className="text-[13px] text-neutral-500 font-medium">{t('noFollowing.recommendedCreators')}</span>
         <button type="button" className="text-[13px] text-primary-500">
-          더보기
+          {t('noFollowing.more')}
         </button>
       </div>
 
@@ -90,14 +96,14 @@ export function FeedNoFollowing() {
                 type="button"
                 className="flex-shrink-0 border border-neutral-300 bg-neutral-200 text-neutral-600 rounded-[var(--radius-sm)] px-4 h-[34px] text-[13px]"
               >
-                팔로잉
+                {tFollow('following')}
               </button>
             ) : (
               <button
                 type="button"
                 className="flex-shrink-0 border border-primary-700 text-primary-700 rounded-[var(--radius-sm)] px-4 h-[34px] text-[13px]"
               >
-                팔로우
+                {tFollow('follow')}
               </button>
             )}
           </li>
