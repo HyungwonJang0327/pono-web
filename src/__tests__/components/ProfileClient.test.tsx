@@ -4,6 +4,13 @@ import ProfileClient from '@/app/(main)/[username]/ProfileClient'
 import type { UserPublicProfileDto } from '@/types/user'
 import type { PostSummaryDto } from '@/types/post'
 
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string, params?: Record<string, unknown>) => {
+    if (params) return `${key}:${JSON.stringify(params)}`
+    return key
+  },
+}))
+
 jest.mock('@clerk/nextjs', () => ({
   useAuth: () => ({ getToken: jest.fn().mockResolvedValue('token') }),
   useUser: () => ({ user: { username: 'testuser' } }),
@@ -72,22 +79,22 @@ function renderProfileClient(overrides: Partial<{
 }
 
 describe('ProfileClient', () => {
-  it('타인 프로필: "팔로우" 버튼을 노출한다', () => {
+  it('타인 프로필: "profile.follow" 번역 키 버튼을 노출한다', () => {
     renderProfileClient({ isOwnedByMe: false })
-    expect(screen.getByRole('button', { name: '팔로우' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'follow.follow' })).toBeInTheDocument()
   })
 
-  it('본인 프로필(isOwnedByMe=true): "프로필 편집" 버튼을 노출한다', () => {
+  it('본인 프로필(isOwnedByMe=true): "profile.editProfile" 번역 키 버튼을 노출한다', () => {
     renderProfileClient({ isOwnedByMe: true })
-    expect(screen.getByRole('button', { name: /프로필 편집/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /profile.editProfile/ })).toBeInTheDocument()
   })
 
-  it('팔로잉 상태(isFollowedByMe=true): "팔로잉" 버튼을 노출한다', () => {
+  it('팔로잉 상태(isFollowedByMe=true): "follow.following" 번역 키 버튼을 노출한다', () => {
     renderProfileClient({
       profile: { ...mockProfile, isFollowedByMe: true },
       isOwnedByMe: false,
     })
-    expect(screen.getByRole('button', { name: '팔로잉' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'follow.following' })).toBeInTheDocument()
   })
 
   it('스냅 탭: 스냅 그리드를 렌더링한다', () => {
@@ -99,14 +106,14 @@ describe('ProfileClient', () => {
 
   it('아티클 탭: 아티클 리스트를 렌더링한다', async () => {
     renderProfileClient({ articlePosts: [articlePost] })
-    await userEvent.click(screen.getByRole('button', { name: '아티클' }))
+    await userEvent.click(screen.getByRole('button', { name: 'profile.article' }))
     expect(screen.getByText('테스트 아티클')).toBeInTheDocument()
   })
 
-  it('게시글 없음: "아직 게시물이 없어요" 를 노출한다', () => {
+  it('게시글 없음: "profile.noPost" 번역 키를 노출한다', () => {
     renderProfileClient({ snapPosts: [], articlePosts: [] })
     // 스냅·아티클 탭 모두 EmptyState를 렌더링하므로 복수로 확인
-    const messages = screen.getAllByText('아직 게시물이 없어요')
+    const messages = screen.getAllByText('profile.noPost')
     expect(messages.length).toBeGreaterThan(0)
   })
 })

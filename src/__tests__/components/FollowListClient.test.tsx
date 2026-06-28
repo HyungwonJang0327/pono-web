@@ -6,6 +6,13 @@ import type { FollowUserDto } from '@/types/user'
 const mockPush = jest.fn()
 const mockReplace = jest.fn()
 
+jest.mock('next-intl', () => ({
+  useTranslations: () => (key: string, params?: Record<string, unknown>) => {
+    if (params) return `${key}:${JSON.stringify(params)}`
+    return key
+  },
+}))
+
 jest.mock('@clerk/nextjs', () => ({
   useAuth: () => ({ getToken: jest.fn().mockResolvedValue('token') }),
   useUser: () => ({ user: { username: 'me' } }),
@@ -67,22 +74,22 @@ describe('FollowListClient', () => {
     expect(screen.getByText('bob')).toBeInTheDocument()
   })
 
-  it('isFollowedByMe가 false인 유저에게 "팔로우" 버튼을 표시한다', () => {
+  it('isFollowedByMe가 false인 유저에게 "follow.follow" 버튼을 표시한다', () => {
     render(<FollowListClient list={mockList} activeTab="followers" username="profileowner" />)
-    expect(screen.getByRole('button', { name: '팔로우' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'follow.follow' })).toBeInTheDocument()
   })
 
-  it('isFollowedByMe가 true인 유저에게 "팔로잉" 버튼을 표시한다', () => {
+  it('isFollowedByMe가 true인 유저에게 "follow.following" 버튼을 표시한다', () => {
     render(<FollowListClient list={mockList} activeTab="followers" username="profileowner" />)
-    // 탭 "팔로잉" + 팔로우 상태 "팔로잉" 두 개 존재
-    expect(screen.getAllByRole('button', { name: '팔로잉' })).toHaveLength(2)
+    // 탭 "follow.following" + 팔로우 상태 "follow.following" 두 개 존재
+    expect(screen.getAllByRole('button', { name: 'follow.following' })).toHaveLength(2)
   })
 
   it('현재 로그인 유저 본인은 팔로우 버튼을 숨긴다', () => {
     render(<FollowListClient list={mockList} activeTab="followers" username="profileowner" />)
     expect(screen.getByText('me')).toBeInTheDocument()
     const buttons = screen.getAllByRole('button')
-    // 탭 버튼 2개 + alice 팔로우 + bob 팔로잉 = 4개. me 버튼 없음.
+    // 탭 버튼 2개 + alice follow.follow + bob follow.following = 4개. me 버튼 없음.
     expect(buttons).toHaveLength(4)
   })
 
@@ -91,9 +98,9 @@ describe('FollowListClient', () => {
     expect(screen.getByText('안녕')).toBeInTheDocument()
   })
 
-  it('bio 없고 recentActivity 있으면 "N일 전 아티클 발행"을 표시한다', () => {
+  it('bio 없고 recentActivity 있으면 follow.recentArticle 키로 표시한다', () => {
     render(<FollowListClient list={mockList} activeTab="followers" username="profileowner" />)
-    expect(screen.getByText('3일 전 아티클 발행')).toBeInTheDocument()
+    expect(screen.getByText('follow.recentArticle:{"days":3}')).toBeInTheDocument()
   })
 
   it('bio 없고 recentActivity도 없으면 "@username"을 표시한다', () => {
@@ -102,39 +109,39 @@ describe('FollowListClient', () => {
     expect(screen.getByText('@me')).toBeInTheDocument()
   })
 
-  it('followerCount를 "팔로워 N,NNN" 형식으로 표시한다', () => {
+  it('followerCount를 follow.followerCount 키로 표시한다', () => {
     render(<FollowListClient list={mockList} activeTab="followers" username="profileowner" />)
-    // bob: 5000 → "팔로워 5,000"
-    expect(screen.getByText('팔로워 5,000')).toBeInTheDocument()
-    // alice: 120 → "팔로워 120"
-    expect(screen.getByText('팔로워 120')).toBeInTheDocument()
+    // bob: 5000 → follow.followerCount:{"count":"5,000"}
+    expect(screen.getByText('follow.followerCount:{"count":"5,000"}')).toBeInTheDocument()
+    // alice: 120 → follow.followerCount:{"count":"120"}
+    expect(screen.getByText('follow.followerCount:{"count":"120"}')).toBeInTheDocument()
   })
 
-  it('"팔로워" 탭이 activeTab=followers일 때 활성 상태다', () => {
+  it('"follow.followers" 탭이 activeTab=followers일 때 활성 상태다', () => {
     render(<FollowListClient list={mockList} activeTab="followers" username="profileowner" />)
-    const followersTab = screen.getByRole('button', { name: '팔로워' })
+    const followersTab = screen.getByRole('button', { name: 'follow.followers' })
     expect(followersTab).toBeInTheDocument()
   })
 
-  it('"팔로잉" 탭 클릭 시 /profileowner/following으로 이동한다', async () => {
+  it('"follow.following" 탭 클릭 시 /profileowner/following으로 이동한다', async () => {
     const user = userEvent.setup()
     render(<FollowListClient list={mockList} activeTab="followers" username="profileowner" />)
     // 첫 번째가 탭 버튼
-    const followingTab = screen.getAllByRole('button', { name: '팔로잉' })[0]
+    const followingTab = screen.getAllByRole('button', { name: 'follow.following' })[0]
     await user.click(followingTab)
     expect(mockReplace).toHaveBeenCalledWith('/profileowner/following')
   })
 
-  it('"팔로워" 탭 클릭 시 /profileowner/followers로 이동한다', async () => {
+  it('"follow.followers" 탭 클릭 시 /profileowner/followers로 이동한다', async () => {
     const user = userEvent.setup()
     render(<FollowListClient list={mockList} activeTab="following" username="profileowner" />)
-    const followersTab = screen.getByRole('button', { name: '팔로워' })
+    const followersTab = screen.getByRole('button', { name: 'follow.followers' })
     await user.click(followersTab)
     expect(mockReplace).toHaveBeenCalledWith('/profileowner/followers')
   })
 
-  it('목록이 비어있으면 빈 상태 메시지를 표시한다', () => {
+  it('목록이 비어있으면 follow.empty 메시지를 표시한다', () => {
     render(<FollowListClient list={[]} activeTab="followers" username="profileowner" />)
-    expect(screen.getByText('아직 없어요')).toBeInTheDocument()
+    expect(screen.getByText('follow.empty')).toBeInTheDocument()
   })
 })
