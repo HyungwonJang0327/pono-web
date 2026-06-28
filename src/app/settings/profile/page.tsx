@@ -16,13 +16,14 @@ export default async function ProfileEditPage() {
 
   if (!res.ok) redirect('/login')
 
-  const user = await res.json() as { username: string; bio: string | null; avatar: string | null }
+  const user = await res.json() as { username: string; bio: string | null; avatar: string | null; locale: string | null }
 
   return (
     <ProfileEditClient
       initialUsername={user.username}
       initialBio={user.bio}
       initialAvatar={user.avatar}
+      initialLocale={user.locale}
     />
   )
 }

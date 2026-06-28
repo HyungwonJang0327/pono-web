@@ -7,10 +7,17 @@ import { ChevronLeft, Camera } from 'lucide-react'
 import { useToastContext } from '@/components/ui'
 import { updateUserProfile } from '@/services/user.service'
 
+const LOCALES = [
+  { value: 'ko', label: '한국어' },
+  { value: 'en', label: 'English' },
+  { value: 'ja', label: '日本語' },
+] as const
+
 interface ProfileEditClientProps {
   initialUsername: string
   initialBio: string | null
   initialAvatar: string | null
+  initialLocale: string | null
 }
 
 const BIO_MAX = 80
@@ -19,6 +26,7 @@ export default function ProfileEditClient({
   initialUsername,
   initialBio,
   initialAvatar,
+  initialLocale,
 }: ProfileEditClientProps) {
   const router = useRouter()
   const { getToken } = useAuth()
@@ -26,9 +34,12 @@ export default function ProfileEditClient({
 
   const [username, setUsername] = useState(initialUsername)
   const [bio, setBio] = useState(initialBio ?? '')
+  const [locale, setLocale] = useState(initialLocale ?? 'ko')
 
   const isDirty =
-    username !== initialUsername || bio !== (initialBio ?? '')
+    username !== initialUsername ||
+    bio !== (initialBio ?? '') ||
+    locale !== (initialLocale ?? 'ko')
 
   const handleBioChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length <= BIO_MAX) {
@@ -39,8 +50,10 @@ export default function ProfileEditClient({
   const handleSave = async () => {
     try {
       const token = (await getToken()) ?? ''
-      await updateUserProfile({ username, bio }, token)
+      await updateUserProfile({ username, bio, locale }, token)
+      document.cookie = `locale=${locale}; path=/; max-age=31536000; SameSite=Lax`
       toast.success('저장되었어요')
+      router.refresh()
       router.back()
     } catch {
       toast.error('저장에 실패했어요')
@@ -153,6 +166,28 @@ export default function ProfileEditClient({
             >
               {bio.length} / {BIO_MAX}
             </p>
+          </div>
+        </div>
+
+        {/* 언어 선택 */}
+        <div className="mb-6">
+          <p className="block text-[14px] text-[#57534E] mb-2">언어</p>
+          <div className="flex gap-2">
+            {LOCALES.map((l) => (
+              <button
+                key={l.value}
+                type="button"
+                onClick={() => setLocale(l.value)}
+                className={[
+                  'flex-1 h-[48px] rounded-[8px] text-[15px] font-medium',
+                  locale === l.value
+                    ? 'bg-primary-700 text-white'
+                    : 'bg-[#EFEDE6] text-neutral-700',
+                ].join(' ')}
+              >
+                {l.label}
+              </button>
+            ))}
           </div>
         </div>
 

@@ -57,7 +57,7 @@ export async function getFollowing(
  * PATCH /users/me
  */
 export async function updateUserProfile(
-  data: { username?: string; bio?: string },
+  data: { username?: string; bio?: string; locale?: string },
   token: string,
 ): Promise<void> {
   await api.patch<void>('/users/me', data, token)
