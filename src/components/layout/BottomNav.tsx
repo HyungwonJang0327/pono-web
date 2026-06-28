@@ -6,6 +6,7 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { useTranslations } from 'next-intl'
 
 export interface BottomNavProps {
   isWebView?: boolean // 추후 WebView 숨김 처리용 (현재 미사용)
@@ -13,6 +14,7 @@ export interface BottomNavProps {
 
 export default function BottomNav({ isWebView }: BottomNavProps) {
   const pathname = usePathname()
+  const t = useTranslations('nav')
 
   const isHomeActive = pathname === '/'
   const isExploreActive = pathname === '/explore'
@@ -26,7 +28,7 @@ export default function BottomNav({ isWebView }: BottomNavProps) {
             <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
             <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
-          <span className="text-[9px] font-medium">홈</span>
+          <span className="text-[9px] font-medium">{t('home')}</span>
         </button>
 
         <button className={`flex flex-col items-center gap-0.5 ${isExploreActive ? 'text-primary-700' : 'text-neutral-400'}`}>
@@ -34,7 +36,7 @@ export default function BottomNav({ isWebView }: BottomNavProps) {
             <circle cx="11" cy="11" r="8"/>
             <path d="m21 21-4.35-4.35"/>
           </svg>
-          <span className="text-[9px] font-medium">탐색</span>
+          <span className="text-[9px] font-medium">{t('explore')}</span>
         </button>
 
         {/* FAB */}
@@ -50,7 +52,7 @@ export default function BottomNav({ isWebView }: BottomNavProps) {
 
         <button className={`flex flex-col items-center gap-0.5 ${isProfileActive ? 'text-primary-700' : 'text-neutral-400'}`}>
           <div className="w-5.5 h-5.5 rounded-full bg-neutral-300" />
-          <span className="text-[9px] font-medium">프로필</span>
+          <span className="text-[9px] font-medium">{t('profile')}</span>
         </button>
 
         <div className="w-10" />
