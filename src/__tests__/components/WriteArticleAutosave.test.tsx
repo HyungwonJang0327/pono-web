@@ -63,7 +63,7 @@ describe('WriteArticlePage 자동저장 실패 표시', () => {
     render(<WriteArticlePage />)
 
     // 제목 입력 → 자동저장 예약
-    const titleInput = screen.getByPlaceholderText('제목을 입력하세요')
+    const titleInput = screen.getByPlaceholderText('writeArticle.titlePlaceholder')
     act(() => {
       titleInput.focus()
     })
@@ -82,6 +82,6 @@ describe('WriteArticlePage 자동저장 실패 표시', () => {
       jest.advanceTimersByTime(30_000)
     })
 
-    await waitFor(() => expect(screen.getByText('저장 실패')).toBeInTheDocument())
+    await waitFor(() => expect(screen.getByText('writeArticle.saveError')).toBeInTheDocument())
   })
 })

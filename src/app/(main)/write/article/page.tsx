@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { useEditor, EditorContent } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import Link from '@tiptap/extension-link'
@@ -67,6 +68,7 @@ function ToolbarBtn({ onClick, isActive, label, children }: ToolbarBtnProps) {
 export default function WriteArticlePage() {
   const router = useRouter()
   const toast = useToast()
+  const t = useTranslations('writeArticle')
   const getErrorMessage = useErrorMessage()
   const { isLoaded, isSignedIn, getToken } = useAuth()
 
@@ -93,7 +95,7 @@ export default function WriteArticlePage() {
       Link.configure({ openOnClick: false, autolink: false }),
       Image.configure({ inline: false }),
       Placeholder.configure({
-        placeholder: '내용을 입력하세요...',
+        placeholder: t('bodyPlaceholder'),
       }),
     ],
     editorProps: {
@@ -171,7 +173,7 @@ export default function WriteArticlePage() {
 
     try {
       const token = await getToken()
-      if (!token) { toast.error('로그인이 필요합니다.'); return }
+      if (!token) { toast.error(t('loginRequired')); return }
 
       // 미리보기
       const localUrl = URL.createObjectURL(file)
@@ -185,7 +187,7 @@ export default function WriteArticlePage() {
       setCoverImage(fileUrl)
       setCoverPreview(fileUrl)
     } catch {
-      toast.error('커버 이미지 업로드에 실패했습니다.')
+      toast.error(t('coverUploadError'))
       setCoverPreview(null)
     }
   }
@@ -205,7 +207,7 @@ export default function WriteArticlePage() {
 
     try {
       const token = await getToken()
-      if (!token) { toast.error('로그인이 필요합니다.'); return }
+      if (!token) { toast.error(t('loginRequired')); return }
 
       const { blob } = await compressImage(file)
       const { uploadUrl, fileUrl } = await getPresignedUrl(file.name, file.type || 'image/jpeg', token)
@@ -213,7 +215,7 @@ export default function WriteArticlePage() {
 
       editor.chain().focus().setImage({ src: fileUrl }).run()
     } catch {
-      toast.error('이미지 업로드에 실패했습니다.')
+      toast.error(t('imageUploadError'))
     }
   }
 
@@ -239,7 +241,7 @@ export default function WriteArticlePage() {
     setIsPublishing(true)
     try {
       const token = await getToken()
-      if (!token) { toast.error('로그인이 필요합니다.'); return }
+      if (!token) { toast.error(t('loginRequired')); return }
 
       const body = editor?.getJSON() ?? {}
 
@@ -257,7 +259,7 @@ export default function WriteArticlePage() {
         )
       }
 
-      toast.success('아티클이 게시되었습니다.')
+      toast.success(t('publishSuccess'))
       // 포스트 상세 페이지로 이동
       router.push(`/${result.author.username}/${result.id}`)
     } catch (err) {
@@ -281,7 +283,7 @@ export default function WriteArticlePage() {
           onClick={() => router.back()}
           className="text-[14px] text-neutral-600 font-medium"
         >
-          취소
+          {t('cancel')}
         </button>
 
         {/* 저장 상태 */}
@@ -291,9 +293,9 @@ export default function WriteArticlePage() {
             saveStatus === 'error' ? 'text-red-500' : 'text-neutral-400',
           ].join(' ')}
         >
-          {saveStatus === 'saving' && '저장 중...'}
-          {saveStatus === 'saved' && '저장됨'}
-          {saveStatus === 'error' && '저장 실패'}
+          {saveStatus === 'saving' && t('saving')}
+          {saveStatus === 'saved' && t('saved')}
+          {saveStatus === 'error' && t('saveError')}
         </span>
 
         <button
@@ -307,7 +309,7 @@ export default function WriteArticlePage() {
               : 'bg-neutral-300 text-neutral-500 cursor-not-allowed',
           ].join(' ')}
         >
-          {isPublishing ? '게시 중...' : '게시'}
+          {isPublishing ? t('publishing') : t('publish')}
         </button>
       </div>
 
@@ -316,10 +318,10 @@ export default function WriteArticlePage() {
         {coverPreview ? (
           <div className="relative w-full aspect-[16/9] rounded-[var(--radius-lg)] overflow-hidden bg-neutral-200">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={coverPreview} alt="커버 이미지" className="w-full h-full object-cover" />
+            <img src={coverPreview} alt={t('coverAlt')} className="w-full h-full object-cover" />
             <button
               type="button"
-              aria-label="커버 이미지 삭제"
+              aria-label={t('removeCover')}
               onClick={removeCoverImage}
               className="absolute top-2 right-2 w-7 h-7 rounded-full bg-neutral-900/60 flex items-center justify-center text-white"
             >
@@ -333,7 +335,7 @@ export default function WriteArticlePage() {
             className="w-full h-20 rounded-[var(--radius-lg)] border-2 border-dashed border-neutral-300 flex items-center justify-center gap-2 text-neutral-400 bg-white hover:bg-neutral-50 transition-colors"
           >
             <ImageIcon size={18} strokeWidth={1.5} />
-            <span className="text-[13px] font-medium">커버 이미지 추가 (선택)</span>
+            <span className="text-[13px] font-medium">{t('addCover')}</span>
           </button>
         )}
         <input ref={coverInputRef} type="file" accept="image/*" className="hidden" onChange={handleCoverImageChange} />
@@ -343,7 +345,7 @@ export default function WriteArticlePage() {
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          placeholder="제목을 입력하세요"
+          placeholder={t('titlePlaceholder')}
           className="w-full bg-transparent text-[22px] font-bold text-neutral-900 placeholder:text-neutral-300 outline-none"
         />
 
@@ -353,42 +355,42 @@ export default function WriteArticlePage() {
         {/* 툴바 */}
         <div className="sticky top-14 z-10 bg-neutral-100 rounded-[var(--radius-sm)] flex flex-wrap items-center gap-0.5 p-1.5">
           <ToolbarBtn
-            label="굵게"
+            label={t('toolbarBold')}
             isActive={editor?.isActive('bold')}
             onClick={() => editor?.chain().focus().toggleBold().run()}
           >
             <Bold size={15} strokeWidth={2} />
           </ToolbarBtn>
           <ToolbarBtn
-            label="기울임"
+            label={t('toolbarItalic')}
             isActive={editor?.isActive('italic')}
             onClick={() => editor?.chain().focus().toggleItalic().run()}
           >
             <Italic size={15} strokeWidth={2} />
           </ToolbarBtn>
           <ToolbarBtn
-            label="제목 1"
+            label={t('toolbarHeading1')}
             isActive={editor?.isActive('heading', { level: 1 })}
             onClick={() => editor?.chain().focus().toggleHeading({ level: 1 }).run()}
           >
             <Heading1 size={15} strokeWidth={2} />
           </ToolbarBtn>
           <ToolbarBtn
-            label="제목 2"
+            label={t('toolbarHeading2')}
             isActive={editor?.isActive('heading', { level: 2 })}
             onClick={() => editor?.chain().focus().toggleHeading({ level: 2 }).run()}
           >
             <Heading2 size={15} strokeWidth={2} />
           </ToolbarBtn>
           <ToolbarBtn
-            label="인용구"
+            label={t('toolbarQuote')}
             isActive={editor?.isActive('blockquote')}
             onClick={() => editor?.chain().focus().toggleBlockquote().run()}
           >
             <Quote size={15} strokeWidth={2} />
           </ToolbarBtn>
           <ToolbarBtn
-            label="링크"
+            label={t('toolbarLink')}
             isActive={editor?.isActive('link')}
             onClick={() => {
               const prev = editor?.getAttributes('link').href ?? ''
@@ -399,7 +401,7 @@ export default function WriteArticlePage() {
             <LinkIcon size={15} strokeWidth={2} />
           </ToolbarBtn>
           <ToolbarBtn
-            label="이미지 삽입"
+            label={t('toolbarImage')}
             onClick={() => editorImageInputRef.current?.click()}
           >
             <ImageIcon size={15} strokeWidth={2} />
@@ -413,7 +415,7 @@ export default function WriteArticlePage() {
                 value={linkHref}
                 onChange={(e) => setLinkHref(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter') applyLink() }}
-                placeholder="https://..."
+                placeholder={t('linkPlaceholder')}
                 className="flex-1 bg-white border border-neutral-300 rounded-[var(--radius-sm)] px-2.5 py-1 text-[13px] outline-none focus:border-primary-500"
                 autoFocus
               />
@@ -422,7 +424,7 @@ export default function WriteArticlePage() {
                 onMouseDown={(e) => { e.preventDefault(); applyLink() }}
                 className="px-3 py-1 bg-primary-700 text-white text-[13px] font-medium rounded-[var(--radius-sm)]"
               >
-                적용
+                {t('apply')}
               </button>
             </div>
           )}

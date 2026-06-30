@@ -3,6 +3,7 @@
 import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { X, ImagePlus } from 'lucide-react'
 import { useToast } from '@/hooks/useToast'
 import { LoginRequired } from '@/components/ui'
@@ -26,6 +27,7 @@ interface SelectedImage {
 export default function WriteSnapPage() {
   const router = useRouter()
   const toast = useToast()
+  const t = useTranslations('writeSnap')
   const { isLoaded, isSignedIn, getToken } = useAuth()
 
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -70,7 +72,7 @@ export default function WriteSnapPage() {
     try {
       const token = await getToken()
       if (!token) {
-        toast.error('로그인이 필요합니다.')
+        toast.error(t('loginRequired'))
         return
       }
 
@@ -98,10 +100,10 @@ export default function WriteSnapPage() {
         token,
       )
 
-      toast.success('스냅이 게시되었습니다.')
+      toast.success(t('publishSuccess'))
       router.push('/')
     } catch {
-      toast.error('게시에 실패했습니다. 다시 시도해 주세요.')
+      toast.error(t('publishError'))
     } finally {
       setIsSubmitting(false)
     }
@@ -120,9 +122,9 @@ export default function WriteSnapPage() {
           onClick={() => router.back()}
           className="text-[14px] text-neutral-600 font-medium"
         >
-          취소
+          {t('cancel')}
         </button>
-        <span className="text-[15px] font-semibold text-neutral-900">새 스냅</span>
+        <span className="text-[15px] font-semibold text-neutral-900">{t('headerTitle')}</span>
         <button
           type="button"
           onClick={handleSubmit}
@@ -134,7 +136,7 @@ export default function WriteSnapPage() {
               : 'bg-neutral-300 text-neutral-500 cursor-not-allowed',
           ].join(' ')}
         >
-          {isSubmitting ? '게시 중...' : '게시'}
+          {isSubmitting ? t('publishing') : t('publish')}
         </button>
       </div>
 
@@ -151,12 +153,12 @@ export default function WriteSnapPage() {
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={img.previewUrl}
-                  alt={`선택된 이미지 ${idx + 1}`}
+                  alt={t('selectedImageAlt', { index: idx + 1 })}
                   className="w-full h-full object-cover"
                 />
                 <button
                   type="button"
-                  aria-label={`이미지 ${idx + 1} 삭제`}
+                  aria-label={t('removeImage', { index: idx + 1 })}
                   onClick={() => removeImage(idx)}
                   className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-neutral-900/60 flex items-center justify-center text-white"
                 >
@@ -174,7 +176,7 @@ export default function WriteSnapPage() {
               >
                 <ImagePlus size={22} strokeWidth={1.5} />
                 <span className="text-[11px] font-medium">
-                  {images.length === 0 ? '사진 추가' : `${images.length}/${MAX_IMAGES}`}
+                  {images.length === 0 ? t('addPhotoShort') : `${images.length}/${MAX_IMAGES}`}
                 </span>
               </button>
             )}
@@ -189,8 +191,8 @@ export default function WriteSnapPage() {
             >
               <ImagePlus size={32} strokeWidth={1.5} />
               <div className="text-center">
-                <p className="text-[14px] font-medium text-neutral-600">사진을 추가하세요</p>
-                <p className="text-[12px] text-neutral-400 mt-0.5">최대 {MAX_IMAGES}장</p>
+                <p className="text-[14px] font-medium text-neutral-600">{t('addPhotos')}</p>
+                <p className="text-[12px] text-neutral-400 mt-0.5">{t('maxPhotos', { max: MAX_IMAGES })}</p>
               </div>
             </button>
           )}
@@ -208,14 +210,14 @@ export default function WriteSnapPage() {
         {/* 캡션 입력 */}
         <div className="flex flex-col gap-1.5">
           <label className="text-[13px] font-medium text-neutral-600" htmlFor="caption">
-            캡션
+            {t('captionLabel')}
           </label>
           <div className="relative">
             <textarea
               id="caption"
               value={caption}
               onChange={(e) => setCaption(e.target.value.slice(0, MAX_CAPTION))}
-              placeholder="이 순간에 대해 써보세요..."
+              placeholder={t('captionPlaceholder')}
               rows={4}
               className="w-full bg-neutral-200 rounded-[var(--radius-sm)] px-3.5 py-3 text-[14px] text-neutral-900 placeholder:text-neutral-400 resize-none outline-none focus:ring-2 focus:ring-primary-500/30"
             />
