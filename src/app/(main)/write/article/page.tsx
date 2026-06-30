@@ -19,6 +19,7 @@ import {
   X,
 } from 'lucide-react'
 import { useToast } from '@/hooks/useToast'
+import { useErrorMessage } from '@/hooks/useErrorMessage'
 import { LoginRequired } from '@/components/ui'
 import { compressImage } from '@/lib/image'
 import {
@@ -31,7 +32,7 @@ import {
 // ── 자동저장 디바운스 (30초) ──────────────────────────────────────────────────
 const AUTOSAVE_DELAY_MS = 30_000
 
-type SaveStatus = 'idle' | 'saving' | 'saved'
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error'
 
 // ── 툴바 버튼 공통 컴포넌트 ──────────────────────────────────────────────────
 
@@ -66,6 +67,7 @@ function ToolbarBtn({ onClick, isActive, label, children }: ToolbarBtnProps) {
 export default function WriteArticlePage() {
   const router = useRouter()
   const toast = useToast()
+  const getErrorMessage = useErrorMessage()
   const { isLoaded, isSignedIn, getToken } = useAuth()
 
   const [title, setTitle] = useState('')
@@ -137,7 +139,8 @@ export default function WriteArticlePage() {
         }
         setSaveStatus('saved')
       } catch {
-        setSaveStatus('idle')
+        // 자동저장 실패를 사용자에게 표시 (이전엔 무알림)
+        setSaveStatus('error')
       }
     }, AUTOSAVE_DELAY_MS)
   }, [title, editor, getToken, draftId])
@@ -257,8 +260,9 @@ export default function WriteArticlePage() {
       toast.success('아티클이 게시되었습니다.')
       // 포스트 상세 페이지로 이동
       router.push(`/${result.author.username}/${result.id}`)
-    } catch {
-      toast.error('게시에 실패했습니다. 다시 시도해 주세요.')
+    } catch (err) {
+      // 서버 code(ARTICLE_TITLE_REQUIRED 등) 기반 메시지 노출
+      toast.error(getErrorMessage(err))
     } finally {
       setIsPublishing(false)
     }
@@ -281,9 +285,15 @@ export default function WriteArticlePage() {
         </button>
 
         {/* 저장 상태 */}
-        <span className="text-[12px] text-neutral-400">
+        <span
+          className={[
+            'text-[12px]',
+            saveStatus === 'error' ? 'text-red-500' : 'text-neutral-400',
+          ].join(' ')}
+        >
           {saveStatus === 'saving' && '저장 중...'}
           {saveStatus === 'saved' && '저장됨'}
+          {saveStatus === 'error' && '저장 실패'}
         </span>
 
         <button
