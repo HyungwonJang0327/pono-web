@@ -1,5 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import { koKR } from "@clerk/localizations";
+import { koKR, enUS, jaJP } from "@clerk/localizations";
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Noto_Serif_KR } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
@@ -26,6 +26,8 @@ export const metadata: Metadata = {
   description: "짧은 스냅과 깊이 있는 아티클을 함께 발견하는 플랫폼",
 };
 
+const clerkLocalizations = { ko: koKR, en: enUS, ja: jaJP } as const;
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -33,6 +35,8 @@ export default async function RootLayout({
 }>) {
   const locale = await getLocale();
   const messages = await getMessages();
+  const clerkLocalization =
+    clerkLocalizations[locale as keyof typeof clerkLocalizations] ?? koKR;
 
   return (
     <html
@@ -55,7 +59,7 @@ export default async function RootLayout({
     return _push(state, unused, url);
   };
 })();` }} />
-        <ClerkProvider localization={koKR}>
+        <ClerkProvider localization={clerkLocalization}>
           <NextIntlClientProvider locale={locale} messages={messages}>
             <Providers>{children}</Providers>
           </NextIntlClientProvider>
