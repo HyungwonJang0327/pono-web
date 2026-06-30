@@ -1,6 +1,5 @@
+import { api } from '@/lib/api'
 import { FeedItemDto } from '@/types/post'
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3005'
 
 export interface FeedResponse {
   items: FeedItemDto[]
@@ -17,19 +16,6 @@ export async function fetchFeed(params: {
   const searchParams = new URLSearchParams({ tab })
   if (cursor) searchParams.set('cursor', cursor)
 
-  const res = await fetch(`${API_BASE}/feed?${searchParams}`, {
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-    },
-    cache: 'no-store',
-  })
-
-  if (!res.ok) {
-    const err = new Error(`Feed API error: ${res.status}`) as Error & { status: number }
-    err.status = res.status
-    throw err
-  }
-
-  return res.json()
+  // 공통 api 래퍼로 통합 → ApiError 형태 일관화
+  return api.get<FeedResponse>(`/feed?${searchParams.toString()}`, token ?? undefined)
 }
