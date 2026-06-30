@@ -33,6 +33,44 @@ async function typeValidUsername() {
   return screen.getByRole('button', { name: 'onboarding.submit' })
 }
 
+describe('OnboardingUsernamePage username 검증 (백엔드 규칙: /^[a-zA-Z0-9]+$/, 2~20자)', () => {
+  it('대문자가 포함된 이름을 허용한다', async () => {
+    render(<OnboardingUsernamePage />)
+    const input = screen.getByPlaceholderText('onboarding.usernamePlaceholder')
+    await userEvent.type(input, 'JaneDoe')
+
+    expect(screen.getByText('onboarding.usernameAvailable')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'onboarding.submit' })).not.toBeDisabled()
+  })
+
+  it('2자 이름을 허용한다', async () => {
+    render(<OnboardingUsernamePage />)
+    const input = screen.getByPlaceholderText('onboarding.usernamePlaceholder')
+    await userEvent.type(input, 'ab')
+
+    expect(screen.getByText('onboarding.usernameAvailable')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'onboarding.submit' })).not.toBeDisabled()
+  })
+
+  it('1자 이름은 너무 짧다고 안내한다', async () => {
+    render(<OnboardingUsernamePage />)
+    const input = screen.getByPlaceholderText('onboarding.usernamePlaceholder')
+    await userEvent.type(input, 'a')
+
+    expect(screen.getByText('onboarding.usernameTooShort')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'onboarding.submit' })).toBeDisabled()
+  })
+
+  it('밑줄(_)이 포함된 이름을 거부한다', async () => {
+    render(<OnboardingUsernamePage />)
+    const input = screen.getByPlaceholderText('onboarding.usernamePlaceholder')
+    await userEvent.type(input, 'jane_doe')
+
+    expect(screen.getByText('onboarding.usernameInvalidChars')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'onboarding.submit' })).toBeDisabled()
+  })
+})
+
 describe('OnboardingUsernamePage 에러 처리', () => {
   it('409 충돌 시 이미 사용 중 메시지를 노출한다', async () => {
     mockUpdate.mockRejectedValue(new ApiError({ status: 409, code: 'USERNAME_TAKEN' }))

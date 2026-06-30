@@ -21,10 +21,10 @@ function validateUsername(
   if (RESERVED_USERNAMES.includes(value.toLowerCase())) {
     return { state: 'error', message: t('usernameReserved') };
   }
-  if (!/^[a-z0-9_]+$/.test(value)) {
+  if (!/^[a-zA-Z0-9]+$/.test(value)) {
     return { state: 'error', message: t('usernameInvalidChars') };
   }
-  if (value.length < 3) {
+  if (value.length < 2) {
     return { state: 'error', message: t('usernameTooShort') };
   }
   if (value.length > 20) {
