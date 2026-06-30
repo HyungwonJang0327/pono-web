@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
 import { User, Plus, Pencil, Check } from 'lucide-react';
 import { RESERVED_USERNAMES } from '@/constants';
+import { updateUserProfile } from '@/services/user.service';
+import { ApiError } from '@/lib/api';
 
 type ValidationState = 'idle' | 'valid' | 'error';
 
@@ -37,6 +39,7 @@ export default function OnboardingUsernamePage() {
   const [isFocused, setIsFocused] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [conflictError, setConflictError] = useState(false);
+  const [submitError, setSubmitError] = useState(false);
 
   const { state: validationState, message: validationMessage } = validateUsername(username);
   const isValid = validationState === 'valid';
@@ -61,32 +64,26 @@ export default function OnboardingUsernamePage() {
     const raw = e.target.value.replace(/^@/, '');
     setUsername(raw);
     setConflictError(false);
+    setSubmitError(false);
   }, []);
 
   const handleSubmit = useCallback(async () => {
     if (!isValid) return;
     setIsSubmitting(true);
     setConflictError(false);
+    setSubmitError(false);
     try {
-      const token = await getToken();
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3005'}/users/me`,
-        {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({ username }),
-        }
-      );
-      if (res.ok) {
-        router.refresh();
-        router.push('/');
-      } else if (res.status === 409) {
+      const token = (await getToken()) ?? '';
+      await updateUserProfile({ username }, token);
+      router.refresh();
+      router.push('/');
+    } catch (err) {
+      // 409(USERNAME_TAKEN)은 충돌 안내, 그 외 에러는 일반 안내 + 버튼 재활성
+      if (err instanceof ApiError && (err.status === 409 || err.code === 'USERNAME_TAKEN')) {
         setConflictError(true);
+      } else {
+        setSubmitError(true);
       }
-      // 기타 에러는 버튼만 다시 활성화 (finally에서 처리)
     } finally {
       setIsSubmitting(false);
     }
@@ -201,7 +198,11 @@ export default function OnboardingUsernamePage() {
           </div>
 
           {/* 안내/유효성 메시지 */}
-          {conflictError ? (
+          {submitError ? (
+            <p className="mt-2 text-[13px] text-red-500">
+              잠시 후 다시 시도해 주세요.
+            </p>
+          ) : conflictError ? (
             <p className="mt-2 text-[13px] text-red-500">
               이미 사용 중인 이름이에요.
             </p>
