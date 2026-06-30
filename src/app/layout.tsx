@@ -3,7 +3,7 @@ import { koKR, enUS, jaJP } from "@clerk/localizations";
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Noto_Serif_KR } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
-import { getLocale, getMessages } from "next-intl/server";
+import { getLocale, getMessages, getTranslations } from "next-intl/server";
 import "./globals.css";
 import { Providers } from "@/providers";
 
@@ -21,10 +21,13 @@ const notoSerifKR = Noto_Serif_KR({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: "Pono",
-  description: "짧은 스냅과 깊이 있는 아티클을 함께 발견하는 플랫폼",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("metadata");
+  return {
+    title: "Pono",
+    description: t("description"),
+  };
+}
 
 const clerkLocalizations = { ko: koKR, en: enUS, ja: jaJP } as const;
 
