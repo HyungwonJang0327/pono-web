@@ -61,6 +61,8 @@ export default function ArticleCard({ post }: ArticleCardProps) {
       {/* 커버 이미지 16:9 */}
       {post.coverImage && (
         <div className="relative w-full aspect-[16/9]">
+          {/* 사용자 업로드 원격 이미지(S3). 동적 URL이라 next/image 대신 img 사용. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={post.coverImage}
             alt={post.title ?? undefined}
@@ -79,6 +81,7 @@ export default function ArticleCard({ post }: ArticleCardProps) {
         </p>
         <div className="flex items-center gap-2">
           {post.author.avatar ? (
+            // eslint-disable-next-line @next/next/no-img-element
             <img
               src={post.author.avatar}
               alt={post.author.username ?? undefined}

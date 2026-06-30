@@ -63,6 +63,8 @@ export default function SnapMiniCard({ post, aspectRatio }: SnapMiniCardProps) {
       {/* 이미지 */}
       <div className={`relative w-full ${aspectClass} bg-neutral-200`}>
         {image?.url && (
+          // 사용자 업로드 원격 이미지(S3). 동적 URL이라 next/image 대신 img 사용.
+          // eslint-disable-next-line @next/next/no-img-element
           <img
             src={image.url}
             alt={post.caption ?? undefined}
@@ -81,6 +83,7 @@ export default function SnapMiniCard({ post, aspectRatio }: SnapMiniCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 min-w-0">
             {post.author.avatar ? (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={post.author.avatar}
                 alt={post.author.username ?? undefined}

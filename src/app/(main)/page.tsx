@@ -34,32 +34,53 @@ export default function HomePage() {
 
   const { getToken, isSignedIn } = useAuth()
 
-  const loadFeed = async (tab: TabType) => {
+  // 피드를 로딩 상태로 되돌린다(탭 전환·재시도 공용). 누적 상태 초기화 포함.
+  const resetToLoading = useCallback(() => {
     setIsLoading(true)
     setError(false)
     setIsLoginRequired(false)
-    // 탭 전환 시 누적 상태 초기화
     setItems([])
     setCursor(null)
     setHasMore(false)
     setLoadMoreError(false)
+  }, [])
 
-    try {
-      const token = isSignedIn ? await getToken() : null
-      const data = await fetchFeed({ tab, token })
-      setItems(data.items)
-      setCursor(data.nextCursor)
-      setHasMore(data.hasMore)
-    } catch (e: unknown) {
-      if ((e as { status?: number })?.status === 401) {
-        setIsLoginRequired(true)
-        return
+  const loadFeed = useCallback(
+    async (tab: TabType) => {
+      try {
+        const token = isSignedIn ? await getToken() : null
+        const data = await fetchFeed({ tab, token })
+        setItems(data.items)
+        setCursor(data.nextCursor)
+        setHasMore(data.hasMore)
+      } catch (e: unknown) {
+        if ((e as { status?: number })?.status === 401) {
+          setIsLoginRequired(true)
+          return
+        }
+        setError(true)
+      } finally {
+        setIsLoading(false)
       }
-      setError(true)
-    } finally {
-      setIsLoading(false)
-    }
-  }
+    },
+    [isSignedIn, getToken],
+  )
+
+  // 재시도: 로딩 표시를 즉시 켠 뒤 다시 불러온다(이벤트 핸들러에서 동기 setState).
+  const retry = useCallback(() => {
+    resetToLoading()
+    loadFeed(activeTab)
+  }, [resetToLoading, loadFeed, activeTab])
+
+  // 탭 전환: 로딩 표시를 즉시 켜고 탭을 바꾼다. 실제 fetch는 effect가 담당.
+  const handleTabChange = useCallback(
+    (tab: TabType) => {
+      if (tab === activeTab) return
+      resetToLoading()
+      setActiveTab(tab)
+    },
+    [activeTab, resetToLoading],
+  )
 
   const loadMore = useCallback(async () => {
     // in-flight 가드 + 더 없거나 cursor 없으면 중단
@@ -91,10 +112,15 @@ export default function HomePage() {
     isLoading: isLoadingMore,
   })
 
+  // 최신 loadFeed를 ref로 들고 있어, auth 상태로 인한 함수 재생성이 재fetch를 유발하지 않게 한다.
+  const loadFeedRef = useRef(loadFeed)
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    loadFeed(activeTab)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    loadFeedRef.current = loadFeed
+  }, [loadFeed])
+
+  // activeTab 변경·마운트 시에만 데이터 fetch. setState는 모두 await 이후라 동기 cascading 없음.
+  useEffect(() => {
+    loadFeedRef.current(activeTab)
   }, [activeTab])
 
   return (
@@ -110,7 +136,7 @@ export default function HomePage() {
               <button
                 key={tab}
                 type="button"
-                onClick={() => setActiveTab(tab)}
+                onClick={() => handleTabChange(tab)}
                 className={[
                   'text-[14px] font-semibold pb-1.5 border-b-2 transition-colors',
                   isActive
@@ -182,7 +208,7 @@ export default function HomePage() {
       ) : error ? (
         <div className="fixed inset-x-0 top-[96px] bottom-0 flex items-center justify-center pointer-events-none">
           <div className="w-full max-w-[320px] pointer-events-auto">
-            <FeedErrorState onRetry={() => loadFeed(activeTab)} />
+            <FeedErrorState onRetry={retry} />
           </div>
         </div>
       ) : items.length === 0 && activeTab === 'following' ? (

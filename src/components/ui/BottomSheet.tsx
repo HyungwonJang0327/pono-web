@@ -26,32 +26,43 @@ interface BottomSheetProps {
  *   </BottomSheet>
  */
 export function BottomSheet({ isOpen, onClose, children }: BottomSheetProps) {
-  // isVisible: DOM 마운트 여부
+  // isOpen이 true가 되면 즉시 마운트(파생값), 퇴장 애니메이션 동안엔 isClosing으로 유지
   // isAnimating: 진입 클래스 적용 여부 (false면 퇴장 애니메이션)
-  const [isVisible, setIsVisible] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
   const [isAnimating, setIsAnimating] = useState(false)
   const sheetRef = useRef<HTMLDivElement>(null)
+  // 한 번이라도 열린 적이 있는지 (초기 닫힘 상태에서 퇴장 애니메이션 오발동 방지)
+  const wasOpenRef = useRef(false)
+
+  // 마운트 여부는 effect의 동기 setState 없이 props/state에서 파생
+  const isVisible = isOpen || isClosing
 
   useEffect(() => {
     if (isOpen) {
-      // 마운트 → 다음 프레임에 진입 애니메이션 적용
-      setIsVisible(true)
+      wasOpenRef.current = true
+      // 마운트된 다음 프레임에 진입 애니메이션 적용 (rAF 콜백 = 비동기 setState)
       const raf = requestAnimationFrame(() => {
         requestAnimationFrame(() => {
+          setIsClosing(false)
           setIsAnimating(true)
         })
       })
       return () => cancelAnimationFrame(raf)
-    } else {
-      // 퇴장 애니메이션 시작
-      setIsAnimating(false)
     }
+    // 처음부터 닫혀 있던 경우엔 아무 것도 하지 않는다
+    if (!wasOpenRef.current) return
+    // 열려 있던 시트가 닫힐 때: 다음 프레임에 퇴장 애니메이션 시작, 마운트는 transitionend까지 유지
+    const raf = requestAnimationFrame(() => {
+      setIsClosing(true)
+      setIsAnimating(false)
+    })
+    return () => cancelAnimationFrame(raf)
   }, [isOpen])
 
   // 퇴장 애니메이션 끝난 후 DOM 제거
   function handleTransitionEnd() {
     if (!isAnimating) {
-      setIsVisible(false)
+      setIsClosing(false)
     }
   }
 

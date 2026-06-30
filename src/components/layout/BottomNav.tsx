@@ -12,7 +12,7 @@ export interface BottomNavProps {
   isWebView?: boolean // 추후 WebView 숨김 처리용 (현재 미사용)
 }
 
-export default function BottomNav({ isWebView }: BottomNavProps) {
+export default function BottomNav({ isWebView: _isWebView }: BottomNavProps) {
   const pathname = usePathname()
   const t = useTranslations('nav')
 

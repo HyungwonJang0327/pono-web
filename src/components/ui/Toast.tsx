@@ -7,10 +7,21 @@ import React, {
   useEffect,
   useReducer,
   useRef,
-  useState,
+  useSyncExternalStore,
   type ReactNode,
 } from 'react'
 import { createPortal } from 'react-dom'
+
+// 하이드레이션 완료 여부 (서버=false, 클라이언트=true).
+// effect 내 setState 없이 SSR-safe하게 portal 마운트 시점을 가른다.
+const emptySubscribe = () => () => {}
+function useHydrated() {
+  return useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  )
+}
 
 // ── 타입 ──────────────────────────────────────────────────────────────────────
 
@@ -135,7 +146,7 @@ function ToastItemView({ item, onExited }: ToastItemProps) {
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, dispatch] = useReducer(toastReducer, [])
-  const [mounted, setMounted] = useState(false)
+  const mounted = useHydrated()
   /** id별 타이머 ref. 언마운트 시 정리 */
   const timers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map())
 
@@ -150,8 +161,6 @@ export function ToastProvider({ children }: { children: ReactNode }) {
 
     timers.current.set(id, timer)
   }, [])
-
-  useEffect(() => { setMounted(true) }, [])
 
   // 언마운트 시 타이머 전체 정리
   useEffect(() => {

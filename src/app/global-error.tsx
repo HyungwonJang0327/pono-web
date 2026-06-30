@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useSyncExternalStore } from 'react'
 
 // 루트 레이아웃을 대체하므로 next-intl Provider가 없다.
 // 쿠키/브라우저 언어로 로케일을 추정해 자체 사전에서 카피를 고른다.
@@ -32,12 +32,15 @@ export default function GlobalError({
   error: Error & { digest?: string }
   unstable_retry: () => void
 }) {
-  // 초기 SSR은 ko로 렌더하고 마운트 후 추정 로케일로 보정 (hydration 안전)
-  const [locale, setLocale] = useState<Locale>('ko')
+  // 초기 SSR은 ko로 렌더하고 하이드레이션 후 추정 로케일로 보정 (effect 내 setState 회피)
+  const locale = useSyncExternalStore(
+    () => () => {},
+    detectLocale,
+    () => 'ko' as Locale,
+  )
 
   useEffect(() => {
     console.error(error)
-    setLocale(detectLocale())
   }, [error])
 
   const copy = COPY[locale]

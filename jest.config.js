@@ -1,3 +1,5 @@
+// Jest 설정은 CommonJS 컨텍스트에서 로드되므로 require를 사용한다.
+/* eslint-disable @typescript-eslint/no-require-imports */
 const nextJest = require('next/jest')
 
 const createJestConfig = nextJest({ dir: './' })
