@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { useAuth, useClerk } from '@clerk/nextjs'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { BottomSheet, useToastContext } from '@/components/ui'
+import { NetworkErrorState } from '@/components/ui/NetworkErrorState'
 import { updateUserProfile } from '@/services/user.service'
 
 const LOCALE_LABELS: Record<string, string> = {
@@ -29,12 +30,15 @@ interface SettingsClientProps {
   username: string | null
   avatar: string | null
   locale: string | null
+  /** 로그인 상태인데 /users/me 조회가 실패한 경우 true */
+  loadFailed?: boolean
 }
 
 export default function SettingsClient({
   username,
   avatar,
   locale,
+  loadFailed = false,
 }: SettingsClientProps) {
   const router = useRouter()
   const { isSignedIn, getToken } = useAuth()
@@ -121,6 +125,13 @@ export default function SettingsClient({
             </div>
             <ChevronRight size={20} strokeWidth={1.5} className="text-[#B5B1A8] shrink-0" />
           </button>
+        ) : loadFailed ? (
+          <div
+            className="mt-6 w-full rounded-[10px] bg-white"
+            style={{ boxShadow: CARD_SHADOW }}
+          >
+            <NetworkErrorState onRetry={() => router.refresh()} />
+          </div>
         ) : (
           <button
             type="button"

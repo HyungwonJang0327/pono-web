@@ -52,12 +52,14 @@ function renderSettingsClient(overrides: {
   username?: string | null
   avatar?: string | null
   locale?: string | null
+  loadFailed?: boolean
 } = {}) {
   return render(
     <SettingsClient
       username={overrides.username === undefined ? 'testuser' : overrides.username}
       avatar={overrides.avatar ?? null}
       locale={overrides.locale ?? 'ko'}
+      loadFailed={overrides.loadFailed ?? false}
     />,
   )
 }
@@ -155,6 +157,20 @@ describe('SettingsClient', () => {
       const enRow = screen.getByRole('button', { name: 'English' })
       await userEvent.click(enRow)
       expect(updateUserProfile).not.toHaveBeenCalled()
+      expect(mockRouterRefresh).toHaveBeenCalled()
+    })
+  })
+
+  describe('프로필 로드 실패 상태', () => {
+    it('loadFailed면 로그인하기 카드 대신 에러/재시도를 노출한다', () => {
+      renderSettingsClient({ username: null, loadFailed: true })
+      expect(screen.queryByText('로그인하기')).not.toBeInTheDocument()
+      expect(screen.getByRole('button', { name: 'error.retry' })).toBeInTheDocument()
+    })
+
+    it('재시도 버튼 탭 시 router.refresh를 호출한다', async () => {
+      renderSettingsClient({ username: null, loadFailed: true })
+      await userEvent.click(screen.getByRole('button', { name: 'error.retry' }))
       expect(mockRouterRefresh).toHaveBeenCalled()
     })
   })
