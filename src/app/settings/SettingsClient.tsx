@@ -1,12 +1,26 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { useAuth } from '@clerk/nextjs'
+import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
+import { BottomSheet, useToastContext } from '@/components/ui'
+import { updateUserProfile } from '@/services/user.service'
 
 const LOCALE_LABELS: Record<string, string> = {
   ko: '한국어',
   en: 'English',
   ja: '日本語',
+}
+
+const LOCALES = [
+  { value: 'ko', label: '한국어' },
+  { value: 'en', label: 'English' },
+  { value: 'ja', label: '日本語' },
+] as const
+
+function persistLocaleCookie(value: string) {
+  document.cookie = `locale=${value}; path=/; max-age=31536000; SameSite=Lax`
 }
 
 const CARD_SHADOW = '0 1px 4px rgba(28,25,23,0.06)'
@@ -23,8 +37,32 @@ export default function SettingsClient({
   locale,
 }: SettingsClientProps) {
   const router = useRouter()
+  const { getToken } = useAuth()
+  const toast = useToastContext()
 
-  const localeLabel = LOCALE_LABELS[locale ?? 'ko'] ?? '한국어'
+  const [isSheetOpen, setIsSheetOpen] = useState(false)
+  const [currentLocale, setCurrentLocale] = useState(locale ?? 'ko')
+
+  const localeLabel = LOCALE_LABELS[currentLocale] ?? '한국어'
+
+  const handleSelectLocale = async (selected: string) => {
+    if (selected === currentLocale) {
+      setIsSheetOpen(false)
+      return
+    }
+    const previous = currentLocale
+    setCurrentLocale(selected)
+    try {
+      const token = (await getToken()) ?? ''
+      await updateUserProfile({ locale: selected }, token)
+      persistLocaleCookie(selected)
+      router.refresh()
+      setIsSheetOpen(false)
+    } catch {
+      setCurrentLocale(previous)
+      toast.error('오류가 발생했어요')
+    }
+  }
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -85,8 +123,7 @@ export default function SettingsClient({
           <p className="text-[12px] text-[#6B6760] mb-2">앱 설정</p>
           <button
             type="button"
-            // TODO: 언어 선택 바텀시트 (Figma 노드 확정 후 구현)
-            onClick={() => {}}
+            onClick={() => setIsSheetOpen(true)}
             className="w-full h-[52px] rounded-[10px] bg-white px-4 flex items-center text-left"
             style={{ boxShadow: CARD_SHADOW }}
           >
@@ -96,6 +133,38 @@ export default function SettingsClient({
           </button>
         </div>
       </div>
+
+      {/* 언어 선택 바텀시트 */}
+      <BottomSheet isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)}>
+        <p className="text-[17px] font-semibold text-[#1C1917]">언어 선택</p>
+        <div className="mt-3 -mx-5 border-t border-[#D4D1CA]">
+          {LOCALES.map((l, i) => {
+            const isSelected = l.value === currentLocale
+            return (
+              <button
+                key={l.value}
+                type="button"
+                onClick={() => handleSelectLocale(l.value)}
+                className={[
+                  'w-full h-[56px] px-5 flex items-center text-left',
+                  i > 0 ? 'border-t border-[#E8E6E1]' : '',
+                  isSelected ? 'bg-[#F0F7F4]' : 'bg-transparent',
+                ].join(' ')}
+              >
+                <span className="flex-1 text-[15px] text-[#1C1917]">{l.label}</span>
+                {isSelected && (
+                  <Check
+                    data-testid="locale-check"
+                    size={20}
+                    strokeWidth={1.5}
+                    className="text-[#1F4D3A]"
+                  />
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </BottomSheet>
     </div>
   )
 }

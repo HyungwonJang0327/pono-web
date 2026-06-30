@@ -26,6 +26,13 @@ jest.mock('@clerk/nextjs', () => ({
 
 jest.mock('@/components/ui', () => ({
   useToastContext: () => ({ error: mockToastError }),
+  BottomSheet: ({
+    isOpen,
+    children,
+  }: {
+    isOpen: boolean
+    children: React.ReactNode
+  }) => (isOpen ? <div role="dialog">{children}</div> : null),
 }))
 
 jest.mock('@/services/user.service', () => ({
