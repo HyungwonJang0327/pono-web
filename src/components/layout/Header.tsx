@@ -5,7 +5,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth, useUser, SignInButton } from '@clerk/nextjs'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Settings } from 'lucide-react'
 import { RESERVED_USERNAMES } from '@/constants'
 
 export interface HeaderProps {
@@ -59,6 +59,9 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
   // - 그 외: ChevronLeft 버튼
   const showLogo = isWebView === true || NO_BACK_PATHS.includes(pathname)
 
+  // 설정 진입: 홈 피드에서 로그인 사용자에게만 노출
+  const showSettings = pathname === '/' && isSignedIn && !!myUsername
+
   return (
     <header
       className={[
@@ -81,8 +84,19 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
           </button>
         )}
 
-        {/* 우측: 알림 + 프로필 */}
+        {/* 우측: 설정 + 알림 + 프로필 */}
         <div className="flex items-center gap-3">
+          {/* 설정 버튼 — 홈 피드 + 로그인 시에만 노출 */}
+          {showSettings && (
+            <button
+              type="button"
+              aria-label="설정"
+              onClick={() => router.push('/settings')}
+              className="w-7 h-7 flex items-center justify-center text-neutral-600"
+            >
+              <Settings size={20} strokeWidth={1.5} />
+            </button>
+          )}
           {/* 알림 버튼 — MVP에서 알림 기능 없음, 뱃지 미표시 */}
           <button className="w-7 h-7 flex items-center justify-center text-neutral-600">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
