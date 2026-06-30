@@ -4,7 +4,7 @@ import { useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, useClerk, useUser } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
-import { MoreHorizontal, MessageCircle } from 'lucide-react'
+import { MoreHorizontal, MessageCircle, ChevronLeft } from 'lucide-react'
 import Image from 'next/image'
 import { SnapLikeButton } from '@/components/ui/SnapLikeButton'
 import { BottomSheet } from '@/components/ui/BottomSheet'
@@ -155,9 +155,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
             onClick={() => router.back()}
             className="w-10 h-10 -ml-1 flex items-center justify-center text-neutral-900"
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
+            <ChevronLeft size={24} strokeWidth={1.5} />
           </button>
         )}
         {isWebView && <div />}

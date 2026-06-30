@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
-import { Camera, FileText } from 'lucide-react'
+import { Camera, FileText, Plus } from 'lucide-react'
 import { BottomSheet } from '@/components/ui'
 
 export default function WriteFab() {
@@ -41,10 +41,7 @@ export default function WriteFab() {
             className="w-[52px] h-[52px] bg-primary-700 rounded-full flex items-center justify-center shadow-[var(--shadow-md)] text-white"
             aria-label={t('write')}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19"/>
-              <line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
+            <Plus size={24} strokeWidth={2} />
           </button>
         </div>
       </div>

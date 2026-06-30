@@ -7,6 +7,7 @@ import type { FeedItemDto } from '@/types/post'
 
 jest.mock('@clerk/nextjs', () => ({
   useAuth: () => ({ isSignedIn: true, getToken: jest.fn().mockResolvedValue('token') }),
+  useUser: () => ({ user: { imageUrl: null, username: 'alice' } }),
 }))
 
 jest.mock('@/hooks/useToast', () => ({

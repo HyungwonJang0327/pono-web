@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { useAuth } from '@clerk/nextjs'
+import { useAuth, useUser } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
+import { Bell, User } from 'lucide-react'
 import FeedRenderer from '@/components/feed/FeedRenderer'
 import { FeedErrorState } from '@/components/feed/FeedErrorState'
 import { FeedEmptyState } from '@/components/feed/FeedEmptyState'
@@ -33,6 +34,7 @@ export default function HomePage() {
   const loadingMoreRef = useRef(false)
 
   const { getToken, isSignedIn } = useAuth()
+  const { user } = useUser()
 
   // 피드를 로딩 상태로 되돌린다(탭 전환·재시도 공용). 누적 상태 초기화 포함.
   const resetToLoading = useCallback(() => {
@@ -154,17 +156,21 @@ export default function HomePage() {
         <div className="tab-secondary-actions flex items-center gap-3">
           {/* 알림 버튼 — MVP에서 알림 기능 없음, 뱃지 미표시 */}
           <button className="w-7 h-7 flex items-center justify-center text-neutral-600">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
+            <Bell size={20} strokeWidth={1.5} />
           </button>
-          {/* 프로필 버튼 — 추후 Clerk avatar로 교체 예정 */}
+          {/* 프로필 버튼 — 로그인 + 아바타 있으면 Clerk avatar, 아니면 User 폴백 */}
           <button className="w-7 h-7 rounded-full bg-neutral-200 overflow-hidden flex items-center justify-center text-neutral-500">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-              <circle cx="12" cy="7" r="4"/>
-            </svg>
+            {isSignedIn && user?.imageUrl ? (
+              // Clerk 호스팅 원격 이미지. 동적 URL이라 next/image 대신 img 사용.
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={user.imageUrl}
+                alt={user.username ?? ''}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <User size={16} strokeWidth={1.5} />
+            )}
           </button>
         </div>
       </div>

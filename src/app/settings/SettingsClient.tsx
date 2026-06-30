@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, useClerk } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
-import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
+import { ChevronLeft, ChevronRight, Check, User } from 'lucide-react'
 import { BottomSheet, useToastContext } from '@/components/ui'
 import { NetworkErrorState } from '@/components/ui/NetworkErrorState'
 import { updateUserProfile } from '@/services/user.service'
@@ -143,10 +143,7 @@ export default function SettingsClient({
             style={{ boxShadow: CARD_SHADOW }}
           >
             <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-neutral-200 text-neutral-500 shrink-0">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                <circle cx="12" cy="7" r="4" />
-              </svg>
+              <User size={20} strokeWidth={1.5} />
             </div>
             <div className="ml-3 min-w-0 flex-1">
               <p className="text-[15px] font-semibold text-neutral-900 truncate">
