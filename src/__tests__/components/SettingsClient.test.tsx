@@ -1,16 +1,35 @@
 'use client'
 
-import { render, screen } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import SettingsClient from '@/app/settings/SettingsClient'
+import { updateUserProfile } from '@/services/user.service'
 
 // ── 모킹 ──────────────────────────────────────────────────────────────────────
 
 const mockRouterBack = jest.fn()
 const mockRouterPush = jest.fn()
+const mockRouterRefresh = jest.fn()
+const mockToastError = jest.fn()
 
 jest.mock('next/navigation', () => ({
-  useRouter: () => ({ back: mockRouterBack, push: mockRouterPush }),
+  useRouter: () => ({
+    back: mockRouterBack,
+    push: mockRouterPush,
+    refresh: mockRouterRefresh,
+  }),
+}))
+
+jest.mock('@clerk/nextjs', () => ({
+  useAuth: () => ({ getToken: jest.fn().mockResolvedValue('token') }),
+}))
+
+jest.mock('@/components/ui', () => ({
+  useToastContext: () => ({ error: mockToastError }),
+}))
+
+jest.mock('@/services/user.service', () => ({
+  updateUserProfile: jest.fn().mockResolvedValue(undefined),
 }))
 
 // ── 헬퍼 ──────────────────────────────────────────────────────────────────────
@@ -64,5 +83,30 @@ describe('SettingsClient', () => {
     const backButton = screen.getByRole('button', { name: '뒤로 가기' })
     await userEvent.click(backButton)
     expect(mockRouterBack).toHaveBeenCalled()
+  })
+
+  it('언어 row 탭 시 언어 선택 바텀시트가 열린다', async () => {
+    renderSettingsClient()
+    expect(screen.queryByText('언어 선택')).not.toBeInTheDocument()
+    const languageRow = screen.getByRole('button', { name: /언어/ })
+    await userEvent.click(languageRow)
+    expect(screen.getByText('언어 선택')).toBeInTheDocument()
+  })
+
+  it('선택된 locale row에 Check 아이콘을 표시한다', async () => {
+    renderSettingsClient({ locale: 'ko' })
+    const languageRow = screen.getByRole('button', { name: /언어/ })
+    await userEvent.click(languageRow)
+    const koRow = screen.getByRole('button', { name: '한국어' })
+    expect(within(koRow).getByTestId('locale-check')).toBeInTheDocument()
+  })
+
+  it('English row 탭 시 updateUserProfile를 { locale: "en" }로 호출한다', async () => {
+    renderSettingsClient({ locale: 'ko' })
+    const languageRow = screen.getByRole('button', { name: /언어/ })
+    await userEvent.click(languageRow)
+    const enRow = screen.getByRole('button', { name: 'English' })
+    await userEvent.click(enRow)
+    expect(updateUserProfile).toHaveBeenCalledWith({ locale: 'en' }, 'token')
   })
 })
