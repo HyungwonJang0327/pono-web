@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, useClerk, useUser } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { MoreHorizontal, MessageCircle } from 'lucide-react'
 import Image from 'next/image'
 import { SnapLikeButton } from '@/components/ui/SnapLikeButton'
@@ -27,6 +28,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
   const toast = useToast()
   const getErrorMessage = useErrorMessage()
   const formatRelativeTime = useRelativeTime()
+  const t = useTranslations('post')
 
   const currentUser = user
     ? { username: user.username ?? '', avatar: user.imageUrl ?? null }
@@ -149,7 +151,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
         {!isWebView && (
           <button
             type="button"
-            aria-label="뒤로 가기"
+            aria-label={t('back')}
             onClick={() => router.back()}
             className="w-10 h-10 -ml-1 flex items-center justify-center text-neutral-900"
           >
@@ -163,7 +165,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
         {post.isOwnedByMe ? (
           <button
             type="button"
-            aria-label="더보기"
+            aria-label={t('more')}
             onClick={() => setSheetOpen(true)}
             className="w-10 h-10 flex items-center justify-center text-neutral-700"
           >
@@ -192,7 +194,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
             >
               <Image
                 src={img.url}
-                alt={`이미지 ${i + 1}`}
+                alt={t('imageAlt', { index: i + 1 })}
                 fill
                 className="object-cover"
                 priority={i === 0}
@@ -253,7 +255,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
                     onClick={handleCaptionCancel}
                     className="text-sm text-neutral-500 font-medium"
                   >
-                    취소
+                    {t('cancel')}
                   </button>
                   <button
                     type="button"
@@ -261,7 +263,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
                     disabled={isSaving}
                     className="text-sm text-primary-700 font-semibold disabled:opacity-50"
                   >
-                    완료
+                    {t('done')}
                   </button>
                 </div>
               </div>
@@ -281,7 +283,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
                     onClick={() => setIsCaptionExpanded(true)}
                     className="text-sm text-primary-700 font-medium mt-0.5"
                   >
-                    더 보기
+                    {t('expand')}
                   </button>
                 )}
                 {isCaptionExpanded && (
@@ -290,7 +292,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
                     onClick={() => setIsCaptionExpanded(false)}
                     className="text-sm text-primary-700 font-medium mt-0.5"
                   >
-                    접기
+                    {t('collapse')}
                   </button>
                 )}
               </div>
@@ -338,7 +340,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
             }}
             className="py-4 text-left text-[15px] text-neutral-900 font-medium border-b border-neutral-100"
           >
-            캡션 수정
+            {t('editCaption')}
           </button>
           <button
             type="button"
@@ -349,14 +351,14 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
             className="py-4 text-left text-[15px] font-medium"
             style={{ color: '#B54040' }}
           >
-            게시물 삭제
+            {t('deletePost')}
           </button>
           <button
             type="button"
             onClick={() => setSheetOpen(false)}
             className="py-4 text-left text-[15px] text-neutral-500 font-medium"
           >
-            취소
+            {t('cancel')}
           </button>
         </div>
       </BottomSheet>
@@ -372,15 +374,15 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
             className="w-full max-w-[320px] bg-white rounded-[var(--radius-lg)] p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="text-[15px] font-semibold text-neutral-900 mb-2">게시물을 삭제할까요?</p>
-            <p className="text-sm text-neutral-500 mb-6">삭제된 게시물은 복구할 수 없어요</p>
+            <p className="text-[15px] font-semibold text-neutral-900 mb-2">{t('deleteConfirmTitle')}</p>
+            <p className="text-sm text-neutral-500 mb-6">{t('deleteConfirmDescription')}</p>
             <div className="flex gap-3">
               <button
                 type="button"
                 onClick={() => setDeleteDialogOpen(false)}
                 className="flex-1 py-2.5 rounded-[var(--radius-md)] border border-neutral-200 text-sm font-medium text-neutral-700"
               >
-                취소
+                {t('cancel')}
               </button>
               <button
                 type="button"
@@ -389,7 +391,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
                 className="flex-1 py-2.5 rounded-[var(--radius-md)] text-sm font-semibold text-white disabled:opacity-50"
                 style={{ background: '#B54040' }}
               >
-                삭제
+                {t('delete')}
               </button>
             </div>
           </div>
