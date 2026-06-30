@@ -1,15 +1,16 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import FeedRenderer from '@/components/feed/FeedRenderer'
 import { FeedErrorState } from '@/components/feed/FeedErrorState'
 import { FeedEmptyState } from '@/components/feed/FeedEmptyState'
 import { FeedNoFollowing } from '@/components/feed/FeedNoFollowing'
 import { FeedLoginRequired } from '@/components/feed/FeedLoginRequired'
-import { Skeleton } from '@/components/ui'
+import { Skeleton, NetworkErrorState } from '@/components/ui'
 import { FeedItemDto } from '@/types/post'
 import { fetchFeed } from '@/services/feed.service'
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 
 type TabType = 'following' | 'recommended'
 
@@ -20,18 +21,33 @@ export default function HomePage() {
   const [error, setError] = useState(false)
   const [isLoginRequired, setIsLoginRequired] = useState(false)
 
+  // 페이지네이션 상태
+  const [cursor, setCursor] = useState<string | null>(null)
+  const [hasMore, setHasMore] = useState(false)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [loadMoreError, setLoadMoreError] = useState(false)
+
+  // 추가 로드 중복 호출 방지용 in-flight 가드 (state 갱신 전 동기 차단)
+  const loadingMoreRef = useRef(false)
+
   const { getToken, isSignedIn } = useAuth()
 
   const loadFeed = async (tab: TabType) => {
     setIsLoading(true)
     setError(false)
     setIsLoginRequired(false)
+    // 탭 전환 시 누적 상태 초기화
     setItems([])
+    setCursor(null)
+    setHasMore(false)
+    setLoadMoreError(false)
 
     try {
       const token = isSignedIn ? await getToken() : null
       const data = await fetchFeed({ tab, token })
       setItems(data.items)
+      setCursor(data.nextCursor)
+      setHasMore(data.hasMore)
     } catch (e: unknown) {
       if ((e as { status?: number })?.status === 401) {
         setIsLoginRequired(true)
@@ -42,6 +58,36 @@ export default function HomePage() {
       setIsLoading(false)
     }
   }
+
+  const loadMore = useCallback(async () => {
+    // in-flight 가드 + 더 없거나 cursor 없으면 중단
+    if (loadingMoreRef.current || !hasMore || !cursor) return
+    loadingMoreRef.current = true
+    setIsLoadingMore(true)
+    setLoadMoreError(false)
+
+    try {
+      const token = isSignedIn ? await getToken() : null
+      const data = await fetchFeed({ tab: activeTab, cursor, token })
+      // 누적 배열을 통째로 넘겨 페이지 경계 스냅 그룹핑을 FeedRenderer가 처리
+      setItems((prev) => [...prev, ...data.items])
+      setCursor(data.nextCursor)
+      setHasMore(data.hasMore)
+    } catch {
+      // 추가 로드 실패는 전체 피드를 날리지 않고 인라인 재시도로 처리
+      setLoadMoreError(true)
+    } finally {
+      loadingMoreRef.current = false
+      setIsLoadingMore(false)
+    }
+  }, [activeTab, cursor, hasMore, isSignedIn, getToken])
+
+  // 추가 로드 에러가 떠 있으면 자동 관찰을 멈추고 사용자의 명시적 재시도만 받는다
+  const { sentinelRef } = useInfiniteScroll({
+    onLoadMore: loadMore,
+    hasMore: hasMore && !loadMoreError,
+    isLoading: isLoadingMore,
+  })
 
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -150,7 +196,33 @@ export default function HomePage() {
           </div>
         </div>
       ) : (
-        <FeedRenderer items={items} />
+        <>
+          <FeedRenderer items={items} />
+
+          {/* 추가 로드 실패: 전체 피드 유지, 인라인 재시도 */}
+          {loadMoreError ? (
+            <NetworkErrorState compact onRetry={loadMore} />
+          ) : isLoadingMore ? (
+            // 하단 로딩 인디케이터 (스켈레톤 톤 유지, 스피너 미사용)
+            <div className="grid grid-cols-2 gap-2 mt-2.5" aria-hidden="true">
+              {[0, 1].map((i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-[var(--radius-md)] overflow-hidden shadow-[var(--shadow-card)]"
+                >
+                  <Skeleton className="w-full aspect-square" />
+                  <div className="px-2.5 pt-2 pb-2.5 flex flex-col gap-1.5">
+                    <Skeleton className="w-full h-3" />
+                    <Skeleton className="w-2/3 h-3" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : null}
+
+          {/* IntersectionObserver sentinel */}
+          {hasMore && !loadMoreError && <div ref={sentinelRef} className="h-px" aria-hidden="true" />}
+        </>
       )}
     </>
   )
