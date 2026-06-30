@@ -1,6 +1,7 @@
 'use client'
 
 import { Component, type ErrorInfo, type ReactNode } from 'react'
+import { useTranslations } from 'next-intl'
 
 // ── 타입 ──────────────────────────────────────────────────────────────────────
 
@@ -22,6 +23,7 @@ interface DefaultFallbackProps {
 }
 
 function DefaultFallback({ onRetry }: DefaultFallbackProps) {
+  const t = useTranslations('boundary')
   return (
     <div className="flex flex-col items-center justify-center gap-[10px] py-10 px-6 text-center">
       <svg
@@ -42,17 +44,17 @@ function DefaultFallback({ onRetry }: DefaultFallbackProps) {
         <circle cx="24" cy="33" r="1.5" fill="#D4D1CA" />
       </svg>
       <p className="text-[15px] font-semibold text-neutral-700 tracking-[-0.2px]">
-        문제가 생겼어요
+        {t('title')}
       </p>
       <p className="text-[13px] text-neutral-500 leading-relaxed">
-        잠시 후 다시 시도해 주세요.
+        {t('description')}
       </p>
       <button
         type="button"
         onClick={onRetry}
         className="mt-2 px-5 py-[10px] rounded-[var(--radius-md)] bg-primary-700 text-white text-[13px] font-semibold hover:bg-primary-800 transition-colors duration-200 ease-in-out"
       >
-        다시 시도
+        {t('retry')}
       </button>
     </div>
   )

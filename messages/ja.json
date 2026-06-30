@@ -208,6 +208,12 @@
     "follow": "フォロー",
     "following": "フォロー中"
   },
+  "articleCard": {
+    "noTitle": "無題"
+  },
+  "metadata": {
+    "description": "短いスナップと深いアーティクルを一緒に発見するプラットフォーム"
+  },
   "error": {
     "networkTitle": "読み込めませんでした",
     "networkDescription": "インターネット接続が不安定か、サーバーに一時的な問題があります。しばらくしてからもう一度お試しください。",

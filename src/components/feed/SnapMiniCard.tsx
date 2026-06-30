@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react'
 import { useAuth, useClerk } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { useToast } from '@/hooks/useToast'
 import { addLike, removeLike } from '@/services/post.service'
 import { SnapFeedItemDto } from '@/types/post'
@@ -26,6 +27,7 @@ export default function SnapMiniCard({ post, aspectRatio }: SnapMiniCardProps) {
   const { isSignedIn, getToken } = useAuth()
   const { openSignIn } = useClerk()
   const toast = useToast()
+  const tLike = useTranslations('like')
 
   const [likedByMe, setLikedByMe] = useState(post.likedByMe)
   const [likeCount, setLikeCount] = useState(post.likeCount)
@@ -49,9 +51,9 @@ export default function SnapMiniCard({ post, aspectRatio }: SnapMiniCardProps) {
     } catch {
       setLikedByMe(prev.likedByMe)
       setLikeCount(prev.likeCount)
-      toast.error('좋아요 처리에 실패했어요')
+      toast.error(tLike('error'))
     }
-  }, [isSignedIn, likedByMe, likeCount, post.id, getToken, openSignIn, toast])
+  }, [isSignedIn, likedByMe, likeCount, post.id, getToken, openSignIn, toast, tLike])
 
   const image = post.images[0]
   const aspectClass = aspectRatio === '4/5' ? 'aspect-[4/5]' : 'aspect-square'

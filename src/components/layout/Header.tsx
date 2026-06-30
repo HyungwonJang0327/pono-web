@@ -5,6 +5,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { useAuth, useUser, SignInButton } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { ChevronLeft, Settings } from 'lucide-react'
 import { RESERVED_USERNAMES } from '@/constants'
 
@@ -21,6 +22,7 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
   const { user } = useUser()
   const pathname = usePathname()
   const router = useRouter()
+  const t = useTranslations('header')
   const [isHidden, setIsHidden] = useState(false)
   const lastScrollY = useRef(0)
 
@@ -76,7 +78,7 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
         ) : (
           <button
             type="button"
-            aria-label="뒤로 가기"
+            aria-label={t('back')}
             onClick={() => router.back()}
             className="w-10 h-10 -ml-2 flex items-center justify-center text-neutral-900"
           >
@@ -90,7 +92,7 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
           {showSettings && (
             <button
               type="button"
-              aria-label="설정"
+              aria-label={t('settings')}
               onClick={() => router.push('/settings')}
               className="w-7 h-7 flex items-center justify-center text-neutral-600"
             >
@@ -108,13 +110,13 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
           {isSignedIn && myUsername && user ? (
             <button
               type="button"
-              aria-label="내 프로필"
+              aria-label={t('myProfile')}
               onClick={() => router.push(`/${myUsername}`)}
               className="w-7 h-7 rounded-full overflow-hidden flex items-center justify-center bg-neutral-200 text-neutral-700 text-xs font-semibold flex-shrink-0"
             >
               {user.imageUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={user.imageUrl} alt={user.username ?? '프로필'} className="w-full h-full object-cover" />
+                <img src={user.imageUrl} alt={user.username ?? t('profile')} className="w-full h-full object-cover" />
               ) : (
                 <span>{(user.username ?? user.firstName ?? '?')[0].toUpperCase()}</span>
               )}

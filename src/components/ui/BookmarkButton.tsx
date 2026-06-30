@@ -1,6 +1,7 @@
 'use client'
 
 import { Bookmark } from 'lucide-react'
+import { useTranslations } from 'next-intl'
 
 interface BookmarkButtonProps {
   isBookmarked: boolean
@@ -23,7 +24,8 @@ export function BookmarkButton({
   onToggle,
   label,
 }: BookmarkButtonProps) {
-  const ariaLabel = label ?? (isBookmarked ? '북마크 해제' : '북마크 추가')
+  const t = useTranslations('bookmark')
+  const ariaLabel = label ?? (isBookmarked ? t('remove') : t('add'))
 
   return (
     <button

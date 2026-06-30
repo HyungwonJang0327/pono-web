@@ -5,13 +5,13 @@ import { ArticleLikeButton } from '@/components/ui/ArticleLikeButton'
 describe('ArticleLikeButton', () => {
   it('비활성(isLiked: false) 상태를 렌더링한다', () => {
     render(<ArticleLikeButton isLiked={false} onToggle={() => {}} />)
-    expect(screen.getByRole('button', { name: '좋아요' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'like.like' })).toBeInTheDocument()
     expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'false')
   })
 
   it('활성(isLiked: true) 상태를 렌더링한다', () => {
     render(<ArticleLikeButton isLiked={true} onToggle={() => {}} />)
-    expect(screen.getByRole('button', { name: '좋아요 취소' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'like.unlike' })).toBeInTheDocument()
     expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'true')
   })
 

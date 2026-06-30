@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from 'react'
 import { useAuth, useClerk } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { useToast } from '@/hooks/useToast'
 import { addLike, removeLike } from '@/services/post.service'
 import { ArticleFeedItemDto } from '@/types/post'
@@ -25,6 +26,9 @@ export default function ArticleCard({ post }: ArticleCardProps) {
   const { isSignedIn, getToken } = useAuth()
   const { openSignIn } = useClerk()
   const toast = useToast()
+  const t = useTranslations('articleCard')
+  const tProfile = useTranslations('profile')
+  const tLike = useTranslations('like')
 
   const [likedByMe, setLikedByMe] = useState(post.likedByMe)
   const [likeCount, setLikeCount] = useState(post.likeCount)
@@ -48,9 +52,9 @@ export default function ArticleCard({ post }: ArticleCardProps) {
     } catch {
       setLikedByMe(prev.likedByMe)
       setLikeCount(prev.likeCount)
-      toast.error('좋아요 처리에 실패했어요')
+      toast.error(tLike('error'))
     }
-  }, [isSignedIn, likedByMe, likeCount, post.id, getToken, openSignIn, toast])
+  }, [isSignedIn, likedByMe, likeCount, post.id, getToken, openSignIn, toast, tLike])
 
   return (
     <div className="bg-white rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-card)]">
@@ -68,7 +72,7 @@ export default function ArticleCard({ post }: ArticleCardProps) {
       {/* 본문 */}
       <div className="px-3 pt-3 pb-3.5">
         <h2 className="text-[15px] font-bold text-neutral-900 leading-[1.4] tracking-tight mb-1.5 line-clamp-2">
-          {post.title ?? '제목 없음'}
+          {post.title ?? t('noTitle')}
         </h2>
         <p className="text-[11px] text-neutral-600 leading-[1.6] mb-2.5 line-clamp-2">
           {post.excerpt}
@@ -88,7 +92,7 @@ export default function ArticleCard({ post }: ArticleCardProps) {
           </span>
           {post.readingTime != null && (
             <span className="text-[10px] text-neutral-500">
-              {post.readingTime}분 읽기
+              {tProfile('readingTime', { minutes: post.readingTime })}
             </span>
           )}
           <ArticleLikeButton

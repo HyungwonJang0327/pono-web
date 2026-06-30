@@ -30,49 +30,49 @@ describe('WriteFab 노출 정책', () => {
   it('홈 피드(/)에서 표시된다', () => {
     mockPathname = '/'
     render(<WriteFab />)
-    expect(screen.getByRole('button', { name: '글 작성' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'writeFab.write' })).toBeInTheDocument()
   })
 
   it('내 프로필(/me)에서 표시된다', () => {
     mockPathname = '/me'
     render(<WriteFab />)
-    expect(screen.getByRole('button', { name: '글 작성' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'writeFab.write' })).toBeInTheDocument()
   })
 
   it('타인 프로필에서 숨겨진다', () => {
     mockPathname = '/other'
     render(<WriteFab />)
-    expect(screen.queryByRole('button', { name: '글 작성' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'writeFab.write' })).not.toBeInTheDocument()
   })
 
   it('팔로워 목록 페이지에서 숨겨진다', () => {
     mockPathname = '/me/followers'
     render(<WriteFab />)
-    expect(screen.queryByRole('button', { name: '글 작성' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'writeFab.write' })).not.toBeInTheDocument()
   })
 
   it('팔로잉 목록 페이지에서 숨겨진다', () => {
     mockPathname = '/me/following'
     render(<WriteFab />)
-    expect(screen.queryByRole('button', { name: '글 작성' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'writeFab.write' })).not.toBeInTheDocument()
   })
 
   it('포스트 상세 페이지에서 숨겨진다', () => {
     mockPathname = '/someone/post-id-123'
     render(<WriteFab />)
-    expect(screen.queryByRole('button', { name: '글 작성' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'writeFab.write' })).not.toBeInTheDocument()
   })
 
   it('글 작성 페이지에서 숨겨진다', () => {
     mockPathname = '/write/snap'
     render(<WriteFab />)
-    expect(screen.queryByRole('button', { name: '글 작성' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'writeFab.write' })).not.toBeInTheDocument()
   })
 
   it('비로그인 상태에서 숨겨진다', () => {
     mockIsSignedIn = false
     mockPathname = '/'
     render(<WriteFab />)
-    expect(screen.queryByRole('button', { name: '글 작성' })).not.toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'writeFab.write' })).not.toBeInTheDocument()
   })
 })

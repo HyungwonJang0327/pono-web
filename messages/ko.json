@@ -208,6 +208,12 @@
     "follow": "팔로우",
     "following": "팔로잉"
   },
+  "articleCard": {
+    "noTitle": "제목 없음"
+  },
+  "metadata": {
+    "description": "짧은 스냅과 깊이 있는 아티클을 함께 발견하는 플랫폼"
+  },
   "error": {
     "networkTitle": "불러오지 못했어요",
     "networkDescription": "인터넷 연결이 불안정하거나 서버에 일시적인 문제가 있어요. 잠시 후 다시 시도해 주세요.",

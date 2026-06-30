@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 const MOCK_CREATORS = [
   { id: '1', username: '이도현', desc: 'Slow Letters · 아티클 42', color: '#1F4D3A' },
@@ -10,6 +11,7 @@ const MOCK_CREATORS = [
 ]
 
 function CreatorRow({ creator }: { creator: typeof MOCK_CREATORS[0] }) {
+  const t = useTranslations('recommendedCreators')
   const [following, setFollowing] = useState(creator.id === '3')
 
   return (
@@ -31,16 +33,17 @@ function CreatorRow({ creator }: { creator: typeof MOCK_CREATORS[0] }) {
             : 'border border-primary-700 text-primary-700',
         ].join(' ')}
       >
-        {following ? '팔로잉' : '팔로우'}
+        {following ? t('following') : t('follow')}
       </button>
     </div>
   )
 }
 
 export default function EmptySlot() {
+  const t = useTranslations('recommendedCreators')
   return (
     <div className="flex flex-col p-3 gap-2.5">
-      <span className="text-xs font-semibold text-neutral-900">추천 크리에이터</span>
+      <span className="text-xs font-semibold text-neutral-900">{t('title')}</span>
       {MOCK_CREATORS.map(c => <CreatorRow key={c.id} creator={c} />)}
     </div>
   )

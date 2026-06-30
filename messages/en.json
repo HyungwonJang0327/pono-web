@@ -208,6 +208,12 @@
     "follow": "Follow",
     "following": "Following"
   },
+  "articleCard": {
+    "noTitle": "Untitled"
+  },
+  "metadata": {
+    "description": "A platform to discover quick snaps and in-depth articles together"
+  },
   "error": {
     "networkTitle": "Couldn't load",
     "networkDescription": "Your connection may be unstable or the server is temporarily unavailable. Please try again later.",

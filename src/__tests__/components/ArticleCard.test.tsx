@@ -66,6 +66,6 @@ describe('ArticleCard', () => {
 
   it('읽기시간을 표시한다', () => {
     render(<ArticleCard post={basePost} />)
-    expect(screen.getByText('5분 읽기')).toBeInTheDocument()
+    expect(screen.getByText('profile.readingTime:{"minutes":5}')).toBeInTheDocument()
   })
 })

@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useRef, useState } from 'react'
+import { useTranslations } from 'next-intl'
 
 interface LikeButtonProps {
   isLiked: boolean
@@ -24,6 +25,7 @@ function LikeButtonBase({
   activeColor,
   activeCountColor,
 }: LikeButtonProps) {
+  const t = useTranslations('like')
   const [isPopping, setIsPopping] = useState(false)
   const prevIsLikedRef = useRef(isLiked)
 
@@ -52,7 +54,7 @@ function LikeButtonBase({
     <button
       type="button"
       onClick={handleClick}
-      aria-label={isLiked ? '좋아요 취소' : '좋아요'}
+      aria-label={isLiked ? t('unlike') : t('like')}
       aria-pressed={isLiked}
       style={{
         display: 'inline-flex',

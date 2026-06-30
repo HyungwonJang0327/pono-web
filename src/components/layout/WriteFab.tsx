@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter, usePathname } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { Camera, FileText } from 'lucide-react'
 import { BottomSheet } from '@/components/ui'
 
@@ -11,6 +12,7 @@ export default function WriteFab() {
   const { user } = useUser()
   const router = useRouter()
   const pathname = usePathname()
+  const t = useTranslations('writeFab')
   const [isOpen, setIsOpen] = useState(false)
 
   const isHomeFeed = pathname === '/'
@@ -37,7 +39,7 @@ export default function WriteFab() {
             type="button"
             onClick={() => setIsOpen(true)}
             className="w-[52px] h-[52px] bg-primary-700 rounded-full flex items-center justify-center shadow-[var(--shadow-md)] text-white"
-            aria-label="글 작성"
+            aria-label={t('write')}
           >
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <line x1="12" y1="5" x2="12" y2="19"/>
@@ -50,7 +52,7 @@ export default function WriteFab() {
       <BottomSheet isOpen={isOpen} onClose={() => setIsOpen(false)}>
         <div className="flex flex-col gap-1">
           <p className="text-[12px] font-semibold text-neutral-400 uppercase tracking-widest mb-3">
-            무엇을 올릴까요?
+            {t('sheetTitle')}
           </p>
 
           {/* 스냅 올리기 */}
@@ -64,10 +66,10 @@ export default function WriteFab() {
             </div>
             <div className="flex flex-col gap-0.5">
               <span className="text-[15px] font-semibold text-neutral-900 leading-tight">
-                스냅 올리기
+                {t('snapTitle')}
               </span>
               <span className="text-[12px] text-neutral-500 leading-tight">
-                사진 한 장으로 순간을 기록해요
+                {t('snapDescription')}
               </span>
             </div>
           </button>
@@ -83,10 +85,10 @@ export default function WriteFab() {
             </div>
             <div className="flex flex-col gap-0.5">
               <span className="text-[15px] font-semibold text-neutral-900 leading-tight">
-                아티클 쓰기
+                {t('articleTitle')}
               </span>
               <span className="text-[12px] text-neutral-500 leading-tight">
-                생각을 긴 글로 풀어보세요
+                {t('articleDescription')}
               </span>
             </div>
           </button>
