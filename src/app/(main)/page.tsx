@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useAuth } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import FeedRenderer from '@/components/feed/FeedRenderer'
 import { FeedErrorState } from '@/components/feed/FeedErrorState'
 import { FeedEmptyState } from '@/components/feed/FeedEmptyState'
@@ -15,6 +16,7 @@ import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
 type TabType = 'following' | 'recommended'
 
 export default function HomePage() {
+  const t = useTranslations('feedHome')
   const [activeTab, setActiveTab] = useState<TabType>('recommended')
   const [items, setItems] = useState<FeedItemDto[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -103,7 +105,7 @@ export default function HomePage() {
         <div className="flex gap-4">
           {(['following', 'recommended'] as const).map((tab) => {
             const isActive = activeTab === tab
-            const label = tab === 'following' ? '팔로잉' : '추천'
+            const label = tab === 'following' ? t('following') : t('recommended')
             return (
               <button
                 key={tab}
