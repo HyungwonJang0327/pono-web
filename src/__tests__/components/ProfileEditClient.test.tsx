@@ -55,12 +55,12 @@ describe('ProfileEditClient', () => {
 
   it('"저장하기" 버튼이 초기 진입 시 렌더링된다', () => {
     renderProfileEditClient()
-    expect(screen.getByRole('button', { name: '저장하기' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'profileEdit.save' })).toBeInTheDocument()
   })
 
   it('bio 입력 시 글자 수 카운터가 업데이트된다', async () => {
     renderProfileEditClient({ initialBio: null })
-    const textarea = screen.getByRole('textbox', { name: /한 줄 소개/ })
+    const textarea = screen.getByRole('textbox', { name: /profileEdit\.bioLabel/ })
 
     await userEvent.clear(textarea)
     await userEvent.type(textarea, '안녕하세요')
@@ -71,7 +71,7 @@ describe('ProfileEditClient', () => {
 
   it('bio 80자 초과 입력을 방지한다', async () => {
     renderProfileEditClient({ initialBio: null })
-    const textarea = screen.getByRole('textbox', { name: /한 줄 소개/ })
+    const textarea = screen.getByRole('textbox', { name: /profileEdit\.bioLabel/ })
 
     const over80 = 'a'.repeat(85)
     await userEvent.clear(textarea)
@@ -89,15 +89,15 @@ describe('ProfileEditClient', () => {
     renderProfileEditClient({ initialUsername: 'testuser', initialBio: '기존 소개' })
 
     // bio를 변경해서 isDirty 상태 만들기
-    const textarea = screen.getByRole('textbox', { name: /한 줄 소개/ })
+    const textarea = screen.getByRole('textbox', { name: /profileEdit\.bioLabel/ })
     await userEvent.clear(textarea)
     await userEvent.type(textarea, '새로운 소개')
 
-    const saveButton = screen.getByRole('button', { name: '저장하기' })
+    const saveButton = screen.getByRole('button', { name: 'profileEdit.save' })
     await userEvent.click(saveButton)
 
     await waitFor(() => {
-      expect(mockToastSuccess).toHaveBeenCalledWith('저장되었어요')
+      expect(mockToastSuccess).toHaveBeenCalledWith('profileEdit.saveSuccess')
     })
   })
 
@@ -108,15 +108,15 @@ describe('ProfileEditClient', () => {
     renderProfileEditClient({ initialUsername: 'testuser', initialBio: '기존 소개' })
 
     // bio를 변경해서 isDirty 상태 만들기
-    const textarea = screen.getByRole('textbox', { name: /한 줄 소개/ })
+    const textarea = screen.getByRole('textbox', { name: /profileEdit\.bioLabel/ })
     await userEvent.clear(textarea)
     await userEvent.type(textarea, '새로운 소개')
 
-    const saveButton = screen.getByRole('button', { name: '저장하기' })
+    const saveButton = screen.getByRole('button', { name: 'profileEdit.save' })
     await userEvent.click(saveButton)
 
     await waitFor(() => {
-      expect(mockToastError).toHaveBeenCalledWith('저장에 실패했어요')
+      expect(mockToastError).toHaveBeenCalledWith('profileEdit.saveError')
     })
   })
 })

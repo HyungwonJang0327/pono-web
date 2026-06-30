@@ -80,7 +80,7 @@ describe('SettingsClient', () => {
 
   it('프로필 요약 카드 탭 시 /settings/profile로 이동한다', async () => {
     renderSettingsClient()
-    const card = screen.getByRole('button', { name: /프로필 편집/ })
+    const card = screen.getByRole('button', { name: /settings\.editProfile/ })
     await userEvent.click(card)
     expect(mockRouterPush).toHaveBeenCalledWith('/settings/profile')
   })
@@ -97,22 +97,22 @@ describe('SettingsClient', () => {
 
   it('헤더 뒤로 가기 버튼 탭 시 router.back을 호출한다', async () => {
     renderSettingsClient()
-    const backButton = screen.getByRole('button', { name: '뒤로 가기' })
+    const backButton = screen.getByRole('button', { name: 'settings.back' })
     await userEvent.click(backButton)
     expect(mockRouterBack).toHaveBeenCalled()
   })
 
   it('언어 row 탭 시 언어 선택 바텀시트가 열린다', async () => {
     renderSettingsClient()
-    expect(screen.queryByText('언어 선택')).not.toBeInTheDocument()
-    const languageRow = screen.getByRole('button', { name: /언어/ })
+    expect(screen.queryByText('settings.languageSheetTitle')).not.toBeInTheDocument()
+    const languageRow = screen.getByRole('button', { name: /settings\.language/ })
     await userEvent.click(languageRow)
-    expect(screen.getByText('언어 선택')).toBeInTheDocument()
+    expect(screen.getByText('settings.languageSheetTitle')).toBeInTheDocument()
   })
 
   it('선택된 locale row에 Check 아이콘을 표시한다', async () => {
     renderSettingsClient({ locale: 'ko' })
-    const languageRow = screen.getByRole('button', { name: /언어/ })
+    const languageRow = screen.getByRole('button', { name: /settings\.language/ })
     await userEvent.click(languageRow)
     const koRow = screen.getByRole('button', { name: '한국어' })
     expect(within(koRow).getByTestId('locale-check')).toBeInTheDocument()
@@ -120,7 +120,7 @@ describe('SettingsClient', () => {
 
   it('English row 탭 시 updateUserProfile를 { locale: "en" }로 호출한다', async () => {
     renderSettingsClient({ locale: 'ko' })
-    const languageRow = screen.getByRole('button', { name: /언어/ })
+    const languageRow = screen.getByRole('button', { name: /settings\.language/ })
     await userEvent.click(languageRow)
     const enRow = screen.getByRole('button', { name: 'English' })
     await userEvent.click(enRow)
@@ -134,25 +134,25 @@ describe('SettingsClient', () => {
 
     it('"로그인하기" row를 표시하고 프로필 요약 카드를 표시하지 않는다', () => {
       renderSettingsClient({ username: null })
-      expect(screen.getByText('로그인하기')).toBeInTheDocument()
-      expect(screen.queryByRole('button', { name: /프로필 편집/ })).not.toBeInTheDocument()
+      expect(screen.getByText('settings.login')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /settings\.editProfile/ })).not.toBeInTheDocument()
     })
 
     it('"로그인하기" row 탭 시 openSignIn을 호출한다', async () => {
       renderSettingsClient({ username: null })
-      const loginRow = screen.getByRole('button', { name: /로그인하기/ })
+      const loginRow = screen.getByRole('button', { name: /settings\.login/ })
       await userEvent.click(loginRow)
       expect(mockOpenSignIn).toHaveBeenCalled()
     })
 
     it('언어 설정 섹션은 그대로 노출한다', () => {
       renderSettingsClient({ username: null, locale: 'ko' })
-      expect(screen.getByRole('button', { name: /언어/ })).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /settings\.language/ })).toBeInTheDocument()
     })
 
     it('언어 변경 시 updateUserProfile를 호출하지 않는다', async () => {
       renderSettingsClient({ username: null, locale: 'ko' })
-      const languageRow = screen.getByRole('button', { name: /언어/ })
+      const languageRow = screen.getByRole('button', { name: /settings\.language/ })
       await userEvent.click(languageRow)
       const enRow = screen.getByRole('button', { name: 'English' })
       await userEvent.click(enRow)

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, useClerk } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { BottomSheet, useToastContext } from '@/components/ui'
 import { NetworkErrorState } from '@/components/ui/NetworkErrorState'
@@ -44,6 +45,7 @@ export default function SettingsClient({
   const { isSignedIn, getToken } = useAuth()
   const { openSignIn } = useClerk()
   const toast = useToastContext()
+  const t = useTranslations('settings')
 
   const [isSheetOpen, setIsSheetOpen] = useState(false)
   const [currentLocale, setCurrentLocale] = useState(locale ?? 'ko')
@@ -67,7 +69,7 @@ export default function SettingsClient({
       setIsSheetOpen(false)
     } catch {
       setCurrentLocale(previous)
-      toast.error('오류가 발생했어요')
+      toast.error(t('errorGeneric'))
     }
   }
 
@@ -78,14 +80,14 @@ export default function SettingsClient({
         <div className="mx-auto w-full max-w-[560px] h-[52px] flex items-center px-4">
           <button
             type="button"
-            aria-label="뒤로 가기"
+            aria-label={t('back')}
             onClick={() => router.back()}
             className="w-10 h-10 -ml-2 flex items-center justify-center text-neutral-900"
           >
             <ChevronLeft size={24} strokeWidth={1.5} />
           </button>
           <span className="flex-1 text-center text-[17px] font-semibold text-neutral-900 -ml-8">
-            설정
+            {t('title')}
           </span>
         </div>
       </div>
@@ -95,7 +97,7 @@ export default function SettingsClient({
         {username ? (
           <button
             type="button"
-            aria-label="프로필 편집"
+            aria-label={t('editProfile')}
             onClick={() => router.push('/settings/profile')}
             className="mt-6 w-full h-[72px] rounded-[10px] bg-white px-4 flex items-center text-left"
             style={{ boxShadow: CARD_SHADOW }}
@@ -135,7 +137,7 @@ export default function SettingsClient({
         ) : (
           <button
             type="button"
-            aria-label="로그인하기"
+            aria-label={t('login')}
             onClick={() => openSignIn()}
             className="mt-6 w-full h-[72px] rounded-[10px] bg-white px-4 flex items-center text-left"
             style={{ boxShadow: CARD_SHADOW }}
@@ -148,10 +150,10 @@ export default function SettingsClient({
             </div>
             <div className="ml-3 min-w-0 flex-1">
               <p className="text-[15px] font-semibold text-neutral-900 truncate">
-                로그인하기
+                {t('login')}
               </p>
               <p className="mt-1 text-[13px] text-[#6B6760] truncate">
-                로그인하고 프로필을 관리하세요
+                {t('loginDescription')}
               </p>
             </div>
             <ChevronRight size={20} strokeWidth={1.5} className="text-[#B5B1A8] shrink-0" />
@@ -160,14 +162,14 @@ export default function SettingsClient({
 
         {/* 앱 설정 섹션 */}
         <div className="mt-7">
-          <p className="text-[12px] text-[#6B6760] mb-2">앱 설정</p>
+          <p className="text-[12px] text-[#6B6760] mb-2">{t('appSettings')}</p>
           <button
             type="button"
             onClick={() => setIsSheetOpen(true)}
             className="w-full h-[52px] rounded-[10px] bg-white px-4 flex items-center text-left"
             style={{ boxShadow: CARD_SHADOW }}
           >
-            <span className="flex-1 text-[15px] text-neutral-900">언어</span>
+            <span className="flex-1 text-[15px] text-neutral-900">{t('language')}</span>
             <span className="text-[13px] text-[#6B6760]">{localeLabel}</span>
             <ChevronRight size={16} strokeWidth={1.5} className="ml-1 text-[#B5B1A8]" />
           </button>
@@ -176,7 +178,7 @@ export default function SettingsClient({
 
       {/* 언어 선택 바텀시트 */}
       <BottomSheet isOpen={isSheetOpen} onClose={() => setIsSheetOpen(false)}>
-        <p className="text-[17px] font-semibold text-[#1C1917]">언어 선택</p>
+        <p className="text-[17px] font-semibold text-[#1C1917]">{t('languageSheetTitle')}</p>
         <div className="mt-3 -mx-5 border-t border-[#D4D1CA]">
           {LOCALES.map((l, i) => {
             const isSelected = l.value === currentLocale

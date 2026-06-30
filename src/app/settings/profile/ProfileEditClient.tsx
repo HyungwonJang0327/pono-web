@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@clerk/nextjs'
+import { useTranslations } from 'next-intl'
 import { ChevronLeft, Camera } from 'lucide-react'
 import { useToastContext } from '@/components/ui'
 import { updateUserProfile } from '@/services/user.service'
@@ -23,6 +24,7 @@ export default function ProfileEditClient({
   const router = useRouter()
   const { getToken } = useAuth()
   const toast = useToastContext()
+  const t = useTranslations('profileEdit')
 
   const [username, setUsername] = useState(initialUsername)
   const [bio, setBio] = useState(initialBio ?? '')
@@ -40,10 +42,10 @@ export default function ProfileEditClient({
     try {
       const token = (await getToken()) ?? ''
       await updateUserProfile({ username, bio }, token)
-      toast.success('저장되었어요')
+      toast.success(t('saveSuccess'))
       router.back()
     } catch {
-      toast.error('저장에 실패했어요')
+      toast.error(t('saveError'))
     }
   }
 
@@ -54,14 +56,14 @@ export default function ProfileEditClient({
         <div className="mx-auto w-full max-w-[560px] h-[52px] flex items-center px-5">
           <button
             type="button"
-            aria-label="뒤로 가기"
+            aria-label={t('back')}
             onClick={() => router.back()}
             className="w-10 h-10 -ml-2 flex items-center justify-center text-neutral-900"
           >
             <ChevronLeft size={24} strokeWidth={1.5} />
           </button>
           <span className="flex-1 text-center text-[17px] font-semibold text-neutral-900 -ml-8">
-            프로필 편집
+            {t('title')}
           </span>
         </div>
       </div>
@@ -97,7 +99,7 @@ export default function ProfileEditClient({
             }}
             className="mt-2 text-[14px] text-primary-700"
           >
-            사진 변경
+            {t('changePhoto')}
           </button>
         </div>
 
@@ -107,7 +109,7 @@ export default function ProfileEditClient({
             htmlFor="username"
             className="block text-[14px] text-[#57534E] mb-2"
           >
-            닉네임
+            {t('usernameLabel')}
           </label>
           <input
             id="username"
@@ -117,7 +119,7 @@ export default function ProfileEditClient({
             className="w-full h-[48px] px-4 rounded-[8px] bg-[#EFEDE6] text-neutral-900 text-[15px] outline-none"
           />
           <p className="mt-2 text-[12px] text-[#78716C]">
-            다른 사람에게 보여지는 이름이에요
+            {t('usernameHint')}
           </p>
         </div>
 
@@ -127,11 +129,11 @@ export default function ProfileEditClient({
             htmlFor="bio"
             className="block text-[14px] text-[#57534E] mb-2"
           >
-            한 줄 소개
+            {t('bioLabel')}
           </label>
           <textarea
             id="bio"
-            aria-label="한 줄 소개"
+            aria-label={t('bioLabel')}
             value={bio}
             onChange={handleBioChange}
             rows={4}
@@ -144,7 +146,7 @@ export default function ProfileEditClient({
             style={{ height: 88 }}
           />
           <div className="flex items-center justify-between mt-1">
-            <p className="text-[12px] text-[#78716C]">최대 80자</p>
+            <p className="text-[12px] text-[#78716C]">{t('bioMax')}</p>
             <p
               className={[
                 'text-[12px]',
@@ -163,7 +165,7 @@ export default function ProfileEditClient({
           disabled={!isDirty}
           className="w-full h-[48px] rounded-[12px] bg-primary-700 text-white text-[15px] font-medium disabled:opacity-50"
         >
-          저장하기
+          {t('save')}
         </button>
       </div>
     </div>
