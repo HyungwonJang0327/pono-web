@@ -6,13 +6,6 @@ import type { FollowUserDto } from '@/types/user'
 const mockPush = jest.fn()
 const mockReplace = jest.fn()
 
-jest.mock('next-intl', () => ({
-  useTranslations: () => (key: string, params?: Record<string, unknown>) => {
-    if (params) return `${key}:${JSON.stringify(params)}`
-    return key
-  },
-}))
-
 jest.mock('@clerk/nextjs', () => ({
   useAuth: () => ({ getToken: jest.fn().mockResolvedValue('token') }),
   useUser: () => ({ user: { username: 'me' } }),

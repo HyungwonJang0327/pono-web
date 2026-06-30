@@ -2,13 +2,6 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { NetworkErrorState } from '@/components/ui/NetworkErrorState'
 
-jest.mock('next-intl', () => ({
-  useTranslations: () => (key: string, params?: Record<string, unknown>) => {
-    if (params) return `${key}:${JSON.stringify(params)}`
-    return key
-  },
-}))
-
 describe('NetworkErrorState', () => {
   it('번역 키 error.networkTitle을 기본 title로 노출한다', () => {
     render(<NetworkErrorState onRetry={() => {}} />)

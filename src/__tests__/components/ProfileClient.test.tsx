@@ -4,13 +4,6 @@ import ProfileClient from '@/app/(main)/[username]/ProfileClient'
 import type { UserPublicProfileDto } from '@/types/user'
 import type { PostSummaryDto } from '@/types/post'
 
-jest.mock('next-intl', () => ({
-  useTranslations: () => (key: string, params?: Record<string, unknown>) => {
-    if (params) return `${key}:${JSON.stringify(params)}`
-    return key
-  },
-}))
-
 jest.mock('@clerk/nextjs', () => ({
   useAuth: () => ({ getToken: jest.fn().mockResolvedValue('token') }),
   useUser: () => ({ user: { username: 'testuser' } }),
