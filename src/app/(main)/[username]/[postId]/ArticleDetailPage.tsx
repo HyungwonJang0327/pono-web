@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { ArticleLikeButton } from '@/components/ui/ArticleLikeButton'
 import { BottomSheet } from '@/components/ui/BottomSheet'
 import { useToast } from '@/hooks/useToast'
+import { useErrorMessage } from '@/hooks/useErrorMessage'
 import { addLike, removeLike, deletePost } from '@/services/post.service'
 import CommentSection from '@/components/post/CommentSection'
 import type { ArticleDetailDto } from '@/types/post'
@@ -101,6 +102,7 @@ export default function ArticleDetailPage({ post, isWebView }: Props) {
   const { openSignIn } = useClerk()
   const { user } = useUser()
   const toast = useToast()
+  const getErrorMessage = useErrorMessage()
 
   const currentUser = user
     ? { username: user.username ?? '', avatar: user.imageUrl ?? null }
@@ -108,6 +110,7 @@ export default function ArticleDetailPage({ post, isWebView }: Props) {
 
   const [likedByMe, setLikedByMe] = useState(post.likedByMe)
   const [likeCount, setLikeCount] = useState(post.likeCount)
+  const likeInFlightRef = useRef(false)
 
   const [sheetOpen, setSheetOpen] = useState(false)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -120,6 +123,8 @@ export default function ArticleDetailPage({ post, isWebView }: Props) {
       openSignIn()
       return
     }
+    if (likeInFlightRef.current) return
+    likeInFlightRef.current = true
     const prev = { likedByMe, likeCount }
     setLikedByMe((v) => !v)
     setLikeCount((v) => (likedByMe ? v - 1 : v + 1))
@@ -131,12 +136,14 @@ export default function ArticleDetailPage({ post, isWebView }: Props) {
       } else {
         await addLike(post.id, token)
       }
-    } catch {
+    } catch (err) {
       setLikedByMe(prev.likedByMe)
       setLikeCount(prev.likeCount)
-      toast.error('좋아요 처리에 실패했어요')
+      toast.error(getErrorMessage(err))
+    } finally {
+      likeInFlightRef.current = false
     }
-  }, [isSignedIn, likedByMe, likeCount, post.id, getToken, openSignIn, toast])
+  }, [isSignedIn, likedByMe, likeCount, post.id, getToken, openSignIn, toast, getErrorMessage])
 
   function handleCommentScroll() {
     commentSectionRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -150,8 +157,8 @@ export default function ArticleDetailPage({ post, isWebView }: Props) {
       if (!token) throw new Error('no token')
       await deletePost(post.id, token)
       router.back()
-    } catch {
-      toast.error('삭제에 실패했어요')
+    } catch (err) {
+      toast.error(getErrorMessage(err))
       setIsDeleting(false)
     }
   }

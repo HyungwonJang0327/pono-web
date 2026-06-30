@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth, useUser } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
 import { useToastContext } from '@/components/ui'
+import { useErrorMessage } from '@/hooks/useErrorMessage'
 import { followUser, unfollowUser } from '@/services/user.service'
 import type { FollowUserDto } from '@/types/user'
 
@@ -28,14 +29,18 @@ export default function FollowListClient({ list, activeTab, username }: Props) {
   const { getToken } = useAuth()
   const { user: clerkUser } = useUser()
   const toast = useToastContext()
+  const getErrorMessage = useErrorMessage()
 
   const t = useTranslations('follow')
 
   const [following, setFollowing] = useState<Record<string, boolean>>(
     () => Object.fromEntries(list.map((u) => [u.id, u.isFollowedByMe])),
   )
+  const inFlightRef = useRef<Set<string>>(new Set())
 
   const handleToggle = async (userId: string) => {
+    if (inFlightRef.current.has(userId)) return
+    inFlightRef.current.add(userId)
     const prev = following[userId]
     setFollowing((s) => ({ ...s, [userId]: !prev }))
     try {
@@ -45,9 +50,11 @@ export default function FollowListClient({ list, activeTab, username }: Props) {
       } else {
         await followUser(userId, token)
       }
-    } catch {
+    } catch (err) {
       setFollowing((s) => ({ ...s, [userId]: prev }))
-      toast.error(t('errorFollow'))
+      toast.error(getErrorMessage(err))
+    } finally {
+      inFlightRef.current.delete(userId)
     }
   }
 

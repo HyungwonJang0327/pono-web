@@ -8,6 +8,7 @@ import Image from 'next/image'
 import { SnapLikeButton } from '@/components/ui/SnapLikeButton'
 import { BottomSheet } from '@/components/ui/BottomSheet'
 import { useToast } from '@/hooks/useToast'
+import { useErrorMessage } from '@/hooks/useErrorMessage'
 import { useRelativeTime } from '@/hooks/useRelativeTime'
 import { addLike, removeLike, updatePost, deletePost } from '@/services/post.service'
 import CommentSection from '@/components/post/CommentSection'
@@ -24,6 +25,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
   const { openSignIn } = useClerk()
   const { user } = useUser()
   const toast = useToast()
+  const getErrorMessage = useErrorMessage()
   const formatRelativeTime = useRelativeTime()
 
   const currentUser = user
@@ -33,6 +35,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
   // 좋아요 낙관적 업데이트 state
   const [likedByMe, setLikedByMe] = useState(post.likedByMe)
   const [likeCount, setLikeCount] = useState(post.likeCount)
+  const likeInFlightRef = useRef(false)
 
   // 캐러셀 state
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -72,6 +75,8 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
       openSignIn()
       return
     }
+    if (likeInFlightRef.current) return
+    likeInFlightRef.current = true
     const prev = { likedByMe, likeCount }
     setLikedByMe((v) => !v)
     setLikeCount((v) => (likedByMe ? v - 1 : v + 1))
@@ -83,12 +88,14 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
       } else {
         await addLike(post.id, token)
       }
-    } catch {
+    } catch (err) {
       setLikedByMe(prev.likedByMe)
       setLikeCount(prev.likeCount)
-      toast.error('좋아요 처리에 실패했어요')
+      toast.error(getErrorMessage(err))
+    } finally {
+      likeInFlightRef.current = false
     }
-  }, [isSignedIn, likedByMe, likeCount, post.id, getToken, openSignIn, toast])
+  }, [isSignedIn, likedByMe, likeCount, post.id, getToken, openSignIn, toast, getErrorMessage])
 
   // 댓글 구간으로 스크롤
   function handleCommentScroll() {
@@ -105,8 +112,8 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
       await updatePost(post.id, { caption: editValue }, token)
       setCaption(editValue)
       setIsEditing(false)
-    } catch {
-      toast.error('수정에 실패했어요')
+    } catch (err) {
+      toast.error(getErrorMessage(err))
     } finally {
       setIsSaving(false)
     }
@@ -126,8 +133,8 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
       if (!token) throw new Error('no token')
       await deletePost(post.id, token)
       router.back()
-    } catch {
-      toast.error('삭제에 실패했어요')
+    } catch (err) {
+      toast.error(getErrorMessage(err))
       setIsDeleting(false)
     }
   }

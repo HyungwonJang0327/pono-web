@@ -6,6 +6,7 @@ import { useAuth, useUser } from '@clerk/nextjs'
 import { BookOpen, Bell, ChevronLeft, Clock, Settings } from 'lucide-react'
 import { useTranslations } from 'next-intl'
 import { useToastContext } from '@/components/ui'
+import { useErrorMessage } from '@/hooks/useErrorMessage'
 import { followUser, unfollowUser } from '@/services/user.service'
 import type { UserPublicProfileDto } from '@/types/user'
 import type { SnapSummaryDto, ArticleSummaryDto, PostSummaryDto } from '@/types/post'
@@ -28,11 +29,13 @@ export default function ProfileClient({
   const { getToken } = useAuth()
   const { user: clerkUser } = useUser()
   const toast = useToastContext()
+  const getErrorMessage = useErrorMessage()
 
   const t = useTranslations('profile')
   const tFollow = useTranslations('follow')
 
   const [isFollowing, setIsFollowing] = useState(profile.isFollowedByMe)
+  const followInFlightRef = useRef(false)
   const [activeTab, setActiveTab] = useState<0 | 1>(0) // 0: 스냅, 1: 아티클
   const [isCompact, setIsCompact] = useState(false)
   const profileSectionRef = useRef<HTMLDivElement>(null)
@@ -63,6 +66,8 @@ export default function ProfileClient({
   // 팔로우 낙관적 업데이트
   const handleFollowToggle = async () => {
     if (!clerkUser) return
+    if (followInFlightRef.current) return
+    followInFlightRef.current = true
     const prev = isFollowing
     setIsFollowing(!prev)
     try {
@@ -72,9 +77,11 @@ export default function ProfileClient({
       } else {
         await followUser(profile.id, token)
       }
-    } catch {
+    } catch (err) {
       setIsFollowing(prev)
-      toast.error(t('errorFollow'))
+      toast.error(getErrorMessage(err))
+    } finally {
+      followInFlightRef.current = false
     }
   }
 
