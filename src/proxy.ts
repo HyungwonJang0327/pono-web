@@ -1,7 +1,14 @@
-import { clerkMiddleware } from '@clerk/nextjs/server'
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 
-export default clerkMiddleware((auth, request: NextRequest) => {
+// 비로그인 직접 접근 차단 라우트 — 온보딩 username 설정은 인증 필수 (강제 플로우)
+const isProtectedRoute = createRouteMatcher(['/onboarding(.*)'])
+
+export default clerkMiddleware(async (auth, request: NextRequest) => {
+  if (isProtectedRoute(request)) {
+    await auth.protect()
+  }
+
   const host = request.headers.get('host') ?? ''
   const userAgent = request.headers.get('user-agent') ?? ''
 
