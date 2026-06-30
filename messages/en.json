@@ -54,6 +54,160 @@
     "errorDelete": "Failed to delete comment",
     "errorSubmit": "Failed to post comment"
   },
+  "common": {
+    "cancel": "Cancel",
+    "done": "Done",
+    "save": "Save",
+    "delete": "Delete",
+    "apply": "Apply",
+    "back": "Go back",
+    "more": "See more",
+    "collapse": "Collapse",
+    "settings": "Settings",
+    "retryLater": "Please try again in a moment.",
+    "errorGeneric": "Something went wrong"
+  },
+  "onboarding": {
+    "logo": "Pono",
+    "title": "Welcome to Pono",
+    "subtitle": "Create your own space",
+    "addPhoto": "Add profile photo",
+    "changePhoto": "Change photo",
+    "avatarPreviewAlt": "Profile preview",
+    "usernameLabel": "Username",
+    "usernamePlaceholder": "username",
+    "usernameHint": "Only lowercase letters, numbers, and underscores (_) are allowed.",
+    "usernameReserved": "That username isn't available.",
+    "usernameInvalidChars": "Only lowercase letters, numbers, and underscores (_) are allowed.",
+    "usernameTooShort": "Please enter at least 3 characters.",
+    "usernameTooLong": "Please enter 20 characters or fewer.",
+    "usernameAvailable": "This username is available.",
+    "usernameTaken": "That username is already taken.",
+    "submitError": "Please try again in a moment.",
+    "submit": "Get started"
+  },
+  "writeSnap": {
+    "headerTitle": "New snap",
+    "cancel": "Cancel",
+    "publish": "Post",
+    "publishing": "Posting...",
+    "addPhotos": "Add photos",
+    "maxPhotos": "Up to {max}",
+    "addPhotoShort": "Add photo",
+    "selectedImageAlt": "Selected image {index}",
+    "removeImage": "Remove image {index}",
+    "captionLabel": "Caption",
+    "captionPlaceholder": "Write about this moment...",
+    "loginRequired": "You need to sign in.",
+    "publishSuccess": "Your snap has been posted.",
+    "publishError": "Failed to post. Please try again."
+  },
+  "writeArticle": {
+    "cancel": "Cancel",
+    "publish": "Publish",
+    "publishing": "Publishing...",
+    "saving": "Saving...",
+    "saved": "Saved",
+    "saveError": "Save failed",
+    "coverAlt": "Cover image",
+    "removeCover": "Remove cover image",
+    "addCover": "Add cover image (optional)",
+    "titlePlaceholder": "Enter a title",
+    "bodyPlaceholder": "Write your content...",
+    "linkPlaceholder": "https://...",
+    "apply": "Apply",
+    "toolbarBold": "Bold",
+    "toolbarItalic": "Italic",
+    "toolbarHeading1": "Heading 1",
+    "toolbarHeading2": "Heading 2",
+    "toolbarQuote": "Quote",
+    "toolbarLink": "Link",
+    "toolbarImage": "Insert image",
+    "loginRequired": "You need to sign in.",
+    "coverUploadError": "Failed to upload cover image.",
+    "imageUploadError": "Failed to upload image.",
+    "publishSuccess": "Your article has been published."
+  },
+  "settings": {
+    "title": "Settings",
+    "back": "Go back",
+    "editProfile": "Edit profile",
+    "login": "Sign in",
+    "loginDescription": "Sign in to manage your profile",
+    "appSettings": "App settings",
+    "language": "Language",
+    "languageSheetTitle": "Select language",
+    "errorGeneric": "Something went wrong"
+  },
+  "profileEdit": {
+    "title": "Edit profile",
+    "back": "Go back",
+    "changePhoto": "Change photo",
+    "usernameLabel": "Display name",
+    "usernameHint": "This is the name others will see",
+    "bioLabel": "Bio",
+    "bioMax": "Up to 80 characters",
+    "save": "Save",
+    "saveSuccess": "Saved",
+    "saveError": "Failed to save"
+  },
+  "post": {
+    "back": "Go back",
+    "more": "More",
+    "imageAlt": "Image {index}",
+    "cancel": "Cancel",
+    "done": "Done",
+    "expand": "See more",
+    "collapse": "Collapse",
+    "editCaption": "Edit caption",
+    "editArticle": "Edit article",
+    "deletePost": "Delete post",
+    "deleteConfirmTitle": "Delete this post?",
+    "deleteConfirmDescription": "Deleted posts can't be recovered",
+    "delete": "Delete",
+    "readingTime": "{minutes} min"
+  },
+  "feedHome": {
+    "following": "Following",
+    "recommended": "For you"
+  },
+  "header": {
+    "back": "Go back",
+    "settings": "Settings",
+    "myProfile": "My profile",
+    "profile": "Profile"
+  },
+  "writeFab": {
+    "write": "Create post",
+    "sheetTitle": "What would you like to post?",
+    "snapTitle": "Post a snap",
+    "snapDescription": "Capture a moment with a single photo",
+    "articleTitle": "Write an article",
+    "articleDescription": "Unfold your thoughts in a long-form piece"
+  },
+  "like": {
+    "like": "Like",
+    "unlike": "Unlike",
+    "error": "Failed to update like"
+  },
+  "bookmark": {
+    "add": "Add bookmark",
+    "remove": "Remove bookmark"
+  },
+  "boundary": {
+    "title": "Something went wrong",
+    "description": "Please try again in a moment.",
+    "retry": "Try again"
+  },
+  "loginRequired": {
+    "message": "This page requires sign in.",
+    "back": "Go back"
+  },
+  "recommendedCreators": {
+    "title": "Suggested creators",
+    "follow": "Follow",
+    "following": "Following"
+  },
   "error": {
     "networkTitle": "Couldn't load",
     "networkDescription": "Your connection may be unstable or the server is temporarily unavailable. Please try again later.",

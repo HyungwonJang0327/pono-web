@@ -28,9 +28,9 @@ beforeEach(() => {
 })
 
 async function typeValidUsername() {
-  const input = screen.getByPlaceholderText('username')
+  const input = screen.getByPlaceholderText('onboarding.usernamePlaceholder')
   await userEvent.type(input, 'validname')
-  return screen.getByRole('button', { name: '시작하기' })
+  return screen.getByRole('button', { name: 'onboarding.submit' })
 }
 
 describe('OnboardingUsernamePage 에러 처리', () => {
@@ -42,7 +42,7 @@ describe('OnboardingUsernamePage 에러 처리', () => {
     await userEvent.click(button)
 
     await waitFor(() =>
-      expect(screen.getByText('이미 사용 중인 이름이에요.')).toBeInTheDocument(),
+      expect(screen.getByText('onboarding.usernameTaken')).toBeInTheDocument(),
     )
   })
 
@@ -54,9 +54,9 @@ describe('OnboardingUsernamePage 에러 처리', () => {
     await userEvent.click(button)
 
     await waitFor(() =>
-      expect(screen.getByText('잠시 후 다시 시도해 주세요.')).toBeInTheDocument(),
+      expect(screen.getByText('onboarding.submitError')).toBeInTheDocument(),
     )
-    expect(screen.getByRole('button', { name: '시작하기' })).not.toBeDisabled()
+    expect(screen.getByRole('button', { name: 'onboarding.submit' })).not.toBeDisabled()
     expect(push).not.toHaveBeenCalled()
   })
 

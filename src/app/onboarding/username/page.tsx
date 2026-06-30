@@ -3,6 +3,7 @@
 import { useRef, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
+import { useTranslations } from 'next-intl';
 import { User, Plus, Pencil, Check } from 'lucide-react';
 import { RESERVED_USERNAMES } from '@/constants';
 import { updateUserProfile } from '@/services/user.service';
@@ -10,28 +11,32 @@ import { ApiError } from '@/lib/api';
 
 type ValidationState = 'idle' | 'valid' | 'error';
 
-function validateUsername(value: string): { state: ValidationState; message: string } {
+function validateUsername(
+  value: string,
+  t: (key: string) => string,
+): { state: ValidationState; message: string } {
   if (value.length === 0) {
     return { state: 'idle', message: '' };
   }
   if (RESERVED_USERNAMES.includes(value.toLowerCase())) {
-    return { state: 'error', message: '사용할 수 없는 이름이에요.' };
+    return { state: 'error', message: t('usernameReserved') };
   }
   if (!/^[a-z0-9_]+$/.test(value)) {
-    return { state: 'error', message: '영문 소문자, 숫자, 밑줄(_)만 사용할 수 있어요.' };
+    return { state: 'error', message: t('usernameInvalidChars') };
   }
   if (value.length < 3) {
-    return { state: 'error', message: '3자 이상 입력해주세요.' };
+    return { state: 'error', message: t('usernameTooShort') };
   }
   if (value.length > 20) {
-    return { state: 'error', message: '20자 이하로 입력해주세요.' };
+    return { state: 'error', message: t('usernameTooLong') };
   }
-  return { state: 'valid', message: '사용할 수 있는 이름이에요.' };
+  return { state: 'valid', message: t('usernameAvailable') };
 }
 
 export default function OnboardingUsernamePage() {
   const router = useRouter();
   const { getToken } = useAuth();
+  const t = useTranslations('onboarding');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
@@ -41,7 +46,7 @@ export default function OnboardingUsernamePage() {
   const [conflictError, setConflictError] = useState(false);
   const [submitError, setSubmitError] = useState(false);
 
-  const { state: validationState, message: validationMessage } = validateUsername(username);
+  const { state: validationState, message: validationMessage } = validateUsername(username, t);
   const isValid = validationState === 'valid';
   const isError = validationState === 'error';
 
@@ -102,7 +107,7 @@ export default function OnboardingUsernamePage() {
       {/* 상단 로고 */}
       <div className="pt-14 pb-2 text-center">
         <span className="font-serif text-xl font-bold text-primary-700 tracking-tight">
-          Pono
+          {t('logo')}
         </span>
       </div>
 
@@ -110,10 +115,10 @@ export default function OnboardingUsernamePage() {
       <div className="flex flex-1 flex-col px-6 pt-8">
         {/* 헤딩 */}
         <h1 className="text-[28px] font-bold leading-tight text-neutral-900">
-          포노에 오신 걸 환영해요
+          {t('title')}
         </h1>
         <p className="mt-2 text-[15px] text-neutral-600">
-          나만의 공간을 만들어보세요
+          {t('subtitle')}
         </p>
 
         {/* 아바타 업로드 */}
@@ -122,7 +127,7 @@ export default function OnboardingUsernamePage() {
             type="button"
             onClick={handleAvatarClick}
             className="relative focus:outline-none"
-            aria-label={avatarPreview ? '사진 변경' : '프로필 사진 추가'}
+            aria-label={avatarPreview ? t('changePhoto') : t('addPhoto')}
           >
             {/* 원형 아바타 */}
             <div className="w-[90px] h-[90px] rounded-full bg-neutral-200 overflow-hidden flex items-center justify-center">
@@ -130,7 +135,7 @@ export default function OnboardingUsernamePage() {
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
                   src={avatarPreview}
-                  alt="프로필 미리보기"
+                  alt={t('avatarPreviewAlt')}
                   className="w-full h-full object-cover"
                 />
               ) : (
@@ -149,7 +154,7 @@ export default function OnboardingUsernamePage() {
           </button>
 
           <span className="text-[13px] text-neutral-500">
-            {avatarPreview ? '사진 변경' : '프로필 사진 추가'}
+            {avatarPreview ? t('changePhoto') : t('addPhoto')}
           </span>
 
           {/* 숨겨진 파일 input */}
@@ -168,7 +173,7 @@ export default function OnboardingUsernamePage() {
             htmlFor="username-input"
             className="block text-[14px] font-medium text-neutral-900 mb-2"
           >
-            사용자 이름
+            {t('usernameLabel')}
           </label>
 
           <div
@@ -189,7 +194,7 @@ export default function OnboardingUsernamePage() {
               onChange={handleUsernameChange}
               onFocus={() => setIsFocused(true)}
               onBlur={() => setIsFocused(false)}
-              placeholder="username"
+              placeholder={t('usernamePlaceholder')}
               className="flex-1 bg-transparent text-[15px] text-neutral-900 placeholder:text-neutral-400 focus:outline-none"
             />
             {isValid && (
@@ -200,15 +205,15 @@ export default function OnboardingUsernamePage() {
           {/* 안내/유효성 메시지 */}
           {submitError ? (
             <p className="mt-2 text-[13px] text-red-500">
-              잠시 후 다시 시도해 주세요.
+              {t('submitError')}
             </p>
           ) : conflictError ? (
             <p className="mt-2 text-[13px] text-red-500">
-              이미 사용 중인 이름이에요.
+              {t('usernameTaken')}
             </p>
           ) : username.length === 0 ? (
             <p className="mt-2 text-[13px] text-neutral-500">
-              영문, 숫자, 밑줄(_)만 사용할 수 있어요.
+              {t('usernameHint')}
             </p>
           ) : isValid ? (
             <p className="mt-2 flex items-center gap-1 text-[13px] text-primary-500">
@@ -236,7 +241,7 @@ export default function OnboardingUsernamePage() {
               : 'bg-neutral-200 text-neutral-400 cursor-not-allowed',
           ].join(' ')}
         >
-          시작하기
+          {t('submit')}
         </button>
       </div>
       </div>

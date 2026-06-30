@@ -54,6 +54,160 @@
     "errorDelete": "コメントの削除に失敗しました",
     "errorSubmit": "コメントの投稿に失敗しました"
   },
+  "common": {
+    "cancel": "キャンセル",
+    "done": "完了",
+    "save": "保存する",
+    "delete": "削除",
+    "apply": "適用",
+    "back": "戻る",
+    "more": "もっと見る",
+    "collapse": "閉じる",
+    "settings": "設定",
+    "retryLater": "しばらくしてからもう一度お試しください。",
+    "errorGeneric": "エラーが発生しました"
+  },
+  "onboarding": {
+    "logo": "Pono",
+    "title": "Ponoへようこそ",
+    "subtitle": "あなただけの空間を作りましょう",
+    "addPhoto": "プロフィール写真を追加",
+    "changePhoto": "写真を変更",
+    "avatarPreviewAlt": "プロフィールプレビュー",
+    "usernameLabel": "ユーザー名",
+    "usernamePlaceholder": "username",
+    "usernameHint": "英小文字、数字、アンダースコア(_)のみ使用できます。",
+    "usernameReserved": "使用できない名前です。",
+    "usernameInvalidChars": "英小文字、数字、アンダースコア(_)のみ使用できます。",
+    "usernameTooShort": "3文字以上入力してください。",
+    "usernameTooLong": "20文字以下で入力してください。",
+    "usernameAvailable": "使用できる名前です。",
+    "usernameTaken": "すでに使われている名前です。",
+    "submitError": "しばらくしてからもう一度お試しください。",
+    "submit": "はじめる"
+  },
+  "writeSnap": {
+    "headerTitle": "新しいスナップ",
+    "cancel": "キャンセル",
+    "publish": "投稿",
+    "publishing": "投稿中...",
+    "addPhotos": "写真を追加してください",
+    "maxPhotos": "最大{max}枚",
+    "addPhotoShort": "写真を追加",
+    "selectedImageAlt": "選択した画像 {index}",
+    "removeImage": "画像 {index} を削除",
+    "captionLabel": "キャプション",
+    "captionPlaceholder": "この瞬間について書いてみましょう...",
+    "loginRequired": "ログインが必要です。",
+    "publishSuccess": "スナップを投稿しました。",
+    "publishError": "投稿に失敗しました。もう一度お試しください。"
+  },
+  "writeArticle": {
+    "cancel": "キャンセル",
+    "publish": "投稿",
+    "publishing": "投稿中...",
+    "saving": "保存中...",
+    "saved": "保存しました",
+    "saveError": "保存に失敗",
+    "coverAlt": "カバー画像",
+    "removeCover": "カバー画像を削除",
+    "addCover": "カバー画像を追加（任意）",
+    "titlePlaceholder": "タイトルを入力してください",
+    "bodyPlaceholder": "内容を入力してください...",
+    "linkPlaceholder": "https://...",
+    "apply": "適用",
+    "toolbarBold": "太字",
+    "toolbarItalic": "斜体",
+    "toolbarHeading1": "見出し1",
+    "toolbarHeading2": "見出し2",
+    "toolbarQuote": "引用",
+    "toolbarLink": "リンク",
+    "toolbarImage": "画像を挿入",
+    "loginRequired": "ログインが必要です。",
+    "coverUploadError": "カバー画像のアップロードに失敗しました。",
+    "imageUploadError": "画像のアップロードに失敗しました。",
+    "publishSuccess": "アーティクルを投稿しました。"
+  },
+  "settings": {
+    "title": "設定",
+    "back": "戻る",
+    "editProfile": "プロフィールを編集",
+    "login": "ログイン",
+    "loginDescription": "ログインしてプロフィールを管理しましょう",
+    "appSettings": "アプリ設定",
+    "language": "言語",
+    "languageSheetTitle": "言語を選択",
+    "errorGeneric": "エラーが発生しました"
+  },
+  "profileEdit": {
+    "title": "プロフィールを編集",
+    "back": "戻る",
+    "changePhoto": "写真を変更",
+    "usernameLabel": "ニックネーム",
+    "usernameHint": "他の人に表示される名前です",
+    "bioLabel": "自己紹介",
+    "bioMax": "最大80文字",
+    "save": "保存する",
+    "saveSuccess": "保存しました",
+    "saveError": "保存に失敗しました"
+  },
+  "post": {
+    "back": "戻る",
+    "more": "もっと見る",
+    "imageAlt": "画像 {index}",
+    "cancel": "キャンセル",
+    "done": "完了",
+    "expand": "もっと見る",
+    "collapse": "閉じる",
+    "editCaption": "キャプションを編集",
+    "editArticle": "アーティクルを編集",
+    "deletePost": "投稿を削除",
+    "deleteConfirmTitle": "投稿を削除しますか？",
+    "deleteConfirmDescription": "削除した投稿は復元できません",
+    "delete": "削除",
+    "readingTime": "{minutes}分"
+  },
+  "feedHome": {
+    "following": "フォロー中",
+    "recommended": "おすすめ"
+  },
+  "header": {
+    "back": "戻る",
+    "settings": "設定",
+    "myProfile": "マイプロフィール",
+    "profile": "プロフィール"
+  },
+  "writeFab": {
+    "write": "投稿を作成",
+    "sheetTitle": "何を投稿しますか？",
+    "snapTitle": "スナップを投稿",
+    "snapDescription": "写真1枚で瞬間を記録しましょう",
+    "articleTitle": "アーティクルを書く",
+    "articleDescription": "考えを長文でつづってみましょう"
+  },
+  "like": {
+    "like": "いいね",
+    "unlike": "いいねを取り消す",
+    "error": "いいねの処理に失敗しました"
+  },
+  "bookmark": {
+    "add": "ブックマークを追加",
+    "remove": "ブックマークを解除"
+  },
+  "boundary": {
+    "title": "問題が発生しました",
+    "description": "しばらくしてからもう一度お試しください。",
+    "retry": "再試行"
+  },
+  "loginRequired": {
+    "message": "このページはログインが必要です。",
+    "back": "戻る"
+  },
+  "recommendedCreators": {
+    "title": "おすすめクリエイター",
+    "follow": "フォロー",
+    "following": "フォロー中"
+  },
   "error": {
     "networkTitle": "読み込めませんでした",
     "networkDescription": "インターネット接続が不安定か、サーバーに一時的な問題があります。しばらくしてからもう一度お試しください。",
