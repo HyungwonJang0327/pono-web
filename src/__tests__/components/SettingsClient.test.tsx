@@ -11,6 +11,9 @@ const mockRouterBack = jest.fn()
 const mockRouterPush = jest.fn()
 const mockRouterRefresh = jest.fn()
 const mockToastError = jest.fn()
+const mockOpenSignIn = jest.fn()
+
+let mockIsSignedIn = true
 
 jest.mock('next/navigation', () => ({
   useRouter: () => ({
@@ -21,7 +24,11 @@ jest.mock('next/navigation', () => ({
 }))
 
 jest.mock('@clerk/nextjs', () => ({
-  useAuth: () => ({ getToken: jest.fn().mockResolvedValue('token') }),
+  useAuth: () => ({
+    isSignedIn: mockIsSignedIn,
+    getToken: jest.fn().mockResolvedValue('token'),
+  }),
+  useClerk: () => ({ openSignIn: mockOpenSignIn }),
 }))
 
 jest.mock('@/components/ui', () => ({
@@ -42,13 +49,13 @@ jest.mock('@/services/user.service', () => ({
 // ── 헬퍼 ──────────────────────────────────────────────────────────────────────
 
 function renderSettingsClient(overrides: {
-  username?: string
+  username?: string | null
   avatar?: string | null
   locale?: string | null
 } = {}) {
   return render(
     <SettingsClient
-      username={overrides.username ?? 'testuser'}
+      username={overrides.username === undefined ? 'testuser' : overrides.username}
       avatar={overrides.avatar ?? null}
       locale={overrides.locale ?? 'ko'}
     />,
@@ -60,6 +67,7 @@ function renderSettingsClient(overrides: {
 describe('SettingsClient', () => {
   beforeEach(() => {
     jest.clearAllMocks()
+    mockIsSignedIn = true
   })
 
   it('username과 @username을 렌더링한다', () => {
@@ -115,5 +123,39 @@ describe('SettingsClient', () => {
     const enRow = screen.getByRole('button', { name: 'English' })
     await userEvent.click(enRow)
     expect(updateUserProfile).toHaveBeenCalledWith({ locale: 'en' }, 'token')
+  })
+
+  describe('비로그인 상태', () => {
+    beforeEach(() => {
+      mockIsSignedIn = false
+    })
+
+    it('"로그인하기" row를 표시하고 프로필 요약 카드를 표시하지 않는다', () => {
+      renderSettingsClient({ username: null })
+      expect(screen.getByText('로그인하기')).toBeInTheDocument()
+      expect(screen.queryByRole('button', { name: /프로필 편집/ })).not.toBeInTheDocument()
+    })
+
+    it('"로그인하기" row 탭 시 openSignIn을 호출한다', async () => {
+      renderSettingsClient({ username: null })
+      const loginRow = screen.getByRole('button', { name: /로그인하기/ })
+      await userEvent.click(loginRow)
+      expect(mockOpenSignIn).toHaveBeenCalled()
+    })
+
+    it('언어 설정 섹션은 그대로 노출한다', () => {
+      renderSettingsClient({ username: null, locale: 'ko' })
+      expect(screen.getByRole('button', { name: /언어/ })).toBeInTheDocument()
+    })
+
+    it('언어 변경 시 updateUserProfile를 호출하지 않는다', async () => {
+      renderSettingsClient({ username: null, locale: 'ko' })
+      const languageRow = screen.getByRole('button', { name: /언어/ })
+      await userEvent.click(languageRow)
+      const enRow = screen.getByRole('button', { name: 'English' })
+      await userEvent.click(enRow)
+      expect(updateUserProfile).not.toHaveBeenCalled()
+      expect(mockRouterRefresh).toHaveBeenCalled()
+    })
   })
 })
