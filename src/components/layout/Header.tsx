@@ -86,7 +86,7 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
 
         {/* 우측: 설정 + 알림 + 프로필 */}
         <div className="flex items-center gap-3">
-          {/* 설정 버튼 — 홈 피드 + 로그인 시에만 노출 */}
+          {/* 설정 버튼 — 홈 피드에서 노출 (언어 설정은 비로그인도 접근 가능) */}
           {showSettings && (
             <button
               type="button"
