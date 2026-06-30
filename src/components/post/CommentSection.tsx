@@ -6,7 +6,9 @@ import { Trash2, X } from 'lucide-react'
 import { useAuth, useClerk } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
 import { useToast } from '@/hooks/useToast'
+import { useErrorMessage } from '@/hooks/useErrorMessage'
 import { useRelativeTime } from '@/hooks/useRelativeTime'
+import { NetworkErrorState, Skeleton } from '@/components/ui'
 import { getComments, createComment, deleteComment } from '@/services/comment.service'
 import type { CommentDto, ReplyDto } from '@/types/comment'
 
@@ -149,26 +151,30 @@ export default function CommentSection({ postId, currentUser }: Props) {
   const { openSignIn } = useClerk()
   const t = useTranslations('comment')
   const toast = useToast()
+  const getErrorMessage = useErrorMessage()
 
   const [comments, setComments] = useState<CommentDto[]>([])
   const [isLoading, setIsLoading] = useState(true)
+  const [loadError, setLoadError] = useState(false)
+  const [reloadTick, setReloadTick] = useState(0)
   const [body, setBody] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [replyTarget, setReplyTarget] = useState<{ username: string; parentId: string } | null>(null)
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-  // 댓글 목록 로드
+  // 댓글 목록 로드 (reloadTick 증가 시 재시도)
   useEffect(() => {
     let cancelled = false
     async function load() {
       setIsLoading(true)
+      setLoadError(false)
       try {
         const token = isSignedIn ? (await getToken()) ?? undefined : undefined
         const data = await getComments(postId, token)
         if (!cancelled) setComments(data.items)
       } catch {
-        // 에러 시 빈 목록 유지
+        if (!cancelled) setLoadError(true)
       } finally {
         if (!cancelled) setIsLoading(false)
       }
@@ -176,7 +182,7 @@ export default function CommentSection({ postId, currentUser }: Props) {
     load()
     return () => { cancelled = true }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [postId])
+  }, [postId, reloadTick])
 
   // textarea 높이 자동 확장
   function handleBodyChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -203,11 +209,11 @@ export default function CommentSection({ postId, currentUser }: Props) {
             replies: c.replies.filter((r) => r.id !== commentId),
           }))
         })
-      } catch {
-        toast.error(t('errorDelete'))
+      } catch (err) {
+        toast.error(getErrorMessage(err))
       }
     },
-    [postId, getToken, toast, t],
+    [postId, getToken, toast, getErrorMessage],
   )
 
   // 답글 타겟 설정
@@ -243,8 +249,8 @@ export default function CommentSection({ postId, currentUser }: Props) {
       if (textareaRef.current) {
         textareaRef.current.style.height = 'auto'
       }
-    } catch {
-      toast.error(t('errorSubmit'))
+    } catch (err) {
+      toast.error(getErrorMessage(err))
     } finally {
       setIsSubmitting(false)
     }
@@ -254,7 +260,25 @@ export default function CommentSection({ postId, currentUser }: Props) {
     <>
       {/* 댓글 목록 */}
       <div>
-        {isLoading ? null : comments.length === 0 ? (
+        {isLoading ? (
+          <div data-testid="comment-loading" className="flex flex-col gap-4 py-4">
+            {[0, 1, 2].map((i) => (
+              <div key={i} className="flex gap-2.5">
+                <Skeleton variant="circle" className="w-10 h-10" />
+                <div className="flex-1 flex flex-col gap-1.5">
+                  <Skeleton className="h-3 w-24 rounded" />
+                  <Skeleton className="h-3 w-full rounded" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : loadError ? (
+          <NetworkErrorState
+            compact
+            description={getErrorMessage(new Error())}
+            onRetry={() => setReloadTick((v) => v + 1)}
+          />
+        ) : comments.length === 0 ? (
           <p className="text-sm text-neutral-400 text-center py-6">{t('empty')}</p>
         ) : (
           comments.map((comment) => (

@@ -30,4 +30,12 @@ describe('NetworkErrorState', () => {
     expect(screen.getByText('오류 발생')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /재시도/ })).toBeInTheDocument()
   })
+
+  it('compact 모드에서도 description과 재시도 버튼을 노출하고 onRetry를 호출한다', async () => {
+    const onRetry = jest.fn()
+    render(<NetworkErrorState compact onRetry={onRetry} />)
+    expect(screen.getByText('error.networkDescription')).toBeInTheDocument()
+    await userEvent.click(screen.getByRole('button', { name: 'error.retry' }))
+    expect(onRetry).toHaveBeenCalledTimes(1)
+  })
 })

@@ -9,6 +9,8 @@ interface NetworkErrorStateProps {
   description?: React.ReactNode
   retryLabel?: string
   onRetry: () => void
+  /** 댓글 등 좁은 영역용 컴팩트 레이아웃 (아이콘·여백 축소, 인라인 재시도 링크) */
+  compact?: boolean
 }
 
 export function NetworkErrorState({
@@ -16,11 +18,29 @@ export function NetworkErrorState({
   description,
   retryLabel,
   onRetry,
+  compact = false,
 }: NetworkErrorStateProps) {
   const t = useTranslations('error')
   const resolvedTitle = title ?? t('networkTitle')
   const resolvedDescription = description ?? t('networkDescription')
   const resolvedRetryLabel = retryLabel ?? t('retry')
+
+  if (compact) {
+    return (
+      <div className="flex flex-col items-center gap-2 py-6 text-center">
+        <p className="text-[13px] text-neutral-600">{resolvedDescription}</p>
+        <button
+          type="button"
+          onClick={onRetry}
+          className="inline-flex items-center gap-1.5 text-[13px] font-medium text-primary-700"
+        >
+          <RefreshCw size={14} />
+          {resolvedRetryLabel}
+        </button>
+      </div>
+    )
+  }
+
   return (
     <div className="px-4 pt-2 pb-6">
       <div className="flex justify-center mb-4">
