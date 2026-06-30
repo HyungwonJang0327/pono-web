@@ -59,8 +59,8 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
   // - 그 외: ChevronLeft 버튼
   const showLogo = isWebView === true || NO_BACK_PATHS.includes(pathname)
 
-  // 설정 진입: 홈 피드에서 로그인 사용자에게만 노출
-  const showSettings = pathname === '/' && isSignedIn && !!myUsername
+  // 설정 진입: 홈 피드에서 노출 (언어 설정은 비로그인도 접근 가능)
+  const showSettings = pathname === '/'
 
   return (
     <header

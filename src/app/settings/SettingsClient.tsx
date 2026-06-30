@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useAuth } from '@clerk/nextjs'
+import { useAuth, useClerk } from '@clerk/nextjs'
 import { ChevronLeft, ChevronRight, Check } from 'lucide-react'
 import { BottomSheet, useToastContext } from '@/components/ui'
 import { updateUserProfile } from '@/services/user.service'
@@ -26,7 +26,7 @@ function persistLocaleCookie(value: string) {
 const CARD_SHADOW = '0 1px 4px rgba(28,25,23,0.06)'
 
 interface SettingsClientProps {
-  username: string
+  username: string | null
   avatar: string | null
   locale: string | null
 }
@@ -37,7 +37,8 @@ export default function SettingsClient({
   locale,
 }: SettingsClientProps) {
   const router = useRouter()
-  const { getToken } = useAuth()
+  const { isSignedIn, getToken } = useAuth()
+  const { openSignIn } = useClerk()
   const toast = useToastContext()
 
   const [isSheetOpen, setIsSheetOpen] = useState(false)
@@ -53,8 +54,10 @@ export default function SettingsClient({
     const previous = currentLocale
     setCurrentLocale(selected)
     try {
-      const token = (await getToken()) ?? ''
-      await updateUserProfile({ locale: selected }, token)
+      if (isSignedIn) {
+        const token = (await getToken()) ?? ''
+        await updateUserProfile({ locale: selected }, token)
+      }
       persistLocaleCookie(selected)
       router.refresh()
       setIsSheetOpen(false)
@@ -84,39 +87,65 @@ export default function SettingsClient({
       </div>
 
       <div className="mx-auto w-full max-w-[560px] px-4">
-        {/* 프로필 요약 카드 */}
-        <button
-          type="button"
-          aria-label="프로필 편집"
-          onClick={() => router.push('/settings/profile')}
-          className="mt-6 w-full h-[72px] rounded-[10px] bg-white px-4 flex items-center text-left"
-          style={{ boxShadow: CARD_SHADOW }}
-        >
-          <div
-            className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white text-[15px] font-semibold shrink-0"
-            style={{
-              background: avatar
-                ? undefined
-                : 'linear-gradient(135deg, #7FA68C, #3F6B53)',
-            }}
+        {/* 프로필 요약 카드 (로그인) / 로그인하기 row (비로그인) */}
+        {username ? (
+          <button
+            type="button"
+            aria-label="프로필 편집"
+            onClick={() => router.push('/settings/profile')}
+            className="mt-6 w-full h-[72px] rounded-[10px] bg-white px-4 flex items-center text-left"
+            style={{ boxShadow: CARD_SHADOW }}
           >
-            {avatar ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={avatar} alt="" className="w-full h-full object-cover" />
-            ) : (
-              <span>{username[0]?.toUpperCase()}</span>
-            )}
-          </div>
-          <div className="ml-3 min-w-0 flex-1">
-            <p className="text-[15px] font-semibold text-neutral-900 truncate">
-              {username}
-            </p>
-            <p className="mt-1 text-[13px] text-[#6B6760] truncate">
-              @{username}
-            </p>
-          </div>
-          <ChevronRight size={20} strokeWidth={1.5} className="text-[#B5B1A8] shrink-0" />
-        </button>
+            <div
+              className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center text-white text-[15px] font-semibold shrink-0"
+              style={{
+                background: avatar
+                  ? undefined
+                  : 'linear-gradient(135deg, #7FA68C, #3F6B53)',
+              }}
+            >
+              {avatar ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={avatar} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <span>{username[0]?.toUpperCase()}</span>
+              )}
+            </div>
+            <div className="ml-3 min-w-0 flex-1">
+              <p className="text-[15px] font-semibold text-neutral-900 truncate">
+                {username}
+              </p>
+              <p className="mt-1 text-[13px] text-[#6B6760] truncate">
+                @{username}
+              </p>
+            </div>
+            <ChevronRight size={20} strokeWidth={1.5} className="text-[#B5B1A8] shrink-0" />
+          </button>
+        ) : (
+          <button
+            type="button"
+            aria-label="로그인하기"
+            onClick={() => openSignIn()}
+            className="mt-6 w-full h-[72px] rounded-[10px] bg-white px-4 flex items-center text-left"
+            style={{ boxShadow: CARD_SHADOW }}
+          >
+            <div className="w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-neutral-200 text-neutral-500 shrink-0">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+              </svg>
+            </div>
+            <div className="ml-3 min-w-0 flex-1">
+              <p className="text-[15px] font-semibold text-neutral-900 truncate">
+                로그인하기
+              </p>
+              <p className="mt-1 text-[13px] text-[#6B6760] truncate">
+                로그인하고 프로필을 관리하세요
+              </p>
+            </div>
+            <ChevronRight size={20} strokeWidth={1.5} className="text-[#B5B1A8] shrink-0" />
+          </button>
+        )}
 
         {/* 앱 설정 섹션 */}
         <div className="mt-7">
