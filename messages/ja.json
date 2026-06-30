@@ -58,5 +58,11 @@
     "networkTitle": "読み込めませんでした",
     "networkDescription": "インターネット接続が不安定か、サーバーに一時的な問題があります。しばらくしてからもう一度お試しください。",
     "retry": "再試行"
+  },
+  "time": {
+    "justNow": "たった今",
+    "minutesAgo": "{count}分前",
+    "hoursAgo": "{count}時間前",
+    "daysAgo": "{count}日前"
   }
 }

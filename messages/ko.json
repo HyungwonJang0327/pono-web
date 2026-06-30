@@ -58,5 +58,11 @@
     "networkTitle": "불러오지 못했어요",
     "networkDescription": "인터넷 연결이 불안정하거나 서버에 일시적인 문제가 있어요. 잠시 후 다시 시도해 주세요.",
     "retry": "다시 시도"
+  },
+  "time": {
+    "justNow": "방금",
+    "minutesAgo": "{count}분 전",
+    "hoursAgo": "{count}시간 전",
+    "daysAgo": "{count}일 전"
   }
 }

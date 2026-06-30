@@ -58,5 +58,11 @@
     "networkTitle": "Couldn't load",
     "networkDescription": "Your connection may be unstable or the server is temporarily unavailable. Please try again later.",
     "retry": "Try again"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago"
   }
 }
