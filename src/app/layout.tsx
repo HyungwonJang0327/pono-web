@@ -26,6 +26,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: "Pono",
     description: t("description"),
+    icons: {
+      icon: [
+        { url: "/logo/favicon-32.png", sizes: "32x32", type: "image/png" },
+        { url: "/logo/favicon-16.png", sizes: "16x16", type: "image/png" },
+        { url: "/logo/favicon-48.png", sizes: "48x48", type: "image/png" },
+      ],
+      apple: "/logo/apple-touch-icon-180.png",
+    },
   };
 }
 
