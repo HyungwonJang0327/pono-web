@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import Link from 'next/link'
 import { useAuth, useClerk } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
 import { useToast } from '@/hooks/useToast'
@@ -56,29 +57,48 @@ export default function ArticleCard({ post }: ArticleCardProps) {
     }
   }, [isSignedIn, likedByMe, likeCount, post.id, getToken, openSignIn, toast, tLike])
 
+  const detailHref = post.author.username
+    ? `/${post.author.username}/${post.id}`
+    : null
+
+  const coverBlock = post.coverImage && (
+    <div className="relative w-full aspect-[16/9]">
+      {/* 사용자 업로드 원격 이미지(S3). 동적 URL이라 next/image 대신 img 사용. */}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        src={post.coverImage}
+        alt={post.title ?? undefined}
+        className="w-full h-full object-cover"
+      />
+    </div>
+  )
+
+  const textBlock = (
+    <>
+      <h2 className="text-[15px] font-bold text-neutral-900 leading-[1.4] tracking-tight mb-1.5 line-clamp-2">
+        {post.title ?? t('noTitle')}
+      </h2>
+      <p className="text-[11px] text-neutral-600 leading-[1.6] mb-2.5 line-clamp-2">
+        {post.excerpt}
+      </p>
+    </>
+  )
+
   return (
     <div className="bg-white rounded-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-card)]">
-      {/* 커버 이미지 16:9 */}
-      {post.coverImage && (
-        <div className="relative w-full aspect-[16/9]">
-          {/* 사용자 업로드 원격 이미지(S3). 동적 URL이라 next/image 대신 img 사용. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={post.coverImage}
-            alt={post.title ?? undefined}
-            className="w-full h-full object-cover"
-          />
-        </div>
-      )}
+      {/* 커버 이미지 16:9 (상세로 이동) */}
+      {coverBlock &&
+        (detailHref ? <Link href={detailHref}>{coverBlock}</Link> : coverBlock)}
 
       {/* 본문 */}
       <div className="px-3 pt-3 pb-3.5">
-        <h2 className="text-[15px] font-bold text-neutral-900 leading-[1.4] tracking-tight mb-1.5 line-clamp-2">
-          {post.title ?? t('noTitle')}
-        </h2>
-        <p className="text-[11px] text-neutral-600 leading-[1.6] mb-2.5 line-clamp-2">
-          {post.excerpt}
-        </p>
+        {detailHref ? (
+          <Link href={detailHref} className="block">
+            {textBlock}
+          </Link>
+        ) : (
+          textBlock
+        )}
         <div className="flex items-center gap-2">
           {post.author.avatar ? (
             // eslint-disable-next-line @next/next/no-img-element

@@ -68,4 +68,17 @@ describe('ArticleCard', () => {
     render(<ArticleCard post={basePost} />)
     expect(screen.getByText('profile.readingTime:{"minutes":5}')).toBeInTheDocument()
   })
+
+  it('제목이 상세 페이지(/{username}/{id})로 가는 링크로 렌더된다', () => {
+    render(<ArticleCard post={basePost} />)
+    const link = screen.getByText('테스트 아티클 제목').closest('a')
+    expect(link).toHaveAttribute('href', '/tester/a1')
+  })
+
+  it('username이 null이면 상세 링크를 걸지 않는다', () => {
+    const post = { ...basePost, author: { ...basePost.author, username: null } }
+    render(<ArticleCard post={post} />)
+    const heading = screen.getByText('테스트 아티클 제목')
+    expect(heading.closest('a')).toBeNull()
+  })
 })
