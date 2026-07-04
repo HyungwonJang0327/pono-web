@@ -4,6 +4,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAuth, useUser, SignInButton } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
 import { ChevronLeft, Settings, Bell, User } from 'lucide-react'
@@ -74,7 +75,11 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
       <div className="mx-auto w-full max-w-[560px] px-5 h-[52px] flex items-center justify-between">
         {/* 좌측: 로고 or 뒤로가기 버튼 */}
         {showLogo ? (
-          <h1 className="text-xl font-bold text-primary-700 italic tracking-tight">Pono</h1>
+          <Link href="/" className="flex items-center">
+            {/* 브랜드 워드마크(로컬 정적 에셋). 로고라 next/image 대신 img로 고정 높이. */}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo/wordmark-transparent.png" alt="Pono" className="h-[22px] w-auto" />
+          </Link>
         ) : (
           <button
             type="button"
