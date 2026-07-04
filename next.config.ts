@@ -11,6 +11,11 @@ const nextConfig: NextConfig = {
         hostname: 'pono-image.s3.ap-northeast-2.amazonaws.com',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'img.clerk.com',
+        pathname: '/**',
+      },
     ],
   },
 };
