@@ -76,9 +76,9 @@ export default function Header({ isWebView, myUsername }: HeaderProps) {
         {/* 좌측: 로고 or 뒤로가기 버튼 */}
         {showLogo ? (
           <Link href="/" className="flex items-center">
-            {/* 브랜드 마크(파비콘과 동일 P 모노그램, 로컬 정적 에셋). */}
+            {/* 브랜드 워드마크(로컬 정적 에셋). 로고라 next/image 대신 img로 고정 높이. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/logo/app-icon-512.png" alt="Pono" className="h-8 w-8" />
+            <img src="/logo/wordmark-transparent.png" alt="Pono" className="h-[22px] w-auto" />
           </Link>
         ) : (
           <button
