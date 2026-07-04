@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useState } from 'react'
+import Link from 'next/link'
 import { useAuth, useClerk } from '@clerk/nextjs'
 import { useTranslations } from 'next-intl'
 import { useToast } from '@/hooks/useToast'
@@ -57,29 +58,45 @@ export default function SnapMiniCard({ post, aspectRatio }: SnapMiniCardProps) {
 
   const image = post.images[0]
   const aspectClass = aspectRatio === '4/5' ? 'aspect-[4/5]' : 'aspect-square'
+  const detailHref = post.author.username
+    ? `/${post.author.username}/${post.id}`
+    : null
+
+  const imageBlock = (
+    <div className={`relative w-full ${aspectClass} bg-neutral-200`}>
+      {image?.url && (
+        // 사용자 업로드 원격 이미지(S3). 동적 URL이라 next/image 대신 img 사용.
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={image.url}
+          alt={post.caption ?? undefined}
+          className="w-full h-full object-cover"
+        />
+      )}
+    </div>
+  )
+
+  const caption = post.caption && (
+    <p className="text-[11px] text-neutral-800 leading-[1.4] mb-1.5 line-clamp-2">
+      {post.caption}
+    </p>
+  )
 
   return (
     <div className="bg-white rounded-[var(--radius-md)] overflow-hidden shadow-[var(--shadow-card)]">
-      {/* 이미지 */}
-      <div className={`relative w-full ${aspectClass} bg-neutral-200`}>
-        {image?.url && (
-          // 사용자 업로드 원격 이미지(S3). 동적 URL이라 next/image 대신 img 사용.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={image.url}
-            alt={post.caption ?? undefined}
-            className="w-full h-full object-cover"
-          />
-        )}
-      </div>
+      {/* 이미지 (상세로 이동) */}
+      {detailHref ? <Link href={detailHref}>{imageBlock}</Link> : imageBlock}
 
       {/* 캡션 + 메타 */}
       <div className="px-2.5 pt-2 pb-2.5">
-        {post.caption && (
-          <p className="text-[11px] text-neutral-800 leading-[1.4] mb-1.5 line-clamp-2">
-            {post.caption}
-          </p>
-        )}
+        {caption &&
+          (detailHref ? (
+            <Link href={detailHref} className="block">
+              {caption}
+            </Link>
+          ) : (
+            caption
+          ))}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1 min-w-0">
             {post.author.avatar ? (
