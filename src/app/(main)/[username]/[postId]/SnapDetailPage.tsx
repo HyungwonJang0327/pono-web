@@ -147,36 +147,38 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* 헤더 */}
-      <div className="sticky top-0 z-10 bg-neutral-50 border-b border-neutral-200 h-[52px] flex items-center justify-between px-4">
-        {/* 웹 전용 뒤로가기 */}
-        {!isWebView && (
-          <button
-            type="button"
-            aria-label={t('back')}
-            onClick={() => router.back()}
-            className="w-10 h-10 -ml-1 flex items-center justify-center text-neutral-900"
-          >
-            <ChevronLeft size={24} strokeWidth={1.5} />
-          </button>
-        )}
-        {isWebView && <div />}
-        {/* 본인 게시물일 때만 더보기 버튼 */}
-        {post.isOwnedByMe ? (
-          <button
-            type="button"
-            aria-label={t('more')}
-            onClick={() => setSheetOpen(true)}
-            className="w-10 h-10 flex items-center justify-center text-neutral-700"
-          >
-            <MoreHorizontal size={22} strokeWidth={1.5} />
-          </button>
-        ) : (
-          <div />
-        )}
+      <div className="sticky top-0 z-10 bg-neutral-50 border-b border-neutral-200">
+        <div className="max-w-[560px] mx-auto h-[52px] flex items-center justify-between px-4">
+          {/* 웹 전용 뒤로가기 */}
+          {!isWebView && (
+            <button
+              type="button"
+              aria-label={t('back')}
+              onClick={() => router.back()}
+              className="w-10 h-10 -ml-1 flex items-center justify-center text-neutral-900"
+            >
+              <ChevronLeft size={24} strokeWidth={1.5} />
+            </button>
+          )}
+          {isWebView && <div />}
+          {/* 본인 게시물일 때만 더보기 버튼 */}
+          {post.isOwnedByMe ? (
+            <button
+              type="button"
+              aria-label={t('more')}
+              onClick={() => setSheetOpen(true)}
+              className="w-10 h-10 flex items-center justify-center text-neutral-900"
+            >
+              <MoreHorizontal size={24} strokeWidth={1.5} />
+            </button>
+          ) : (
+            <div />
+          )}
+        </div>
       </div>
 
       {/* 이미지 캐러셀 */}
-      <div className="relative w-full">
+      <div className="relative w-full max-w-[560px] mx-auto">
         <div
           ref={scrollRef}
           onScroll={handleScroll}
@@ -215,7 +217,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
       </div>
 
       {/* 본문 영역 */}
-      <div className="px-4">
+      <div className="max-w-[560px] mx-auto px-5">
         {/* 작성자 행 */}
         <button
           type="button"
