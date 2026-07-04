@@ -62,6 +62,8 @@ export interface SnapDetailDto {
   commentCount: number
   createdAt: string
   updatedAt: string
+  /** 캡션 실변경 시 true. 서버에서 계산해 반환 (api-spec.md 기준). */
+  isEdited: boolean
 }
 
 /**
@@ -83,6 +85,8 @@ export interface ArticleDetailDto {
   commentCount: number
   createdAt: string
   updatedAt: string
+  /** 본문 실변경 시 true. 서버에서 계산해 반환 (api-spec.md 기준). */
+  isEdited: boolean
 }
 
 /** POST /likes/:postId, DELETE /likes/:postId 응답 */
