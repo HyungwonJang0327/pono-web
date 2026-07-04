@@ -13,6 +13,7 @@ import { useErrorMessage } from '@/hooks/useErrorMessage'
 import { useRelativeTime } from '@/hooks/useRelativeTime'
 import { addLike, removeLike, updatePost, deletePost } from '@/services/post.service'
 import CommentSection from '@/components/post/CommentSection'
+import { EditedMarker } from '@/components/post/EditedMarker'
 import type { SnapDetailDto } from '@/types/post'
 
 interface Props {
@@ -232,6 +233,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
           </div>
           <span className="text-sm font-semibold text-neutral-900">{post.author.username}</span>
           <span className="text-xs text-neutral-600">{formatRelativeTime(post.createdAt)}</span>
+          <EditedMarker isEdited={post.isEdited} />
         </button>
 
         {/* 캡션 구간 */}
