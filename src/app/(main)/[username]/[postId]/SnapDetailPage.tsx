@@ -208,8 +208,8 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
         {/* 인디케이터 — 이미지 2장 이상일 때만 */}
         {hasMultipleImages && (
           <div
-            className="absolute top-3 right-3 px-2 py-1 rounded-full text-white text-xs font-medium"
-            style={{ background: 'rgba(28,25,23,0.45)', lineHeight: '1' }}
+            className="absolute top-3 right-3 p-2 rounded-full text-white text-xs font-medium"
+            style={{ background: 'rgba(28,25,23,0.55)', lineHeight: '1' }}
           >
             {currentIndex + 1}/{post.images.length}
           </div>
@@ -273,7 +273,7 @@ export default function SnapDetailPage({ post, isWebView }: Props) {
               <div>
                 <p
                   className={[
-                    'text-sm text-neutral-900 whitespace-pre-wrap',
+                    'text-[15px] leading-[1.6] text-neutral-900 whitespace-pre-wrap',
                     !isCaptionExpanded ? 'line-clamp-3' : '',
                   ].join(' ')}
                 >
